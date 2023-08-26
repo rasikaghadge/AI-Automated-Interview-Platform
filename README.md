@@ -8,3 +8,10 @@
 
 
 ### AI-Automated-Interview-Platform
+
+<div class="avatar-container">
+    <a href="https://github.com/rasikaghadge/AI-Automated-Interview-Platform/graphs/contributors">
+        <img src="https://contrib.rocks/image?max=50&repo=rasikaghadge/AI-Automated-Interview-Platform" />
+    </a>
+</div>
+
