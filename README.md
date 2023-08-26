@@ -7,7 +7,7 @@
         <a href="https://github.com/rasikaghadge/AI-Automated-Interview-Platform/blob/main/LICENSE"><img src="https://img.shields.io/github/license/rasikaghadge/AI-Automated-Interview-Platform?color=orange" alt="License Badge"/></a>
 
 
-### AI-Automated-Interview-Platform
+Practice interview with AI based on job descriptions and resume.
 
 <div class="avatar-container">
     <a href="https://github.com/rasikaghadge/AI-Automated-Interview-Platform/graphs/contributors">
