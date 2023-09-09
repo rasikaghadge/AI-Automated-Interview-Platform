@@ -103,8 +103,7 @@ app.get('/', (req, res) => {
     res.send('SERVER IS RUNNING')
   })
 
-const DB_URL = "mongodb+srv://ghadgerasika16:Rasika123@cluster0.0fnjyu2.mongodb.net/?retryWrites=true&w=majority"
-// const DB_URL = process.env.
+const DB_URL = process.env.DB_URL;
 const PORT = process.env.PORT || 5000
 
 mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true})
