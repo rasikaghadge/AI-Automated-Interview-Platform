@@ -13,6 +13,12 @@
         target="_blank"><img src="https://img.shields.io/badge/Docs-4285F4?style=flat-square&logo=Google-Docs&logoColor=white" alt="Docs Badge"/></a> &nbsp;
 <a href="https://docs.google.com/document/d/1gmc1uL13lnS2NwI14zwrTzsxAn3qhyvknHcvFG__SGE/edit?usp=sharing"
         target="_blank"><img src="https://img.shields.io/badge/Microsoft%20Word-2B579A?style=flat-square&logo=Microsoft%20Word&logoColor=white" alt="Microsoft Word Badge"/></a> &nbsp;   
+<a href="https://cloud.mongodb.com/v2/64fc322145f323621a98c2c7#/metrics/replicaSet/64fc325cffbf2d598982d1bc/explorer/AIInterviewer/profiles/find" target="_blank">
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=MongoDB&logoColor=white" alt="MongoDB Badge"/>
+</a>
+<a href="https://voicemyworldformicro-2022.postman.co/workspace/Aiiternviewer~52438c4c-2071-4eab-9c36-c66e2978fce5/overview" target="_blank">
+  <img src="https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=Postman&logoColor=white" alt="Postman Badge"/>
+</a>
 
 
 
