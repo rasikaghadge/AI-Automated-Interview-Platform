@@ -31,15 +31,16 @@ export const signin = async (req, res) => {
 
         const userProfile = await ProfileModel.findOne({ email: existingUser?.email })
 
-        jwt.sign({ email: email, id: existingUser._id }, SECRET, {
-            expiresIn: '24h'
-        }, function (err, token) {
+        //If crednetials are valid, create a token for the user
+        jwt.sign({ email: existingUser.email, id: existingUser._id }, SECRET, { 
+            expiresIn: "24h" 
+        }, function(err, token) {
             if (err) {
-                res.status(500).json({ message: 'Error in login', err: String(err) });
+              res.status(500).json({message: 'Error in signin', err: String(err) });
             } else {
-                // send expiry time and token
-                const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-                res.status(201).json({ token, expiresIn: expirationTime, userProfile });
+              // send expiry time and token
+              const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+              res.status(201).json({ token, expiresIn: expirationTime });
             }
         });
 
