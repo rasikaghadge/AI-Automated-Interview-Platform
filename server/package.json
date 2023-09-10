@@ -6,7 +6,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "run": "npx nodemon index.js"
   },
   "keywords": [],
   "author": "Panshak Solomon",
@@ -23,6 +24,6 @@
     "nodemailer": "^6.6.3"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.22"
   }
 }
