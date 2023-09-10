@@ -32,13 +32,20 @@ export const signin = async (req, res)=> {
         if(!isPasswordCorrect) return res.status(400).json({message: "Invalid credentials"})
 
         //If crednetials are valid, create a token for the user
-        const token = jwt.sign({ email: existingUser.email, id: existingUser._id }, SECRET, { expiresIn: "1h" })
-        
-        //Then send the token to the client/frontend
-        res.status(200).json({ result: existingUser, userProfile, token })
+        jwt.sign({ email: existingUser.email, id: existingUser._id }, SECRET, { 
+            expiresIn: "24h" 
+        }, function(err, token) {
+            if (err) {
+              res.status(500).json({message: 'Error in signin', err: String(err) });
+            } else {
+              // send expiry time and token
+              const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+              res.status(201).json({ token, expiresIn: expirationTime });
+            }
+        });
 
     } catch (error) {
-        res.status(500).json({ message: "Something went wrong"})
+        res.status(500).json({message: "Server is not respoding", err: String(error)})
     }
 }
 
