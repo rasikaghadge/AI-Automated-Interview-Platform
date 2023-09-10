@@ -17,6 +17,7 @@ import ProfileModel from '../models/ProfileModel.js';
 
 export const signin = async (req, res)=> {
     const { email, password } = req.body //Coming from formData
+    console.log(email);
 
     try {
         const existingUser = await User.findOne({ email })
@@ -44,6 +45,7 @@ export const signin = async (req, res)=> {
 
 
 export const signup = async (req, res)=> {
+    console.log(req.body);
     const { email, password, confirmPassword, firstName, lastName, bio } = req.body
 
     try {
@@ -52,18 +54,25 @@ export const signup = async (req, res)=> {
 
         if(existingUser) return res.status(400).json({ message: "User already exist" })
 
-        if(password !== confirmPassword) return res.status(400).json({ message: "Password don't match" })
+        if(password !== confirmPassword) return res.status(400).json({ message: "Password doesn't match" })
         
         const hashedPassword = await bcrypt.hash(password, 12)
 
         const result = await User.create({ email, password: hashedPassword, name: `${firstName} ${lastName}`, bio })
 
-        const token = jwt.sign({ email: result.email, id: result._id }, SECRET, { expiresIn: "1h" })
-        
-        res.status(200).json({ result, userProfile, token })
-
+        jwt.sign({ email: result.email, id: result._id }, SECRET, { 
+            expiresIn: '24h' 
+          }, function(err, token) {
+            if (err) {
+              res.status(500).json({message: 'Error in signup', err: String(err) });
+            } else {
+              // send expiry time and token
+              const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+              res.status(201).json({ token, expiresIn: expirationTime });
+            }
+          });
     } catch (error) {
-        res.status(500).json({ message: "Something went wrong"}) 
+        res.status(500).json({message: "Server is not respoding", err: String(error)}) 
     }
 }
 
