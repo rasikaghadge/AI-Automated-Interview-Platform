@@ -54,6 +54,16 @@
             "logo": {"example": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABAC","type": "String","desciption":"Base64 encoded url of image"},
             "website": {"example": "https://exmaple.com","type": "String"}
           }
+        },
+        {
+          "name": "company",
+          "schema": {
+            "id": {"example": "dfjo345393j9dwd9j3", "type": "String", "required": true},
+            "name": {"example": "tata", "type": "String",  "required": true},
+            "logo": {"example": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABAC","type": "String","desciption":"Base64 encoded url of image"},
+            "email": {"example": "hr@example.com","type": "String", "required": true, "unique": true, "desciption": "email of companies hr or who schedule interviews"},
+            "password": {"example": "MySecretes@j93","type": "String", "required": true}
+          }
         }
       ]
     }
