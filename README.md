@@ -20,6 +20,9 @@
   <img src="https://img.shields.io/badge/Postman-FF6C37?style=flat-square&logo=Postman&logoColor=white" alt="Postman Badge"/>
 </a>
 
+## Demo
+<a href="https://ai-interviewer-0dy3.onrender.com"> View live app</a>
+
 
 
 Practice interview with AI based on job descriptions and resume.
