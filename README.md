@@ -21,8 +21,9 @@
 </a>
 
 ## Demo
-<a href="https://ai-interviewer-0dy3.onrender.com"> View live app</a>
-
+<a href="https://ai-interviewer-0dy3.onrender.com" target="_blank">
+  <img src="https://img.shields.io/badge/Aiinterviewer-Your%20Color?style=flat-square&logo=Your%20Logo&logoColor=white" alt="Aiinterviewer Badge"/>
+</a>
 
 
 Practice interview with AI based on job descriptions and resume.
