@@ -21,7 +21,7 @@
 </a>
 
 ## Demo
-<a href="https://ai-interviewer-0dy3.onrender.com"> View live app</a>
+<a href="https://ai-interviewer-app.onrender.com"> View live app</a>
 
 
 
