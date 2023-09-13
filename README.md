@@ -21,8 +21,9 @@
 </a>
 
 ## Demo
+
 <a href="https://ai-interviewer-app.onrender.com" target="_blank">
-  <img src="https://img.shields.io/badge/Aiinterviewer-Your%20Color?style=flat-square&logo=Your%20Logo&logoColor=white" alt="Aiinterviewer Badge"/>
+  <img src="https://img.shields.io/badge/Aiinterviewer-Your%20Color?style=flat-square&logo=Your%20Logo&logoColor=white" alt="AI-Interviewer Badge"/>
 </a>
 
 
