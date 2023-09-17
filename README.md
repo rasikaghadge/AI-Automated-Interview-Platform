@@ -21,13 +21,50 @@
 </a>
 
 ## Demo
-
-<a href="https://ai-interviewer-app.onrender.com" target="_blank">
-  <img src="https://img.shields.io/badge/Aiinterviewer-Your%20Color?style=flat-square&logo=Your%20Logo&logoColor=white" alt="AI-Interviewer Badge"/>
+<a href="https://ai-interviewer-0dy3.onrender.com" target="_blank">
+  <img src="https://img.shields.io/badge/Aiinterviewer-Your%20Color?style=flat-square&logo=Your%20Logo&logoColor=white" alt="Aiinterviewer Badge"/>
 </a>
 
 
-Practice interview with AI based on job descriptions and resume.
+## Installation
+
+- Backend
+```bash
+  cd backend/
+  npm install
+```
+
+- Frontend
+```bash
+  cd frontend/
+  npm install
+```
+
+## Run Locally
+
+Start the server
+
+```bash
+  npm start
+```
+
+Start the client
+
+```bash
+  npm start
+```
+
+## Tech Stack
+
+**Client:** React, Redux, CSS
+
+**Server:** Node, Express
+
+
+## License
+
+[MIT](https://github.com/rasikaghadge/AI-Automated-Interview-Platform/blob/main/LICENSE)
+
 
 ## Thanks for your Contribution
 <div class="avatar-container">
