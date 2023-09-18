@@ -32,15 +32,15 @@ export const signin = async (req, res) => {
         const userProfile = await ProfileModel.findOne({ email: existingUser?.email })
 
         //If crednetials are valid, create a token for the user
-        jwt.sign({ email: existingUser.email, id: existingUser._id }, SECRET, { 
-            expiresIn: "24h" 
-        }, function(err, token) {
+        jwt.sign({ email: existingUser.email, id: existingUser._id }, SECRET, {
+            expiresIn: "24h"
+        }, function (err, token) {
             if (err) {
-              res.status(500).json({message: 'Error in signin', err: String(err) });
+                res.status(500).json({ message: 'Error in signin', err: String(err) });
             } else {
-              // send expiry time and token
-              const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-              res.status(201).json({ token, expiresIn: expirationTime });
+                // send expiry time and token
+                const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+                res.status(201).json({ token, expiresIn: expirationTime });
             }
         });
 
@@ -52,40 +52,66 @@ export const signin = async (req, res) => {
 
 
 export const signup = async (req, res) => {
-    const { email, password, confirmPassword, firstName, lastName, bio } = req.body
+    const { email, password, confirmPassword, firstName, lastName } = req.body
 
     try {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: 'Invalid email format' });
+        }
+
+        if (password !== confirmPassword) return res.status(400).json({ message: "Password does not match" })
         const existingUser = await User.findOne({ email })
 
         if (existingUser) return res.status(400).json({ message: "User already exist" })
 
-        if (password !== confirmPassword) return res.status(400).json({ message: "Password doesn't match" })
 
         const hashedPassword = await bcrypt.hash(password, 12)
 
-        const result = await User.create({ email, password: hashedPassword, name: `${firstName} ${lastName}` })
+        const newUser = await new User({
+            email: email,
+            password: hashedPassword,
+            firstName: firstName,
+            lastName: lastName
+        })
 
         const response = await axios.get(`https://ui-avatars.com/api/name=${firstName}+${lastName}`, { responseType: 'arraybuffer' });
 
         const base64Image = Buffer.from(response.data, 'binary').toString('base64');
 
-        const userProfile = await ProfileModel.create({
-            name: `${firstName} ${lastName}`,
-            email: email,
+        const userProfile = await new ProfileModel({
+            email: newUser.email,
             phoneNumber: null,
             contactAddress: null,
-            logo: base64Image,
-            website: null
-        })
-        jwt.sign({ email: result.email, id: result._id }, SECRET, {
+            profilePicture: base64Image,
+            website: null,
+            city: null,
+            country: null
+        });
+        jwt.sign({ email: newUser.email, id: newUser._id }, SECRET, {
             expiresIn: '24h'
         }, function (err, token) {
             if (err) {
                 res.status(500).json({ message: 'Error in signup', err: String(err) });
             } else {
                 // send expiry time and token
-                const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-                res.status(201).json({ token, expiresIn: expirationTime });
+                userProfile.save((err) => {
+                    if (err) {
+                        console.log(`Error in creating user profile ${err}`)
+                    } else {
+                        console.log(`profile created successfully`)
+                    }
+                })
+
+                newUser.save((err) => {
+                    if(err) {
+                        console.log(`Error in creating new user ${err}`)
+                    } else {
+                        console.log(`User created successfully`)
+                        const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+                        return res.status(201).json({ token, expiresIn: expirationTime });
+                    }
+                })
             }
         });
     } catch (error) {
