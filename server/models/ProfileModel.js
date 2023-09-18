@@ -1,11 +1,16 @@
 import mongoose from 'mongoose'
 
 const profileSchema = mongoose.Schema({
-    name: String,
-    email: {type: String, required: true, unique: true},
+    email: {
+        type: String,
+        ref: 'User',
+        required: true,
+        unique: true,
+      },
     phoneNumber: String,
-    contactAddress: String,
-    logo: String,
+    city: String,
+    country: String,
+    profilePicture: String,
     website: String
 })
 
