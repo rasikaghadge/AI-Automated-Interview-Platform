@@ -1,7 +1,14 @@
 import mongoose from 'mongoose'
 
 const userSchema = mongoose.Schema({
-    email: {type: String, required: true, unique: true},
+    email: {
+        type: String, 
+        required: true, 
+        unique: true,
+        lowercase: true,
+        immutable: true,
+        match: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
+    },
     firstName: {
         type: String,
         required: true
@@ -11,8 +18,15 @@ const userSchema = mongoose.Schema({
         required: true
     },
     password: {type: String, required: true},
-    createdAt: Date,
-    updatedAt: Date
+    createdAt: {
+        type: Date, 
+        default: () => Date.now(),
+        immutable: true
+    },
+    updatedAt: {
+        type: Date,
+        default: () => Date.now()
+    }
 })
 
 const User = mongoose.model('User', userSchema)

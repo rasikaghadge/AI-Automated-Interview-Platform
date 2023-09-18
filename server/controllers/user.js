@@ -39,12 +39,12 @@ export const signin = async (req, res) => {
         }, function (err, token) {
             if (err) {
                 console.log(`Error in login ${err}`)
-                res.status(500).json({ message: 'Error in login', err: String(err) });
+                return res.status(500).json({ message: 'Error in login', err: String(err) });
             } else {
                 // send expiry time and token
                 console.log(`User created successfully`)
                 const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-                return res.status(201).json({ token, expiresIn: expirationTime });
+                return res.status(200).json({ token, expiresIn: expirationTime });
             }
         });
 
@@ -99,19 +99,19 @@ export const signup = async (req, res) => {
                 res.status(500).json({ message: 'Error in signup', err: String(err) });
             } else {
                 // send expiry time and token
-                userProfile.save((err) => {
-                    if (err) {
-                        console.log(`Error in creating user profile ${err}`)
-                    } else {
-                        console.log(`profile created successfully`)
-                    }
-                })
-
                 newUser.save((err) => {
                     if (err) {
                         console.log(`Error in creating new user ${err}`)
+                        res.status(500).json({ message: 'Error in register', err: String(err) });
                     } else {
                         console.log(`User created successfully`)
+                        userProfile.save((err) => {
+                            if (err) {
+                                console.log(`Error in creating user profile ${err}`)
+                            } else {
+                                console.log(`profile created successfully`)
+                            }
+                        })
                         const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
                         return res.status(201).json({ token, expiresIn: expirationTime });
                     }
