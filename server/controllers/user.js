@@ -21,26 +21,30 @@ export const signin = async (req, res) => {
     const { email, password } = req.body //Coming from formData
 
     try {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: 'Invalid email format' });
+        }
         const existingUser = await User.findOne({ email })
         //get userprofile and append to login auth detail
-        if (!existingUser) return res.status(404).json({ message: "User doesn't exist", err: "User does not exist" })
+        if (!existingUser) return res.status(404).json({ message: "User does not exist" })
 
         const isPasswordCorrect = await bcrypt.compare(password, existingUser.password)
 
-        if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials", err: "Password does not match" })
-
-        const userProfile = await ProfileModel.findOne({ email: existingUser?.email })
+        if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials" })
 
         //If crednetials are valid, create a token for the user
         jwt.sign({ email: existingUser.email, id: existingUser._id }, SECRET, {
             expiresIn: "24h"
         }, function (err, token) {
             if (err) {
-                res.status(500).json({ message: 'Error in signin', err: String(err) });
+                console.log(`Error in login ${err}`)
+                res.status(500).json({ message: 'Error in login', err: String(err) });
             } else {
                 // send expiry time and token
+                console.log(`User created successfully`)
                 const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-                res.status(201).json({ token, expiresIn: expirationTime });
+                return res.status(201).json({ token, expiresIn: expirationTime });
             }
         });
 
@@ -104,7 +108,7 @@ export const signup = async (req, res) => {
                 })
 
                 newUser.save((err) => {
-                    if(err) {
+                    if (err) {
                         console.log(`Error in creating new user ${err}`)
                     } else {
                         console.log(`User created successfully`)
