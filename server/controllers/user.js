@@ -11,36 +11,38 @@ const HOST = process.env.SMTP_HOST
 const PORT = process.env.SMTP_PORT
 const USER = process.env.SMTP_USER
 const PASS = process.env.SMTP_PASS
-const UI_AVATAR_API_URL = process.env.UI_AVATAR_API_URL
 
 import User from '../models/userModel.js'
-import ProfileModel from '../models/ProfileModel.js';
+import isEmailValid from '../helper/authHelper.js'
 
 
 export const signin = async (req, res) => {
-    const { email, password } = req.body //Coming from formData
+    const { email, password } = req.body
 
     try {
+        if (!isEmailValid(email)) {
+            return res.status(400).json({ message: 'Invalid email format' });
+        }
         const existingUser = await User.findOne({ email })
         //get userprofile and append to login auth detail
-        if (!existingUser) return res.status(404).json({ message: "User doesn't exist", err: "User does not exist" })
+        if (!existingUser) return res.status(404).json({ message: "User does not exist" })
 
         const isPasswordCorrect = await bcrypt.compare(password, existingUser.password)
 
-        if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials", err: "Password does not match" })
-
-        const userProfile = await ProfileModel.findOne({ email: existingUser?.email })
+        if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials" })
 
         //If crednetials are valid, create a token for the user
-        jwt.sign({ email: existingUser.email, id: existingUser._id }, SECRET, { 
-            expiresIn: "24h" 
-        }, function(err, token) {
+        jwt.sign({ email: existingUser.email, id: existingUser._id }, SECRET, {
+            expiresIn: "24h"
+        }, function (err, token) {
             if (err) {
-              res.status(500).json({message: 'Error in signin', err: String(err) });
+                console.log(`Error in login ${err}`)
+                return res.status(500).json({ message: 'Error in login', err: String(err) });
             } else {
-              // send expiry time and token
-              const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-              res.status(201).json({ token, expiresIn: expirationTime });
+                // send expiry time and token
+                console.log(`User created successfully`)
+                const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
+                return res.status(200).json({ token, expiresIn: expirationTime });
             }
         });
 
@@ -49,63 +51,41 @@ export const signin = async (req, res) => {
     }
 }
 
-
-
 export const signup = async (req, res) => {
-    const { email, password, confirmPassword, firstName, lastName, bio } = req.body
+    const { email, password, confirmPassword, firstName, lastName } = req.body
 
     try {
+        if (!isEmailValid(email)) {
+            return res.status(400).json({ message: 'Invalid email format' });
+        }
+
+        if (password !== confirmPassword) return res.status(400).json({ message: "Password does not match" })
         const existingUser = await User.findOne({ email })
 
         if (existingUser) return res.status(400).json({ message: "User already exist" })
 
-        if (password !== confirmPassword) return res.status(400).json({ message: "Password doesn't match" })
 
         const hashedPassword = await bcrypt.hash(password, 12)
 
-        const result = await User.create({ email, password: hashedPassword, name: `${firstName} ${lastName}` })
-
-        const response = await axios.get(`https://ui-avatars.com/api/name=${firstName}+${lastName}`, { responseType: 'arraybuffer' });
-
-        const base64Image = Buffer.from(response.data, 'binary').toString('base64');
-
-        const userProfile = await ProfileModel.create({
-            name: `${firstName} ${lastName}`,
+        const newUser = await new User({
             email: email,
-            phoneNumber: null,
-            contactAddress: null,
-            logo: base64Image,
-            website: null
+            password: hashedPassword,
+            firstName: firstName,
+            lastName: lastName
         })
-        jwt.sign({ email: result.email, id: result._id }, SECRET, {
-            expiresIn: '24h'
-        }, function (err, token) {
+        newUser.save((err) => {
             if (err) {
-                res.status(500).json({ message: 'Error in signup', err: String(err) });
+                console.log(`Error in creating new user ${err}`)
+                res.status(500).json({ message: 'Error in register', err: String(err) });
             } else {
-                // send expiry time and token
-                const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
-                res.status(201).json({ token, expiresIn: expirationTime });
+                console.log(`User created successfully`)
+                return res.status(201).json({ id: newUser._id, email: newUser.email, message: "User Created Successfully" });
             }
-        });
+        })
     } catch (error) {
         res.status(500).json({ message: "Server is not respoding", err: String(error) })
     }
 }
-
-
-// export const updateProfile = async (req, res) => {
-//     const formData = req.body
-//     const { id: _id } = req.params
-//     console.log(formData)
-
-//     if(!mongoose.Types.ObjectId.isValid(_id)) return res.status(404).send('No user with this id found')
-
-//     const updatedUser = await User.findByIdAndUpdate(_id, formData, {new: true})
-//     res.json(updatedUser)
-// }
-
-
 
 
 export const forgotPassword = (req, res) => {
@@ -157,7 +137,6 @@ export const forgotPassword = (req, res) => {
             })
     })
 }
-
 
 
 export const resetPassword = (req, res) => {
