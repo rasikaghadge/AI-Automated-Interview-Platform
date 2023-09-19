@@ -6,8 +6,7 @@ const userSchema = mongoose.Schema({
         required: true, 
         unique: true,
         lowercase: true,
-        immutable: true,
-        match: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
+        immutable: true
     },
     firstName: {
         type: String,
