@@ -14,7 +14,12 @@ RUN npm run build
 
 ENV NODE_ENV production
 
-ENV 
+ENV REACT_APP_API https://ai-interviewer-backend.onrender.com
 
+COPY --from=builder /app/build /usr/share/nginx/html
 
-CMD ["npm", "start"]
+COPY ./client/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
