@@ -30,14 +30,14 @@
 
 - Backend
 ```bash
-  cd backend/
+  cd server/
   npm install
 ```
 
 - Frontend
 ```bash
-  cd frontend/
-  npm install
+  cd client/
+  yarn install
 ```
 
 ## Run Locally
@@ -51,7 +51,7 @@ Start the server
 Start the client
 
 ```bash
-  npm start
+  yarn start
 ```
 
 ## Tech Stack
