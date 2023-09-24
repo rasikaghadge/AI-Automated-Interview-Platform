@@ -11,13 +11,8 @@ import { dirname } from 'path'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
-import invoiceRoutes from './routes/invoices.js'
-import clientRoutes from './routes/clients.js'
 import userRoutes from './routes/userRoutes.js'
-
 import profile from './routes/profile.js'
-import pdfTemplate from './documents/index.js'
-// import invoiceTemplate from './documents/invoice.js'
 import emailTemplate from './documents/email.js'
 
 const app = express()
@@ -27,8 +22,6 @@ app.use((express.json({ limit: "30mb", extended: true})))
 app.use((express.urlencoded({ limit: "30mb", extended: true})))
 app.use((cors()))
 
-app.use('/invoices', invoiceRoutes)
-app.use('/clients', clientRoutes)
 app.use('/users', userRoutes)
 app.use('/profiles', profile)
 
