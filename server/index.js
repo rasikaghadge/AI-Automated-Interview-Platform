@@ -3,8 +3,6 @@ import express from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import nodemailer from 'nodemailer'
-import pdf from 'html-pdf'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 
@@ -23,19 +21,6 @@ app.use((cors()))
 
 app.use('/users', userRoutes)
 app.use('/profiles', profile)
-
-// NODEMAILER TRANSPORT FOR SENDING INVOICE VIA EMAIL
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port : process.env.SMTP_PORT,
-    auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-    },
-    tls:{
-        rejectUnauthorized:false
-    }
-})
 
 
 app.get('/', (req, res) => {
