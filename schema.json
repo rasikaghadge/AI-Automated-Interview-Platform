@@ -1,0 +1,71 @@
+{
+    "projectname": "Aiinterviewer",
+    "projectlinks":{
+      "github": "https://github.com/rasikaghadge/AI-Automated-Interview-Platform",
+      "live": "",
+      "database": "https://cloud.mongodb.com/v2/64fc322145f323621a98c2c7#/metrics/replicaSet/64fc325cffbf2d598982d1bc/explorer/AIInterviewer/profiles/find",
+      "postman APIS": "https://voicemyworldformicro-2022.postman.co/workspace/Aiiternviewer~52438c4c-2071-4eab-9c36-c66e2978fce5/overview",
+      "notion": "https://www.notion.so/ce0ccdad9ecd47669a0037c193dc89b0?v=3574ced0ce64475e91d41d9d0f0b0893",
+      "powerpoint": "https://dypakurdi-my.sharepoint.com/:p:/r/personal/en20111292_dypakurdi_onmicrosoft_com/Documents/Ai_Interviewer.pptx?d=w34cb301f873b40fdb77a4af163d4c55a&csf=1&web=1&e=IqDsC4",
+      "report": "https://docs.google.com/document/d/1csQmkTQ3nxW8LkCVPdcUyh__h7SjpY-dRxK55DVTTZs/edit?usp=sharing"
+
+    },
+    "team":[
+      {
+        "name":"Rasika Ghadge",
+        "github":""
+      },
+      {
+        "name":"Suraj Pisal",
+        "github":"https://github.com/Suraj1089"
+      },
+      {
+        "name":"Kalpesh Pawar",
+        "github":""
+      },
+      {
+        "name":"Pradnya Barve",
+        "github":""
+      }
+    ],
+    "technologies": {
+      "database":"Mongodb",
+      "APIS": "Node/Express",
+      "frontend": "React"
+    },
+    "database": {
+      "name": "Aiinterviewer",
+      "collections":[
+        {
+          "name": "users",
+          "schema":{
+            "name": {"example":"Jon", "type": "String"},
+            "email": {"example": "jon@example.com","type": "String", "required": true, "unique": true},
+            "password": {"example": "MySecretes@j93","type": "String", "required": true}
+          }
+        },
+        {
+          "name": "profile",
+          "schema":{
+            "name": {"example":"Jon Te", "type": "String"},
+            "email": {"example": "jon@example.com","type": "String", "required": true, "unique": true},
+            "phoneNumber": {"example": "+917364281100","type": "String"},
+            "contactAddress": {"example": "Pune, India","type": "String"},
+            "logo": {"example": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABAC","type": "String","desciption":"Base64 encoded url of image"},
+            "website": {"example": "https://exmaple.com","type": "String"}
+          }
+        },
+        {
+          "name": "company",
+          "schema": {
+            "id": {"example": "dfjo345393j9dwd9j3", "type": "String", "required": true},
+            "name": {"example": "tata", "type": "String",  "required": true},
+            "logo": {"example": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABAC","type": "String","desciption":"Base64 encoded url of image"},
+            "email": {"example": "hr@example.com","type": "String", "required": true, "unique": true, "desciption": "email of companies hr or who schedule interviews"},
+            "password": {"example": "MySecretes@j93","type": "String", "required": true}
+          }
+        }
+      ]
+    }
+     
+  }
