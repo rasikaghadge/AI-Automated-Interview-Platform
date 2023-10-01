@@ -56,10 +56,10 @@ const Dashboard = () => {
     }
    
     
-    useEffect(() => {
-        dispatch(getInvoicesByUser({search: user?.result._id || user?.result?.googleId}));
-        // eslint-disable-next-line
-    }, [location, dispatch]);
+    // useEffect(() => {
+    //     dispatch(getInvoicesByUser({search: user?.result._id || user?.result?.googleId}));
+    //     // eslint-disable-next-line
+    // }, [location, dispatch]);
    
 
     const unpaidInvoice = invoices?.filter((invoice) => invoice.status === 'Unpaid')
