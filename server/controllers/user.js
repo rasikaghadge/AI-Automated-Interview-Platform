@@ -93,74 +93,42 @@ export const signup = async (req, res) => {
 }
 
 
-export const forgotPassword = (req, res) => {
+export const forgotPassword = async (req, res) => {
+  const { email, newPassword, confirmNewPassword } = req.body;
 
-    const { email } = req.body
+  try {
+    // Check if the user exists in the database
+    const user = await User.findOne({ email });
 
-    // NODEMAILER TRANSPORT FOR SENDING POST NOTIFICATION VIA EMAIL
-    const transporter = nodemailer.createTransport({
-        host: HOST,
-        port: PORT,
-        auth: {
-            user: USER,
-            pass: PASS
-        },
-        tls: {
-            rejectUnauthorized: false
-        }
-    })
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
+    // Check if newPassword and confirmNewPassword match
+    if (newPassword !== confirmNewPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
+    }
 
-    crypto.randomBytes(32, (err, buffer) => {
-        if (err) {
-            console.log(err)
-        }
-        const token = buffer.toString("hex")
-        User.findOne({ email: email })
-            .then(user => {
-                if (!user) {
-                    return res.status(422).json({ error: "User does not exist in our database" })
-                }
-                user.resetToken = token
-                user.expireToken = Date.now() + 3600000
-                user.save().then((result) => {
-                    transporter.sendMail({
-                        to: user.email,
-                        from: "Accountill <hello@accountill.com>",
-                        subject: "Password reset request",
-                        html: `
-                    <p>You requested for password reset from Arc Invoicing application</p>
-                    <h5>Please click this <a href="https://accountill.com/reset/${token}">link</a> to reset your password</h5>
-                    <p>Link not clickable?, copy and paste the following url in your address bar.</p>
-                    <p>https://accountill.com/reset/${token}</p>
-                    <P>If this was a mistake, just ignore this email and nothing will happen.</P>
-                    `
-                    })
-                    res.json({ message: "check your email" })
-                }).catch((err) => console.log(err))
+    // Generate a password reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
 
-            })
-    })
-}
+    // Set the reset token and expiration time on the user model
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour (adjust as needed)
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    // Save the user with updated information
+    await user.save();
+
+    // Send the reset token as a response to the client
+    return res.status(200).json({ resetToken });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
 
 
-export const resetPassword = (req, res) => {
-    const newPassword = req.body.password
-    const sentToken = req.body.token
-    User.findOne({ resetToken: sentToken, expireToken: { $gt: Date.now() } })
-        .then(user => {
-            if (!user) {
-                return res.status(422).json({ error: "Try again session expired" })
-            }
-            bcrypt.hash(newPassword, 12).then(hashedpassword => {
-                user.password = hashedpassword
-                user.resetToken = undefined
-                user.expireToken = undefined
-                user.save().then((saveduser) => {
-                    res.json({ message: "password updated success" })
-                })
-            })
-        }).catch(err => {
-            console.log(err)
-        })
-}

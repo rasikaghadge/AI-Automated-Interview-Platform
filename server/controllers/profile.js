@@ -120,15 +120,3 @@ export const updateProfile = async (req, res) => {
     res.json({ message: "Profile deleted successfully." });
 }
 
-
-
-// // Function call
-// ProfileModel.insertMany([
-//   { name: 'Gourav', age: 20},
-//   { name: 'Kartik', age: 20},
-//   { name: 'Niharika', age: 20}
-// ]).then(function(){
-//   console.log("Data inserted")  // Success
-// }).catch(function(error){
-//   console.log(error)      // Failure
-// });
