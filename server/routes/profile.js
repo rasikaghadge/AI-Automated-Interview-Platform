@@ -4,7 +4,6 @@ import { getProfiles, createProfile, updateProfile, deleteProfile, getProfile, g
 const router = express.Router()
 
 router.get('/:id', getProfile)
-// router.get('/', getProfiles)
 router.get('/', getProfilesByUser)
 router.post('/', createProfile)
 router.patch('/:id', updateProfile)

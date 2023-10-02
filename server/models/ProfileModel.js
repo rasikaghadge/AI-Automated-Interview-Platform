@@ -1,6 +1,11 @@
 import mongoose from 'mongoose'
+import { v4 as uuidv4 } from 'uuid';
 
 const profileSchema = mongoose.Schema({
+  id: {
+    type: uuidv4,
+    default: () => uuidv4()
+  },
   email: {
     type: String,
     ref: 'User',
