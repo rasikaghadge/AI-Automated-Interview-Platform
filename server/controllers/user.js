@@ -89,7 +89,8 @@ export const signup = async (req, res) => {
                     phoneNumber: "",
                     city: "",
                     profilePicture: "",
-                    webSite: ""
+                    country: "",
+                    website: "",
                 })
                 newUserProfile.save(async(err) => {
                     if(err) {
@@ -122,15 +123,6 @@ export const forgotPassword = async (req, res) => {
     if (newPassword !== confirmNewPassword) {
       return res.status(400).json({ message: 'Passwords do not match' });
     }
-
-    // Generate a password reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-
-    // Set the reset token and expiration time on the user model
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour (adjust as needed)
-
-    // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
 
@@ -138,7 +130,7 @@ export const forgotPassword = async (req, res) => {
     await user.save();
 
     // Send the reset token as a response to the client
-    return res.status(200).json({ resetToken });
+    return res.status(200).json({ message: "Password Changed Successfully" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server error' });
