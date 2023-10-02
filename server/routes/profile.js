@@ -5,7 +5,7 @@ import auth from '../middleware/auth.js';
 const router = express.Router()
 router.get('/all', getProfiles)
 router.get('/search', getProfilesBySearch)
-router.get('/:id', getProfile)
+router.get('/:id', auth, getProfile)
 router.patch('/', auth, updateProfile)
 router.delete('/', auth, deleteProfile)
 

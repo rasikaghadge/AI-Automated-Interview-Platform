@@ -25,27 +25,36 @@ export const getProfiles = async (req, res) => {
 
 export const getProfile = async (req, res) => { 
   const { id } = req.params;
-
+  const userId = req.userId;
   try {
+      var selfProfile = false;
+      if (id == userId) {
+        selfProfile = true;
+      }
       const profile = await Profile.findOne({id});
       if(profile && profile.email) {
           const userEmail = profile.email;
           const user = await User.findOne({email: userEmail});
+          console.log('user is ', user)
           if(user) {
           res.status(200).json({
             name: `${user.firstName} ${user.lastName}`,
             profilePicture: profile.profilePicture,
             website: profile.website,
-            city: profile.city
+            city: profile.city,
+            country: profile.country,
+            selfProfile: selfProfile
           })
         } else {
           res.status(404).json({message: 'User not found'})
         }
 
+      } else{
+          res.status(404).json({message: 'Profile not Found'});
       }
   } catch (error) {
       console.log(error);
-      res.status(404).json({ message: error.message });
+      res.status(401).json({ message: error.message });
   }
 }
 
