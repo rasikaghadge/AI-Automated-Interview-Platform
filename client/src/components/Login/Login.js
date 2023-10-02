@@ -5,7 +5,7 @@ import styles from './Login.module.css'
 import {GoogleLogin, GoogleOAuthProvider} from '@react-oauth/google'
 import jwtDecode from 'jwt-decode'
 import {useDispatch} from 'react-redux'
-import { useHistory, Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { signup, signin } from '../../actions/auth'
 import { Avatar, Button, Paper, Grid, Typography, Container } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
@@ -23,7 +23,7 @@ const Login = () => {
     const [formData, setFormData] = useState(initialState)
     const [isSignup, setIsSignup] = useState(false)
     const dispatch = useDispatch()
-    const history = useHistory()
+    const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false);
      // eslint-disable-next-line 
     const [openSnackbar, closeSnackbar] = useSnackbar()
@@ -58,7 +58,7 @@ const Login = () => {
         try {
             dispatch({ type: "AUTH", data: {result, token}})
 
-            window.location.href='/dashboard'
+            window.location.href='/homepage'
             
         } catch (error) {
             console.log(error)
@@ -71,7 +71,7 @@ const Login = () => {
 
 
     if(user) {
-      history.push('/dashboard')
+      navigate('/homepage')
     }
 
     return (

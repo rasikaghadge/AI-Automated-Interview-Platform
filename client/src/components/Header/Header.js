@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import decode from 'jwt-decode'
 import styles from './Header.module.css'
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 const Header = () => {
     const dispatch = useDispatch()
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
-    const history = useHistory()
+    const navigate = useNavigate()
     const location = useLocation()
 
 
@@ -52,7 +52,7 @@ const Header = () => {
 
     const logout =() => {
         dispatch({ type: 'LOGOUT' })
-        history.push('/')
+        navigate('/')
         setUser(null)
     }  
 
@@ -90,7 +90,7 @@ const Header = () => {
 
 
   const openLink =(link) => {
-      history.push(`/${link}`)
+      navigate(`/${link}`)
       setOpen(false);
   }
 
@@ -116,8 +116,8 @@ const Header = () => {
 
     if(!user) return (
         <div className={styles.header2}>
-         <img style={{width: '50px', cursor: 'pointer'}} onClick={()=> history.push('/')} src="https://i.postimg.cc/hGZKzdkS/logo.png" alt="arc-invoice" />
-        <button onClick={()=> history.push('/login')} className={styles.login}>Get started</button>
+         <img style={{width: '50px', cursor: 'pointer'}} onClick={()=> navigate('/')} src="https://i.postimg.cc/hGZKzdkS/logo.png" alt="arc-invoice" />
+        <button onClick={()=> navigate('/login')} className={styles.login}>Get started</button>
         </div>
     )
     return (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Button, Paper, Typography, Container, Grid } from '@material-ui/core';
 import useStyles from './styles';
 import Field from '../Login/Field';
@@ -10,7 +10,7 @@ import styles from './Password.module.css'
 
 const Forgot = () => {
   const classes = useStyles();
-  const history = useHistory()
+  const navigate = useNavigate()
   const [form, setForm] = useState("");
   const [step, setStep] = useState(0)
   const dispatch = useDispatch();
@@ -24,7 +24,7 @@ const Forgot = () => {
 
   const handleChange = (e) => setForm(e.target.value);
 
-  if(user) history.push('/dashboard')
+  if(user) navigate('/homepage')
 
   return (
     <div style={{paddingTop: '100px', paddingBottom: '100px'}}>
@@ -48,7 +48,7 @@ const Forgot = () => {
                     <br/>
                     <p>A password reset link has been sent to your email. Please follow the link to reset your password</p>
                     <div className={styles.buttons}>
-                        <button className={styles.button} onClick={() =>history.push('/')}>Back to home</button>
+                        <button className={styles.button} onClick={() =>navigate('/')}>Back to home</button>
                         <button className={styles.button} onClick={()=>setStep(0)}>Resend link</button>
                       </div>
                   </div>
@@ -60,7 +60,7 @@ const Forgot = () => {
                     <br/>
                     <p>Please check your internet connection and try again</p>
                     <div className={styles.buttons}>
-                        <button className={styles.button} onClick={() =>history.push('/')}>Back to home</button>
+                        <button className={styles.button} onClick={() =>navigate('/')}>Back to home</button>
                         <button className={styles.button} onClick={()=>setStep(0)}>Resend link</button>
                       </div>
                   </div>

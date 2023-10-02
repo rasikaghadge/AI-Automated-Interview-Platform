@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Button, Paper, Typography, Container, Grid } from '@material-ui/core';
 import useStyles from './styles';
 import Field from '../Login/Field';
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 import { reset } from '../../actions/auth';
 
@@ -11,13 +11,13 @@ const Reset = () => {
   const classes = useStyles();
   const [form, setForm] = useState("");
   const dispatch = useDispatch();
-  const history = useHistory()
+  const navigate = useNavigate()
   const { token } = useParams()
   const user = JSON.parse(localStorage.getItem('profile'))
 
   const handleSubmit = (e) => {
     e.preventDefault()
-      dispatch(reset({ password: form, token: token}, history))
+      dispatch(reset({ password: form, token: token}, navigate))
   }
 
   const handleChange = (e) => setForm(e.target.value);
@@ -25,7 +25,7 @@ const Reset = () => {
   const handleShowPassword = () => setShowPassword(!showPassword);
 
   
-  if(user) history.push('/dashboard')
+  if(user) navigate('/homepage')
 
   return (
     <div style={{paddingTop: '100px', paddingBottom: '100px'}}>
