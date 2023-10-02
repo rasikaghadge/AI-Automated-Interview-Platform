@@ -1,9 +1,7 @@
 import jwt from "jsonwebtoken"
-import nodemailer from 'nodemailer'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
-import axios from 'axios';
 
 dotenv.config()
 const SECRET = process.env.SECRET;
@@ -14,6 +12,7 @@ const PASS = process.env.SMTP_PASS
 
 import User from '../models/userModel.js'
 import isEmailValid from '../helper/authHelper.js'
+import Profile from "../models/ProfileModel.js"
 
 
 export const signin = async (req, res) => {
@@ -78,13 +77,27 @@ export const signup = async (req, res) => {
             firstName: firstName,
             lastName: lastName
         })
-        newUser.save((err) => {
+        newUser.save(async (err) => {
             if (err) {
                 console.log(`Error in creating new user ${err}`)
                 res.status(500).json({ message: 'Error in register', err: String(err) });
             } else {
-                console.log(`User created successfully`)
-                return res.status(201).json({ id: newUser._id, email: newUser.email, message: "User Created Successfully" });
+                
+                const newUserProfile = await new Profile({
+                    email: newUser.email,
+                    phoneNumber: "",
+                    city: "",
+                    profilePicture: "",
+                    webSite: ""
+                })
+                newUserProfile.save(async(err) => {
+                    if(err) {
+                        res.status(500).json({ message: 'Error in register', err: String(err) });
+                    } else {
+                        console.log(`User created successfully`)
+                        res.status(201).json({ id: newUserProfile.id, email: newUser.email, message: "User Created Successfully" });
+                    }
+                })
             }
         })
     } catch (error) {

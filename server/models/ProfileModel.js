@@ -3,7 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 const profileSchema = mongoose.Schema({
   id: {
-    type: uuidv4,
+    required: true,
+    type: String,
     default: () => uuidv4()
   },
   email: {
