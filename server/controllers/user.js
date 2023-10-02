@@ -1,20 +1,47 @@
+import axios from 'axios';
 import jwt from "jsonwebtoken"
-import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
 
 dotenv.config()
 const SECRET = process.env.SECRET;
-const HOST = process.env.SMTP_HOST
-const PORT = process.env.SMTP_PORT
-const USER = process.env.SMTP_USER
-const PASS = process.env.SMTP_PASS
 
 import User from '../models/userModel.js'
 import isEmailValid from '../helper/authHelper.js'
 import Profile from "../models/ProfileModel.js"
 
 
+async function getProfilePictureByName(name) {
+    try {
+        const response = await axios.get(`https://ui-avatars.com/api/name=${name}`, {
+            responseType: 'arraybuffer', // Specify the response type as 'arraybuffer'
+        });
+
+        // Check if the response is successful (status code 200)
+        if (response.status === 200) {
+            // Convert the response data (buffer) to a base64-encoded string
+            const base64String = Buffer.from(response.data, 'binary').toString('base64');
+            return base64String;
+        } else {
+            // Handle other HTTP status codes if needed
+            console.error(`Error: Received status code ${response.status}`);
+            return null;
+        }
+    } catch (error) {
+        // Handle any errors that occur during the request
+        console.error('Error:', error);
+        return null;
+    }
+}
+
+async function findAndRemoveUserProfile(email) {
+    try{
+    await User.findOneAndDelete({email});
+    await Profile.findOneAndDelete({email});
+    } catch(error) {
+        console.log('Error in findAndRemoveUserProfile', error)
+    }
+}
 export const signin = async (req, res) => {
     const { email, password } = req.body
 
@@ -31,6 +58,8 @@ export const signin = async (req, res) => {
         if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials" })
 
         const userProfile = await Profile.findOne({email});
+        
+        if (!userProfile) return res.status(404).json({ message: "User does not exist" })
         //If crednetials are valid, create a token for the user
         // permissions = ["Admin", "User", "HR", "Developer"]
         jwt.sign({ 
@@ -84,11 +113,12 @@ export const signup = async (req, res) => {
                 res.status(500).json({ message: 'Error in register', err: String(err) });
             } else {
                 
+                const profilePicture = await getProfilePictureByName(`${newUser.firstName}+${newUser.lastName}`) || ""
                 const newUserProfile = await new Profile({
                     email: newUser.email,
                     phoneNumber: "",
                     city: "",
-                    profilePicture: "",
+                    profilePicture: profilePicture ,
                     country: "",
                     website: "",
                 })
@@ -103,6 +133,7 @@ export const signup = async (req, res) => {
             }
         })
     } catch (error) {
+        await findAndRemoveUserProfile(email)
         res.status(500).json({ message: "Server is not respoding", err: String(error) })
     }
 }
