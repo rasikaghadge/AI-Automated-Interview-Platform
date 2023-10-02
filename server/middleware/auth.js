@@ -5,9 +5,14 @@ dotenv.config()
 const SECRET = process.env.SECRET;
 
 const auth = async (req, res, next) => {
-    console.log('auth called')
     try {
-        const token = req.headers.authorization.split(" ")[1]
+        const authorizationHeader = req.headers.authorization;
+
+        // Check if the authorization header is not present
+        if (!authorizationHeader) {
+            return res.status(401).json({ message: 'Authentication failed. Token not provided.' });
+        }
+        const token = authorizationHeader.split(" ")[1]
         const isCustomAuth = token.length < 500 
 
         let decodeData;
@@ -15,13 +20,11 @@ const auth = async (req, res, next) => {
         //If token is custom token do this
         if(token && isCustomAuth) {
             decodeData = jwt.verify(token, SECRET)
-
             req.userId = decodeData?.id
 
         } else {
             //Else of token is google token then do this
             decodeData = jwt.decode(token)
-
             req.userId = decodeData?.sub
         }
 
