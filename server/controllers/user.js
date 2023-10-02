@@ -1,9 +1,7 @@
 import jwt from "jsonwebtoken"
-import nodemailer from 'nodemailer'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
-import axios from 'axios';
 
 dotenv.config()
 const SECRET = process.env.SECRET;
@@ -14,6 +12,7 @@ const PASS = process.env.SMTP_PASS
 
 import User from '../models/userModel.js'
 import isEmailValid from '../helper/authHelper.js'
+import Profile from "../models/ProfileModel.js"
 
 
 export const signin = async (req, res) => {
@@ -31,11 +30,12 @@ export const signin = async (req, res) => {
 
         if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials" })
 
+        const userProfile = await Profile.findOne({email});
         //If crednetials are valid, create a token for the user
         // permissions = ["Admin", "User", "HR", "Developer"]
         jwt.sign({ 
             email: existingUser.email, 
-            id: existingUser._id,
+            id: userProfile.id,
             permissions: ["User"]
         }, SECRET, {
             expiresIn: "24h"
@@ -78,13 +78,28 @@ export const signup = async (req, res) => {
             firstName: firstName,
             lastName: lastName
         })
-        newUser.save((err) => {
+        newUser.save(async (err) => {
             if (err) {
                 console.log(`Error in creating new user ${err}`)
                 res.status(500).json({ message: 'Error in register', err: String(err) });
             } else {
-                console.log(`User created successfully`)
-                return res.status(201).json({ id: newUser._id, email: newUser.email, message: "User Created Successfully" });
+                
+                const newUserProfile = await new Profile({
+                    email: newUser.email,
+                    phoneNumber: "",
+                    city: "",
+                    profilePicture: "",
+                    country: "",
+                    website: "",
+                })
+                newUserProfile.save(async(err) => {
+                    if(err) {
+                        res.status(500).json({ message: 'Error in register', err: String(err) });
+                    } else {
+                        console.log(`User created successfully`)
+                        res.status(201).json({ id: newUserProfile.id, email: newUser.email, message: "User Created Successfully" });
+                    }
+                })
             }
         })
     } catch (error) {
@@ -108,15 +123,6 @@ export const forgotPassword = async (req, res) => {
     if (newPassword !== confirmNewPassword) {
       return res.status(400).json({ message: 'Passwords do not match' });
     }
-
-    // Generate a password reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-
-    // Set the reset token and expiration time on the user model
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour (adjust as needed)
-
-    // Hash the new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
 
@@ -124,7 +130,7 @@ export const forgotPassword = async (req, res) => {
     await user.save();
 
     // Send the reset token as a response to the client
-    return res.status(200).json({ resetToken });
+    return res.status(200).json({ message: "Password Changed Successfully" });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server error' });
