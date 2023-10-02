@@ -1,5 +1,5 @@
 import React from "react";
-import Doctor from "../Assets/Man-working-on-laptop-icon-illustration-on-transparent-background-PNG.png";
+import Image from "../../Assets/Man-working-on-laptop-icon-illustration-on-transparent-background-PNG.png";
 import SolutionStep from "./SolutionStep/SolutionStep";
 import "./About.css";
 
@@ -7,7 +7,7 @@ function About() {
   return (
     <div className="about-section" id="about">
       <div className="about-image-content">
-        <img src={Doctor} alt="Doctor Group" className="about-image1" />
+        <img src={Image} alt="Doctor Group" className="about-image1" />
       </div>
 
       <div className="about-text-content">

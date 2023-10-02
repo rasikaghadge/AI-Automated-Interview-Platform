@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import HeroImage from  "../../../public/images/—Pngtree—work from home with computer_5426686.png"
+import { useNavigate } from "react-router-dom";
+import HeroImage from  "../../Assets/—Pngtree—work from home with computer_5426686.png"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck, faAngleUp } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate  } from "react-router-dom";
 import "./Hero.css";
 
 function Hero() {
