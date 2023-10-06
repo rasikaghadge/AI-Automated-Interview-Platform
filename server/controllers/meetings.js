@@ -2,16 +2,9 @@ import express from "express";
 import { createServer } from "http";
 const app = express();
 const server = createServer(app);
-import socket from "socket.io";
-const io = socket(server, {
-	cors: {
-	  origin: '*',
-	}
-  });
-import { json } from "body-parser";
-import cors from 'cors';
+import { Server } from "socket.io"; // Import Server class
 
-app.use(json());
+// Rest of your code...
 
 app.use(cors({
 	"Access-Control-Allow-Origin": "*",
@@ -30,7 +23,7 @@ const adminSocket = {}; // map from chatId to chatAdmins socket
 const allowedUsersInRoom = {}; // list of allowed users in a room
 const emails = {}; // email corr to socketRefs
 
-io.on("connection", (socket) => {
+export const handleSocketEvents = (socket) => {
 	// check for the room
 
 	// we map the email of the admin in this join room
@@ -128,46 +121,45 @@ io.on("connection", (socket) => {
 		// emit event to all other users
 		socket.broadcast.emit("user left", { id: socket.id, alias: useralias });
 	});
-});
+}
 
-// Chat routes
 
-// validate new meeting creation
-app.post("/new_meeting", (req, res) => {
-	const data = req.body;
-	const roomId = data.room;
-	const chatId = data.chat;
 
-	if (rooms[roomId]) {
-		// new meeting not possible to create with this roomId
-		res.send("failure");
-	} else {
-		// new meeting success
-		chats[roomId] = chatId;
-		adminUsername[chatId] = data.admin;
-		res.send("success");
-	}
-});
+// // validate new meeting creation
+// app.post("/new_meeting", (req, res) => {
+// 	const data = req.body;
+// 	const roomId = data.room;
+// 	const chatId = data.chat;
 
-// validate existing meeting creation
-// if success, send a permission request to admin of the meeting
-app.post("/existing_meeting", (req, res) => {
-	const data = req.body;
-	const roomId = data.room;
+// 	if (rooms[roomId]) {
+// 		// new meeting not possible to create with this roomId
+// 		res.send("failure");
+// 	} else {
+// 		// new meeting success
+// 		chats[roomId] = chatId;
+// 		adminUsername[chatId] = data.admin;
+// 		res.send("success");
+// 	}
+// }
 
-	if (rooms[roomId]) {
-		// possible to join this room
-		const data = {
-			status: "success",
-		};
-		res.send(data);
-	} else {
-		// not possible to join this meet
-		const data = {
-			status: "failure",
-		};
-		res.send(data);
-	}
-});
+// // validate existing meeting creation
+// // if success, send a permission request to admin of the meeting
+// app.post("/existing_meeting", (req, res) => {
+// 	const data = req.body;
+// 	const roomId = data.room;
 
-server.listen(8000 ,()=> {console.log("Server is running on port 8000")});
+// 	if (rooms[roomId]) {
+// 		// possible to join this room
+// 		const data = {
+// 			status: "success",
+// 		};
+// 		res.send(data);
+// 	} else {
+// 		// not possible to join this meet
+// 		const data = {
+// 			status: "failure",
+// 		};
+// 		res.send(data);
+// 	}
+// });
+
