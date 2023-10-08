@@ -44,6 +44,7 @@ async function findAndRemoveUserProfile(email) {
 }
 export const signin = async (req, res) => {
     const { email, password } = req.body
+    console.log('email', req.body);
 
     try {
         if (!isEmailValid(email)) {
