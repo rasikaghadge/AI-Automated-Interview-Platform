@@ -1,5 +1,6 @@
 import * as api from '../api/index'
 import { AUTH, CREATE_PROFILE } from './constants'
+import { useNavigate } from 'react-router-dom'
 
 
 export const signin =(formData, openSnackbar, setLoading) => async(dispatch) => {
@@ -12,7 +13,7 @@ export const signin =(formData, openSnackbar, setLoading) => async(dispatch) => 
         // setLoading(false)
         openSnackbar("Signin successfull")
         // history.push('/dashboard')
-        window.location.href="/dashboard"
+        window.location.href="/homepage"
 
     } catch (error) {
         // console.log(error?.response?.data?.message)
@@ -29,7 +30,7 @@ export const signup =(formData, openSnackbar, setLoading) => async(dispatch) => 
         dispatch({ type: AUTH, data})
         const { info } = await api.createProfile({name: data?.result?.name, email: data?.result?.email, userId: data?.result?._id, phoneNumber: '', businessName: '', contactAddress: '', logo: '', website: ''});
         dispatch({ type: CREATE_PROFILE, payload: info });
-        window.location.href="/dashboard"
+        window.location.href="/homepage"
         // history.push('/dashboard')
         openSnackbar("Sign up successfull")
 
@@ -52,10 +53,10 @@ export const forgot =(formData) => async(dispatch) => {
 
 
 export const reset =(formData, history) => async(dispatch) => {
-
+    const navigate = useNavigate()
     try {
         await api.reset(formData)
-        history.push('/dashboard')
+        navigate('/homepage')
 
     } catch (error) {
         alert(error)

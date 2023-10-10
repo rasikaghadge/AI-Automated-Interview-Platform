@@ -19,7 +19,7 @@ const Dashboard = () => {
     const dispatch = useDispatch()
     const user = JSON.parse(localStorage.getItem('profile'))
     const { invoices, isLoading } = useSelector((state) => state?.invoices)
-    // const unpaid = invoices?.filter((invoice) => (invoice.status === 'Unpaid') || (invoice.status === 'Partial'))
+    const unpaid = invoices?.filter((invoice) => (invoice.status === 'Unpaid') || (invoice.status === 'Partial'))
     const overDue = invoices?.filter((invoice) => invoice.dueDate <= new Date().toISOString())
 
 
@@ -34,7 +34,7 @@ const Dashboard = () => {
     }
 
 
-    //sort payment history by date
+    // sort payment history by date
    const sortHistoryByDate =  paymentHistory.sort(function(a, b) {
         var c = new Date(a.datePaid);
         var d = new Date(b.datePaid);
@@ -56,10 +56,10 @@ const Dashboard = () => {
     }
    
     
-    // useEffect(() => {
-    //     dispatch(getInvoicesByUser({search: user?.result._id || user?.result?.googleId}));
-    //     // eslint-disable-next-line
-    // }, [location, dispatch]);
+    useEffect(() => {
+        dispatch(getInvoicesByUser({search: user?.result._id || user?.result?.googleId}));
+        // eslint-disable-next-line
+    }, [location, dispatch]);
    
 
     const unpaidInvoice = invoices?.filter((invoice) => invoice.status === 'Unpaid')

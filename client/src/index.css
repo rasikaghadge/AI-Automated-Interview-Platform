@@ -1,3 +1,30 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom Scroll Bar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background-color: #FFFFFF;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #1A8EFD;
+    border-radius: 4rem;
+}
+
+
+/*
 * {
   box-sizing: border-box;
   padding: 0;
@@ -9,6 +36,8 @@
 body {
   background-color: #EEEEEE;
 }
+
+
 
 .tb-container .Mui-focused {
   background-color: white;
@@ -31,7 +60,7 @@ body {
 
 
 
-/* ##########################PROGRESS BUTTON */
+ ##########################PROGRESS BUTTON 
 .pb-container {
   display: inline-block;
   text-align: center;
@@ -139,7 +168,7 @@ body {
   }
 }
 
-/* ##########################PROGRESS BUTTON */
+##########################PROGRESS BUTTON 
 
 
 
@@ -162,7 +191,7 @@ p {
 } */
 
 
-/* RESPONSIVE SIDE NAVBAR */
+/* RESPONSIVE SIDE NAVBAR 
 :root {
   font-size: 16px;
   font-family: 'Roboto';
@@ -188,19 +217,19 @@ main {
 }
 
 
-/* width */
+/* width 
 .navbar::-webkit-scrollbar {
   width: 1px;
   height: 1px;
 }
 
-/* Track */
+/* Track 
 .navbar::-webkit-scrollbar-track {
   box-shadow: inset 0 0 1px grey; 
   border-radius: 10px;
 }
  
-/* Handle */
+/* Handle 
 .navbar::-webkit-scrollbar-thumb {
   background: rgb(141, 187, 255); 
   border-radius: 10px;
@@ -293,7 +322,7 @@ main {
   transform: rotate(-180deg);
 }
 
-/* Small screens */
+/* Small screens 
 @media only screen and (max-width: 600px) {
   .navbar {
     bottom: 0;
@@ -318,7 +347,7 @@ main {
   }
 }
 
-/* Large screens */
+/* Large screens 
 @media only screen and (min-width: 600px) {
   .navbar {
     top: 0;
@@ -383,7 +412,7 @@ main {
 }
 
 
-/* PAYMENT HISTORY ACCORDION */
+/* PAYMENT HISTORY ACCORDION 
 .tab input {
   position: absolute;
   opacity: 0;
@@ -391,16 +420,16 @@ main {
 }
 
 
-/* Accordion styles */
+/* Accordion styles 
 .tabs {
   border-radius: 8px;
   overflow: hidden;
-  /* box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.5); */
+  /* box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.5); 
   width: 63%;
   margin: 10px auto;
 }
 
-/* Small screens */
+/* Small screens 
 @media only screen and (max-width: 600px) {
   .tabs {
     width: 95%;
@@ -419,7 +448,7 @@ main {
   background: #40404d;
   font-weight: bold;
   cursor: pointer;
-  /* Icon */
+  /* Icon 
 }
 .tab-label:hover {
   background: #3d3d47;
@@ -467,3 +496,5 @@ input:checked ~ .tab-content {
   outline: 0 !important;
   border-bottom-color: #ffab00 !important;
 }
+
+*/
