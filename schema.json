@@ -62,7 +62,8 @@
             "name": {"example": "tata", "type": "String",  "required": true},
             "logo": {"example": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABAC","type": "String","desciption":"Base64 encoded url of image"},
             "email": {"example": "hr@example.com","type": "String", "required": true, "unique": true, "desciption": "email of companies hr or who schedule interviews"},
-            "password": {"example": "MySecretes@j93","type": "String", "required": true}
+            "password": {"example": "MySecretes@j93","type": "String", "required": true},
+            "about": {"example": "We are a company that makes cars", "type": "String"}
           }
         }
       ]
