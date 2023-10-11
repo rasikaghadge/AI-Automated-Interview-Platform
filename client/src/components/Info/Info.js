@@ -11,29 +11,26 @@ function Info() {
           <span>What We Do</span>
         </h3>
         <p className="info-description">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat
-          voluptate, voluptatibus quia, quibusdam, dolorum quas voluptatum quos
-          quod delectus quidem consequuntur. Quia, quibusdam, dolorum quas
-          voluptatum quos quod delectus quidem consequuntur.
+        Our online smart video interview software streamlines your hiring journey, giving you the freedom to focus on what truly matters – nurturing your company's growth. 
         </p>
       </div>
 
       <div className="info-cards-content">
         <InformationCard
           title="Point one"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat"
+          description="Allow Permission to use microphone"
           icon={faMicrophone}
         />
 
         <InformationCard
           title="Point two"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat"
+          description="Allow Permission to turn on camera"
           icon={faVideoCamera}
         />
 
         <InformationCard
           title="Point three"
-          description="lore ipsum dolor sit amet consectetur adipisicing elit. Repellat"
+          description="Allow Permission to share screen"
           icon={faDesktop}
         />
       </div>

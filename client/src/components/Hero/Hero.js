@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import HeroImage from  "../../../public/images/—Pngtree—work from home with computer_5426686.png"
+import { useNavigate } from "react-router-dom";
+import HeroImage from  "../../Assets/—Pngtree—work from home with computer_5426686.png"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck, faAngleUp } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate  } from "react-router-dom";
 import "./Hero.css";
 
 function Hero() {
@@ -40,10 +40,7 @@ function Hero() {
             Schedule an interview in just 4 easy steps
           </h2>
           <p className="text-descritpion">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat
-            voluptate, voluptatibus quia, quibusdam, dolorum quas voluptatum
-            quos quod delectus quidem consequuntur. Quia, quibusdam, dolorum
-            quas voluptatum quos quod delectus quidem consequuntur.
+          Our cutting-edge video recruiting software harnesses the power of Explainable AI to revolutionize your hiring process. We understand that your time is valuable, which is why our platform is designed to pre-screen and shortlist candidates swiftly and accurately, ensuring you access the best talent available for your specific role. 
           </p>
           <button
             className="text-schedule-btn"
