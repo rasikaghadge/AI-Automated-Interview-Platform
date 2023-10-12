@@ -43,7 +43,8 @@ export const getProfile = async (req, res) => {
             website: profile.website,
             city: profile.city,
             country: profile.country,
-            selfProfile: selfProfile
+            selfProfile: selfProfile,
+            role: profile.role
           })
         } else {
           res.status(404).json({message: 'User not found'})

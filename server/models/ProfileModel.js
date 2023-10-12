@@ -26,6 +26,12 @@ const profileSchema = mongoose.Schema({
   updatedAt: {
     type: Date,
     default: () => Date.now()
+  }, 
+  role: {
+    type: String,
+    enum: ['hr', 'candidate', 'admin'],
+    required: true,
+    default: 'candidate'
   }
 })
 
