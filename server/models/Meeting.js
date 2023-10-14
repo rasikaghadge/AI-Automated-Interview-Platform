@@ -27,6 +27,10 @@ const eventSchema = Schema({
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true
+    },
+    allowedUsers: {
+      type: Array,
+      required: false
     }
   });
 var Meeting = module.exports = model('Meetings', eventSchema);
