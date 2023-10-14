@@ -9,6 +9,7 @@ import User from '../models/userModel.js'
 import isEmailValid from '../helper/authHelper.js'
 import Profile from "../models/ProfileModel.js"
 import { createToken } from '../controllers/token.js';
+import { getEventById, getEvents, addEvent, updateEvent, removeEvent } from "../models/Meeting.js";
 
 
 async function getProfilePictureByName(name) {
@@ -168,3 +169,79 @@ export const homepage = async (req, res) => {
         res.status(401).json({ message: error.message });
     }
 }
+
+export const logOut = async (req, res) => {
+    req.logout();
+    res.redirect('/');
+}
+
+export const getMeetings = async (req, res) => {
+    try {
+        const meetings = getEvents();
+        res.status(200).json(meetings);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+export const getMeeting = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const meeting = getEventById(id);
+        res.status(200).json(meeting);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+export const createMeeting = async (req, res) => {
+    const meeting = req.body;
+    try {
+        const newMeeting = addEvent(meeting);
+        res.status(201).json(newMeeting);
+    } catch (error) {
+        res.status(409).json({ message: error.message });
+    }
+}
+
+export const updateMeeting = async (req, res) => {
+    const { id } = req.params;
+    const meeting = req.body;
+    try {
+        const updatedMeeting = updateEvent(id, meeting);
+        res.status(201).json(updatedMeeting);
+    } catch (error) {
+        res.status(409).json({ message: error.message });
+    }
+}
+
+export const deleteMeeting = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await removeEvent(id);
+        res.status(201).json({ message: "Meeting deleted successfully." });
+    } catch (error) {
+        res.status(409).json({ message: error.message });
+    }
+}
+
+export const getMeetingByUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const meetings = getEvents({ user: id });
+        res.status(200).json(meetings);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+export const getMeetingByCompany = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const meetings = getEvents({ company: id });
+        res.status(200).json(meetings);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+

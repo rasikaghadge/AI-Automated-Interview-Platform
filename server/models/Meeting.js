@@ -1,6 +1,6 @@
+import mongoose from 'mongoose';
+const { Schema } = mongoose;
 
-
-import { Schema, model } from 'mongoose';
 const eventSchema = Schema({
     eventTitle: {
       type: String,
@@ -27,10 +27,14 @@ const eventSchema = Schema({
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true
+    },
+    allowedUsers: {
+      type: Array,
+      required: false
     }
   });
-var Meeting = module.exports = model('Meetings', eventSchema);
 
+  export const Meeting = mongoose.model('Meeting', eventSchema);
 
 export function getEventById(id, callback) {
     Meeting.findById(id, callback);
