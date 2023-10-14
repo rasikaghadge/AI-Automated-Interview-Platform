@@ -1,18 +1,4 @@
 import express from "express";
-import { createServer } from "http";
-const app = express();
-const server = createServer(app);
-import { Server } from "socket.io"; // Import Server class
-
-// Rest of your code...
-
-app.use(cors({
-	"Access-Control-Allow-Origin": "*",
-	"Access-Control-Allow-Credentials": "true",
-	"Access-Control-Max-Age": "1800",
-	"Access-Control-Allow-Headers":"content-type",
-	"Access-Control-Allow-Methods": "PUT, POST, GET, DELETE, PATCH, OPTIONS",
-}))
 
 const rooms = {}; // rooms[i] - users in room i
 const socketToRoom = {}; // socketToRoom[s] - room in which s resides
@@ -123,43 +109,38 @@ export const handleSocketEvents = (socket) => {
 	});
 }
 
+export const createNewMeeting = (req, res) => {
+	const data = req.body;
+	const roomId = data.room;
+	const chatId = data.chat;
 
+	if (rooms[roomId]) {
+		// new meeting not possible to create with this roomId
+		res.send("failure");
+	} else {
+		// new meeting success
+		chats[roomId] = chatId;
+		adminUsername[chatId] = data.admin;
+		res.send("success");
+	}
+}
 
-// // validate new meeting creation
-// app.post("/new_meeting", (req, res) => {
-// 	const data = req.body;
-// 	const roomId = data.room;
-// 	const chatId = data.chat;
+export const joinExistingMeeting = (req, res) => {
+	const data = req.body;
+	const roomId = data.room;
 
-// 	if (rooms[roomId]) {
-// 		// new meeting not possible to create with this roomId
-// 		res.send("failure");
-// 	} else {
-// 		// new meeting success
-// 		chats[roomId] = chatId;
-// 		adminUsername[chatId] = data.admin;
-// 		res.send("success");
-// 	}
-// }
-
-// // validate existing meeting creation
-// // if success, send a permission request to admin of the meeting
-// app.post("/existing_meeting", (req, res) => {
-// 	const data = req.body;
-// 	const roomId = data.room;
-
-// 	if (rooms[roomId]) {
-// 		// possible to join this room
-// 		const data = {
-// 			status: "success",
-// 		};
-// 		res.send(data);
-// 	} else {
-// 		// not possible to join this meet
-// 		const data = {
-// 			status: "failure",
-// 		};
-// 		res.send(data);
-// 	}
-// });
+	if (rooms[roomId]) {
+		// possible to join this room
+		const data = {
+			status: "success",
+		};
+		res.send(data);
+	} else {
+		// not possible to join this meet
+		const data = {
+			status: "failure",
+		};
+		res.send(data);
+	}
+}
 
