@@ -9,6 +9,7 @@ import Login from './components/Login/Login'
 import Forgot from './components/Password/Forgot'
 import Reset from './components/Password/Reset'
 import Homepage from './components/Homepage/Homepage';
+import RoleSelect from './components/RoleSelect/RoleSelect';
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/homepage" element={<Homepage/>} />
           <Route path="/forgot" element={<Forgot/>} />
           <Route path="/reset/:token" element={<Reset/>} />
+          <Route path="/select" element={<RoleSelect/>} />
         </Routes>
         </SnackbarProvider>
       </BrowserRouter>

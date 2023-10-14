@@ -5,10 +5,7 @@ import Info from "../Info/Info";
 import About from "../About/About";
 import Footer from "../Footer/Footer";
 import { decode } from "jsonwebtoken";
-import * as api from "../..//api/index.js";
 import { useState, useEffect } from "react";
-import axios from "axios";
-axios.defaults.baseURL = api.baseURL;
 
 let prevUserToken = null;
 
@@ -23,21 +20,12 @@ const Homepage = () => {
 
   useEffect(() => {
     const checkUserRole = async () => {
+      // console.log(user.token)
       try {
         const decodedToken = decode(user.token);
         if (decodedToken) {
-          const userId = decodedToken.id;
-          console.log(decodedToken.email);
-          console.log(userId);
-          console.log(axios.defaults.baseURL);
-          let tokenStr = "Bearer " + user.token;
-          const response = await axios.get(`/profiles/${userId}`, {
-            headers: { Authorization: tokenStr },
-          });
-          const data = response.data;
-          setUserRole(data.role);
-          console.log("User role is " + data.role);
-          console.log(data);
+          const userRole = decodedToken.role;
+          setUserRole(userRole);
         } else {
           setUserRole("");
         }

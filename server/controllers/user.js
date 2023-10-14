@@ -52,10 +52,10 @@ export const signin = async (req, res) => {
         
         if (!userProfile) return res.status(404).json({ message: "User does not exist" })
         //If crednetials are valid, create a token for the user
-        // permissions = ["Admin", "User", "HR", "Developer"]
+        // role = ["admin", "hr", "candidate"]
 
         // create a token for the user
-        const token = createToken(existingUser.email, userProfile.id, ["User"], "24h", SECRET);
+        const token = createToken(existingUser.email, userProfile.id, userProfile.role, "24h", SECRET);
         const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
             return res.status(200).json({ token, expiresIn: expirationTime });
         } catch (error) {
@@ -68,7 +68,7 @@ export const signup = async (req, res) => {
     // check request body is empty
     if(Object.keys(req.body).length === 0) return res.status(400).json({ message: "Request body is empty" })
 
-    const { email, password, confirmPassword, firstName, lastName } = req.body
+    const { email, password, confirmPassword, firstName, lastName, role } = req.body
 
     if (!isEmailValid(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
@@ -85,7 +85,8 @@ export const signup = async (req, res) => {
             email: email,
             password: hashedPassword,
             firstName: firstName,
-            lastName: lastName
+            lastName: lastName,
+            role: role
         })
         await newUser.save();   
         const profilePicture = await getProfilePictureByName(`${newUser.firstName}+${newUser.lastName}`) || ""
@@ -96,10 +97,11 @@ export const signup = async (req, res) => {
             profilePicture: profilePicture ,
             country: "",
             website: "",
+            role: newUser.role
         })
         await newUserProfile.save();
         console.log(`User created successfully`)
-        const token = createToken(newUser.email, newUserProfile.id, ["User"], "24h", SECRET);
+        const token = createToken(newUser.email, newUserProfile.id, role, "24h", SECRET);
         const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
         res.status(201).json({ id: newUserProfile.id, token: token, expirationTime: expirationTime, message: "User Created Successfully" });
 

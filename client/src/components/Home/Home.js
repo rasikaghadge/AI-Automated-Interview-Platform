@@ -21,7 +21,7 @@ const Home = () => {
           alt="arc-invoice"
         />
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/select")}
           className={styles.login}
         >
           Get started

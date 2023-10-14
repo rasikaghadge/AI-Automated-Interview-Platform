@@ -25,7 +25,12 @@ const userSchema = mongoose.Schema({
     updatedAt: {
         type: Date,
         default: () => Date.now()
-    }
+    },
+    role: {
+        type: String,
+        enum: ['candidate', 'hr', 'admin'],
+        default: 'candidate'
+    },
 })
 
 const User = mongoose.model('User', userSchema)
