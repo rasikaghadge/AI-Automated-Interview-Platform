@@ -12,12 +12,18 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { createProfile } from '../../actions/profile'
 import { useSnackbar } from 'react-simple-snackbar'
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { useLocation } from 'react-router-dom';
 
 import myImage from './login_img.jpg';
 
 const initialState ={ firstName: '', lastName: '', email: '', password: '', confirmPassword: '', profilePicture: '', bio: ''}
 
 const Login = () => {
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const selectedRole = searchParams.get('role');
+  // console.log("Role is " + selectedRole)
 
     const classes = useStyles();
     const [formData, setFormData] = useState(initialState)
@@ -31,10 +37,11 @@ const Login = () => {
     const [loading, setLoading] = useState(false)
     
     const handleShowPassword = () => setShowPassword(!showPassword);
+    
     const handleChange =(e)=> {
-        setFormData( {...formData, [e.target.name] : e.target.value} )
-    }
-
+            setFormData( {...formData, role: selectedRole, [e.target.name] : e.target.value} )
+        }
+    
     const handleSubmit =(e) => {
         e.preventDefault()
         if(isSignup) {

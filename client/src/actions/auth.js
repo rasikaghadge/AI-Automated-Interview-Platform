@@ -28,7 +28,7 @@ export const signup =(formData, openSnackbar, setLoading) => async(dispatch) => 
         //Sign up the user
         const { data } = await api.signUp(formData)
         dispatch({ type: AUTH, data})
-        const { info } = await api.createProfile({name: data?.result?.name, email: data?.result?.email, userId: data?.result?._id, phoneNumber: '', businessName: '', contactAddress: '', logo: '', website: ''});
+        const { info } = await api.createProfile({name: data?.result?.name, email: data?.result?.email, userId: data?.result?._id, role: data?.result?.role,  phoneNumber: '', businessName: '', contactAddress: '', logo: '', website: ''});
         dispatch({ type: CREATE_PROFILE, payload: info });
         window.location.href="/homepage"
         // history.push('/dashboard')

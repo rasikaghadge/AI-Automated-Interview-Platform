@@ -1,30 +1,59 @@
 import { useNavigate } from "react-router-dom";
-import Navbar from "../NavBar/NavBar";
+import Navbar from "../Navbar/NavBar";
 import Hero from "../Hero/Hero";
 import Info from "../Info/Info";
 import About from "../About/About";
-// import Reviews from "../Reviews/Reviews";
 import Footer from "../Footer/Footer";
+import { decode } from "jsonwebtoken";
+import { useState, useEffect } from "react";
+
+let prevUserToken = null;
 
 const Homepage = () => {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("profile"));
+  const [userRole, setUserRole] = useState("");
 
-    const navigate = useNavigate();
-    const user = JSON.parse(localStorage.getItem('profile'))
+  if (!user) {
+    navigate("/login");
+  }
 
-    if(!user) {
-        navigate('/login')
+  useEffect(() => {
+    const checkUserRole = async () => {
+      // console.log(user.token)
+      try {
+        const decodedToken = decode(user.token);
+        if (decodedToken) {
+          const userRole = decodedToken.role;
+          setUserRole(userRole);
+        } else {
+          setUserRole("");
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        setUserRole("");
+      }
+    };
+
+    // Check if the user data has changed before making the request
+    if (user && user.token !== prevUserToken) {
+      checkUserRole();
     }
 
-    return (
-        <div className="homepage">
-            <Navbar />
-            <Hero />
-            <Info />
-            <About />
-            {/* <Reviews /> */}
-            <Footer />
-        </div>
-    )
-}
+    // Update the previous user token for the next comparison
+    prevUserToken = user.token;
+  }, [user]);
 
-export default Homepage
+  return (
+    <div className="homepage">
+      <Navbar />
+      <Hero userRole={userRole} />
+      <Info />
+      <About />
+      {/* <Reviews /> */}
+      <Footer />
+    </div>
+  );
+};
+
+export default Homepage;
