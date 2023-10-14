@@ -50,6 +50,7 @@ app.use(cors({
   "Access-Control-Allow-Headers": "content-type",
   "Access-Control-Allow-Methods": "PUT, POST, GET, DELETE, PATCH, OPTIONS",
 }))
+app.use(morgan("dev"));
 
 app.use('/users', userRoutes)
 app.use('/profiles', profile)
