@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import Navbar from "../NavBar/NavBar";
+import NavBar from "../NavBar/NavBar";
 import Hero from "../Hero/Hero";
 import Info from "../Info/Info";
 import About from "../About/About";
@@ -17,7 +17,7 @@ const Homepage = () => {
 
     return (
         <div className="homepage">
-            <Navbar />
+            <NavBar />
             <Hero />
             <Info />
             <About />
