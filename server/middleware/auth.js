@@ -21,11 +21,13 @@ export const auth = async (req, res, next) => {
         if(token && isCustomAuth) {
             decodeData = jwt.verify(token, SECRET)
             req.userId = decodeData?.id
+            req.role = decodeData?.role
 
         } else {
             //Else of token is google token then do this
             decodeData = jwt.decode(token)
             req.userId = decodeData?.sub
+            req.role = decodeData?.role || 'user'
         }
 
         next()
@@ -52,13 +54,12 @@ export const admin = async (req, res, next) => {
         if(token && isCustomAuth) {
             decodeData = jwt.verify(token, SECRET)
             req.userId = decodeData?.id
-            req.isAdmin = decodeData?.isAdmin
 
         } else {
             //Else of token is google token then do this
             decodeData = jwt.decode(token)
             req.userId = decodeData?.sub
-            req.isAdmin = decodeData?.isAdmin
+            req.role = decodeData?.role
         }
 
         next()
@@ -83,19 +84,14 @@ export const hrAuth = async (req, res, next) => {
 
         //If token is custom token do this
         decodeData = jwt.verify(token, SECRET);
-        console.log(decodeData)
         if(token && isCustomAuth) {
             decodeData = jwt.verify(token, SECRET)
             req.userId = decodeData?.id
-            req.isAdmin = decodeData?.isAdmin
-            req.isHR = decodeData?.isHR
-
+            req.role = decodeData?.role
         } else {
             //Else of token is google token then do this
             decodeData = jwt.decode(token)
             req.userId = decodeData?.sub
-            req.isAdmin = decodeData?.isAdmin
-            req.isHR = decodeData?.isHR
         }
 
         next()
