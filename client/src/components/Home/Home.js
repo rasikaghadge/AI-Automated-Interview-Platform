@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./Home.module.css";
 import { useNavigate } from "react-router-dom";
-import Header from "../Header/Header";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -22,7 +21,7 @@ const Home = () => {
           alt="arc-invoice"
         />
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/select")}
           className={styles.login}
         >
           Get started

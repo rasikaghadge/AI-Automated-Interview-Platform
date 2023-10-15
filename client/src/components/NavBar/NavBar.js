@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 function NavBar() {
   const [nav, setNav] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
   const navigate = useNavigate();
 
@@ -33,10 +33,10 @@ function NavBar() {
   };
 
   const handleLogoutBtn = () => {
-      navigate('/')
-      setUser(null)
-      localStorage.clear()
-  }
+    navigate("/");
+    setUser(null);
+    localStorage.clear();
+  };
 
   return (
     <div className="navbar-section">
@@ -45,7 +45,6 @@ function NavBar() {
           AI <span className="navbar-sign">Interviewer</span>
         </Link>
       </h1>
-
       {/* Desktop */}
       <ul className="navbar-items">
         <li>
@@ -64,30 +63,27 @@ function NavBar() {
           </a>
         </li>
         <li>
-          <a href="#reviews"  className="navbar-links">
+          <a href="#reviews" className="navbar-links">
             Reviews
           </a>
         </li>
       </ul>
-
-      {/* <button
+      <button
         className="navbar-btn"
         type="button"
         disabled={isButtonDisabled}
         onClick={handleChatBtnClick}
       >
-        <FontAwesomeIcon icon={faCalendarDays} /> Schedule an interview
-      </button> */}
+        <FontAwesomeIcon icon={faCalendarDays} /> See scheduled interviews
+      </button>
       <button
         className="navbar-btn"
         type="button"
         disabled={isButtonDisabled}
         onClick={handleLogoutBtn}
       >
-        <FontAwesomeIcon icon={faSignOut} /> 
+        <FontAwesomeIcon icon={faSignOut} />
       </button>
-
-
       {/* Mobile */}
       <div className={`mobile-navbar ${nav ? "open-nav" : ""}`}>
         <div onClick={openNav} className="mobile-navbar-close">
@@ -122,7 +118,6 @@ function NavBar() {
           </li> */}
         </ul>
       </div>
-
       {/* Hamburger Icon */}
       <div className="mobile-nav">
         <FontAwesomeIcon
