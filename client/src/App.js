@@ -10,6 +10,7 @@ import Forgot from './components/Password/Forgot'
 import Reset from './components/Password/Reset'
 import Homepage from './components/Homepage/Homepage';
 import RoleSelect from './components/RoleSelect/RoleSelect';
+import VideosdkMeeting from './components/VideosdkMeeting/VideosdkMeeting';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
       <BrowserRouter>
       <SnackbarProvider>
         <Routes>
+          <Route path="/meetings" element={<VideosdkMeeting/>} />
           <Route path="/" element={<Home/>} />
           <Route path="/login" element={<Login/>} />
           <Route path="/homepage" element={<Homepage/>} />
