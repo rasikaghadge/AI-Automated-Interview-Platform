@@ -35,7 +35,6 @@ export const getProfile = async (req, res) => {
       if(profile && profile.email) {
           const userEmail = profile.email;
           const user = await User.findOne({email: userEmail});
-          console.log('user is ', user)
           if(user) {
           res.status(200).json({
             name: `${user.firstName} ${user.lastName}`,
