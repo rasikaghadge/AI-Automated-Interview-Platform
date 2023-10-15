@@ -1,4 +1,5 @@
-import express from "express";
+import jwt from 'jsonwebtoken';
+
 
 const rooms = {}; // rooms[i] - users in room i
 const socketToRoom = {}; // socketToRoom[s] - room in which s resides
@@ -109,38 +110,44 @@ export const handleSocketEvents = (socket) => {
 	});
 }
 
-export const createNewMeeting = (req, res) => {
-	const data = req.body;
-	const roomId = data.room;
-	const chatId = data.chat;
 
-	if (rooms[roomId]) {
-		// new meeting not possible to create with this roomId
-		res.send("failure");
-	} else {
-		// new meeting success
-		chats[roomId] = chatId;
-		adminUsername[chatId] = data.admin;
-		res.send("success");
-	}
-}
-
-export const joinExistingMeeting = (req, res) => {
-	const data = req.body;
-	const roomId = data.room;
-
-	if (rooms[roomId]) {
-		// possible to join this room
-		const data = {
-			status: "success",
-		};
-		res.send(data);
-	} else {
-		// not possible to join this meet
-		const data = {
-			status: "failure",
-		};
-		res.send(data);
-	}
-}
+export const getMeetingToken = (req, res) => {
+	const API_KEY = process.env.VIDEOSDK_API_KEY;
+	const SECRET_KEY = process.env.VIDEOSDK_SECRET_KEY;
+  
+	const options = { expiresIn: "10m", algorithm: "HS256" };
+  
+	const payload = {
+	  apikey: API_KEY,
+	  permissions: ["allow_join", "allow_mod"],
+	};
+  
+	const token = jwt.sign(payload, SECRET_KEY, options);
+	const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
+	res.json({ videoSdkAuth: token, expiresIn: expirationTime });
+  };
+  
+  export const createMeeting = (req, res) => {
+	const { token, region } = req.body;
+	const url = `${process.env.VIDEOSDK_API_ENDPOINT}/api/meetings`;
+	const headers = { Authorization: token, "Content-Type": "application/json" };
+	const data = { region };
+  
+	axios.post(url, data, { headers })
+	  .then((response) => res.json(response.data))
+	  .catch((error) => console.error("error", error));
+  };
+  
+  export const validateMeeting = (req, res) => {
+	const token = req.body.token;
+	const meetingId = req.params.meetingId;
+  
+	const url = `${process.env.VIDEOSDK_API_ENDPOINT}/api/meetings/${meetingId}`;
+  
+	const headers = { Authorization: token };
+  
+	axios.post(url, null, { headers })
+	  .then((response) => res.json(response.data))
+	  .catch((error) => console.error("error", error));
+  };
 

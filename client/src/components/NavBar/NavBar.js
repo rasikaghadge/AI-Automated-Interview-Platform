@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-function Navbar() {
+function NavBar() {
   const [nav, setNav] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
@@ -130,4 +130,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default NavBar;

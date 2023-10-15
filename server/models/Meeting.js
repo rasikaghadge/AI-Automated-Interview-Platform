@@ -18,9 +18,9 @@ const eventSchema = Schema({
       type: Date,
       required: false
     },
-    company: {
+    hr: {
         type: Schema.Types.ObjectId,
-        ref: 'Company',
+        ref: 'User',
         required: true
       },
     user: {
@@ -29,12 +29,55 @@ const eventSchema = Schema({
       required: true
     },
     allowedUsers: {
-      type: Array,
+      type: [Schema.Types.ObjectId],
       required: false
+    },
+    staus: {
+      type: String,
+      enum: ["Scheduled", "Cancelled", "Completed", "Live", "Postponed", "Rescheduled"],
+      default: "Scheduled"
     }
   });
 
-  export const Meeting = mongoose.model('Meeting', eventSchema);
+  const applicationSchema = new mongoose.Schema({
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    jobTitle: String,
+    company: String,
+    status: { type: String, enum: ['Pending', 'Accepted', 'Rejected'], default: 'Pending' },
+    // Add other application-specific fields as needed
+  });
+  
+export const Application = mongoose.model('Application', applicationSchema);
+  
+export const Meeting = mongoose.model('Meeting', eventSchema);
+
+export function getApplicationStatus(id, callback) {
+    Application.findById(id, callback);
+}
+
+export function getApplications(callback, limit) {
+    Application.find(callback).limit(limit);
+}
+
+export function addApplication(application, callback) {
+    Application.create(application, callback);
+}
+
+export function updateApplication(id, application, options, callback) {
+    var query = { _id: id };
+    var update = {
+        user: application.user,
+        jobTitle: application.jobTitle,
+        company: application.company,
+        status: application.status
+    }
+    Application.findOneAndUpdate(query, update, options, callback);
+}
+
+export function removeApplication(id, callback) {
+    var query = { _id: id };
+    Application.remove(query, callback);
+}
 
 export function getEventById(id, callback) {
     Meeting.findById(id, callback);
@@ -45,7 +88,6 @@ export function getEvents(callback, limit) {
 }
 export function addEvent(event, callback) {
     Meeting.create(event, callback);
-
 }
 
 export function updateEvent(id, event, options, callback) {

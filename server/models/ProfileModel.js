@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { v4 as uuidv4 } from 'uuid';
+import User from './userModel';
 
 const profileSchema = mongoose.Schema({
   id: {
@@ -13,11 +14,28 @@ const profileSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
-  phoneNumber: String,
-  city: String,
-  country: String,
-  profilePicture: String,
-  website: String,
+  phoneNumber: {
+    type: String,
+    required: false,
+    unique: true,
+  },
+  city: {
+    type:String,
+    required: false
+  },
+  country: {
+    type: String,
+    required: false,
+    default: 'India'
+  },
+  profilePicture: {
+    type: String,
+    required: false,
+  },
+  website: {
+    type: String,
+    required: false,
+  },
   createdAt: {
     type: Date,
     default: () => Date.now(),
@@ -26,7 +44,15 @@ const profileSchema = mongoose.Schema({
   updatedAt: {
     type: Date,
     default: () => Date.now()
-  }, 
+  },
+  interviews: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Interview'
+  }],
+  applications: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Application'
+  }],
   role: {
     type: String,
     enum: ['hr', 'candidate', 'admin'],
