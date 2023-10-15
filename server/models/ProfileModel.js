@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 import { v4 as uuidv4 } from 'uuid';
-import User from './userModel';
 
 const profileSchema = mongoose.Schema({
   id: {
