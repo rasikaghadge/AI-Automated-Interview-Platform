@@ -44,7 +44,15 @@
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
     "uuid": "^8.3.2",
-    "web-vitals": "^1.1.1"
+    "web-vitals": "^1.1.1",
+    "@headlessui/react": "^1.4.1",
+    "@heroicons/react": "^1.0.2",
+    "@popperjs/core": "^2.11.7",
+    "@videosdk.live/react-sdk": "^0.1.74",
+    "@windmill/react-ui": "^0.6.0",
+    "lottie-react": "^2.4.0",
+    "react-player": "^2.10.1",
+    "react-responsive": "^9.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
