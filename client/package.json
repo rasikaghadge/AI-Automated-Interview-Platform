@@ -39,7 +39,7 @@
     "react-scripts": "4.0.3",
     "react-simple-snackbar": "^1.1.11",
     "react-tiny-fab": "^4.0.3",
-    "react-toastify": "^9.0.0",
+    "react-toastify": "^8.1.0",
     "recharts": "^2.0.9",
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
