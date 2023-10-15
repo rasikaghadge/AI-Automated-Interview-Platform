@@ -3,6 +3,7 @@ import { createServer } from "http";
 import { Server } from "socket.io"; // Import Server class
 import userRoutes from './routes/userRoutes.js'
 import profile from './routes/profile.js'
+import meetingsRoutes from './routes/meetings.js'
 import mongoose from 'mongoose'
 import cors from 'cors';
 import dotenv from 'dotenv'
@@ -53,6 +54,8 @@ app.use(cors({
 
 app.use('/users', userRoutes)
 app.use('/profiles', profile)
+app.use("/meetings", meetingsRoutes);
+
 var userProfile;
 
 passport.serializeUser(function (user, cb) {
