@@ -54,7 +54,6 @@ export const signin = async (req, res) => {
         if (!userProfile) return res.status(404).json({ message: "User does not exist" })
         //If crednetials are valid, create a token for the user
         // role = ["admin", "hr", "candidate"]
-
         // create a token for the user
         const token = createToken(existingUser.email, userProfile.id, userProfile.role, "24h", SECRET);
         const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
@@ -93,11 +92,7 @@ export const signup = async (req, res) => {
         const profilePicture = await getProfilePictureByName(`${newUser.firstName}+${newUser.lastName}`) || ""
         const newUserProfile = await new Profile({
             email: newUser.email,
-            phoneNumber: "",
-            city: "",
             profilePicture: profilePicture ,
-            country: "",
-            website: "",
             role: newUser.role
         })
         await newUserProfile.save();

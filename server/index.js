@@ -56,6 +56,7 @@ app.use('/users', userRoutes)
 app.use('/profiles', profile)
 app.use("/meetings", meetingsRoutes);
 
+/** 
 var userProfile;
 
 passport.serializeUser(function (user, cb) {
@@ -119,6 +120,8 @@ app.get('/api/current_user', isLoggedIn, (req, res) => {
   res.send(req.user);
 });
 
+
+*/
 
 io.on('connection', (socket) => {
   console.log('a user connected');
