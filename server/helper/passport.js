@@ -1,5 +1,6 @@
 // /services/passport.js
 
+/** 
 import { serializeUser, deserializeUser, use } from 'passport';
 import { model, models } from 'mongoose';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
@@ -34,3 +35,5 @@ passport.use(new GoogleStrategy({
         }
     });
 }));
+
+*/
