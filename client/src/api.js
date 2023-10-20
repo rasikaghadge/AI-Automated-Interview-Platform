@@ -1,6 +1,6 @@
 const API_BASE_URL = "https://api.videosdk.live";
-const VIDEOSDK_TOKEN = process.env.REACT_APP_VIDEOSDK_TOKEN;
-const API_AUTH_URL = process.env.REACT_APP_AUTH_URL;
+const VIDEOSDK_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI5Y2VkNGZjNC1kZWY1LTQxOGMtYTNmNC0wZmRiYWE2Y2JlYzUiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTY5NzgxMTgwNSwiZXhwIjoxNjk3ODk4MjA1fQ.I8lVL5GtiVZh1_cIhQYaZbS1M9TKDybgAcScDN5_LM8";
+const API_AUTH_URL = null;
 
 export const getToken = async () => {
   if (VIDEOSDK_TOKEN && API_AUTH_URL) {
@@ -27,7 +27,8 @@ export const createMeeting = async ({ token }) => {
     method: "POST",
     headers: { Authorization: token, "Content-Type": "application/json" },
   };
-
+  console.log('options', options)
+  console.log(token);
   const { roomId } = await fetch(url, options)
     .then((response) => response.json())
     .catch((error) => console.error("error", error));
