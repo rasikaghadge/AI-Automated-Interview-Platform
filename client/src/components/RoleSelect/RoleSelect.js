@@ -1,6 +1,7 @@
 import React from "react";
 import styles  from "./RoleSelect.module.css";
 import { useNavigate } from "react-router-dom";
+import myImage from './login_img.jpg';
 
 const RoleSelect = () => {
   const navigate = useNavigate();
@@ -21,14 +22,21 @@ const RoleSelect = () => {
           alt="arc-invoice"
         />
       </div>
-      
-      <div className={styles.pageContainer}>
-        <section className={styles.hero}>
-          <h1>Login as a...</h1>
-          <RecruiterButton/>
-          <CandidateButton/>
-        
-        </section>
+
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <div className={styles.auth_image}>
+            <img src={myImage} alt="Image" />
+          </div>
+          
+          <div className={styles.pageContainer}>
+            <section className={styles.hero}>
+              <h1>Login as a...</h1>
+              <RecruiterButton/>
+              <CandidateButton/>
+            </section>
+          </div>
+        </div>
       </div>
     </div>
   );
