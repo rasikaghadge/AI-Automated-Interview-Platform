@@ -1,20 +1,20 @@
 import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
-const eventSchema = Schema({
-    eventTitle: {
+const interviewSchema = Schema({
+    interviewTitle: {
       type: String,
       required: true
     },
-    eventDescription: {
+    interviewDescription: {
       type: String,
       required: true
     },
-    eventStartTime: {
+    interviewStartTime: {
       type: Date,
       required: true
     },
-    eventEndTime: {
+    interviewEndTime: {
       type: Date,
       required: false
     },
@@ -32,7 +32,7 @@ const eventSchema = Schema({
       type: [Schema.Types.ObjectId],
       required: false
     },
-    staus: {
+    status: {
       type: String,
       enum: ["Scheduled", "Cancelled", "Completed", "Live", "Postponed", "Rescheduled"],
       default: "Scheduled"
@@ -42,14 +42,14 @@ const eventSchema = Schema({
   const applicationSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     jobTitle: String,
-    company: String,
+    company: String,  
     status: { type: String, enum: ['Pending', 'Accepted', 'Rejected'], default: 'Pending' },
     // Add other application-specific fields as needed
   });
   
 export const Application = mongoose.model('Application', applicationSchema);
   
-export const Meeting = mongoose.model('Meeting', eventSchema);
+export const Interview = mongoose.model('Interview', interviewSchema);
 
 export function getApplicationStatus(id, callback) {
     Application.findById(id, callback);
@@ -79,18 +79,18 @@ export function removeApplication(id, callback) {
     Application.remove(query, callback);
 }
 
-export function getEventById(id, callback) {
-    Meeting.findById(id, callback);
+export function getInterviewById(id, callback) {
+  Interview.findById(id, callback);
 }
 
-export function getEvents(callback, limit) {
-    Meeting.find(callback).limit(limit);
+export function getInterviews(callback, limit) {
+  Interview.find(callback).limit(limit);
 }
-export function addEvent(event, callback) {
-    Meeting.create(event, callback);
+export function addInterview(event, callback) {
+  Interview.create(event, callback);
 }
 
-export function updateEvent(id, event, options, callback) {
+export function updateInterview(id, event, options, callback) {
     var query = { _id: id };
     var update = {
         eventTitle: event.eventTitle,
@@ -102,10 +102,10 @@ export function updateEvent(id, event, options, callback) {
         endsAt: event.endsAt
 
     }
-    Meeting.findOneAndUpdate(query, update, options, callback);
+    Interview.findOneAndUpdate(query, update, options, callback);
 }
 
-export function removeEvent(id, callback) {
+export function removeInterview(id, callback) {
     var query = { _id: id };
-    Meeting.remove(query, callback);
+    Interview.remove(query, callback);
 }

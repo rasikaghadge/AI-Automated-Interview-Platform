@@ -3,7 +3,7 @@ import { createServer } from "http";
 import { Server } from "socket.io"; // Import Server class
 import userRoutes from './routes/userRoutes.js'
 import profile from './routes/profile.js'
-import meetingsRoutes from './routes/meetings.js'
+import interviewRoutes from './routes/interviews.js'
 import mongoose from 'mongoose'
 import cors from 'cors';
 import dotenv from 'dotenv'
@@ -54,7 +54,7 @@ app.use(cors({
 
 app.use('/users', userRoutes)
 app.use('/profiles', profile)
-app.use("/meetings", meetingsRoutes);
+app.use("/interviews", interviewRoutes);
 
 /** 
 var userProfile;
