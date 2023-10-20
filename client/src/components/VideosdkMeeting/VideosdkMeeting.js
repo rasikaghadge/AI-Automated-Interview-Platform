@@ -1,14 +1,11 @@
-import "../../index.css"
+import "./tailwind_build.css"
+// import "./VideosdkMeeting.css"
 import React, { useEffect, useState } from "react";
 import { Constants, MeetingProvider } from "@videosdk.live/react-sdk";
 import { LeaveScreen } from "../screens/LeaveScreen";
 import { JoiningScreen } from "../screens/JoiningScreen";
 import { MeetingContainer } from '../../meeting/MeetingContainer';
 import { MeetingAppProvider } from "./MeetingAppContextDef";
-
-<style>
-    
-</style>
 
 const VideosdkMeeting = () => {
   const [token, setToken] = useState("");
