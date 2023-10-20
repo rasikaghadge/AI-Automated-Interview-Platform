@@ -1,5 +1,5 @@
 import express from "express";
-import { createMeeting, getMeetingToken, validateMeeting } from "../controllers/meetings.js";
+import { createMeeting, getMeetingToken, validateMeeting } from "../controllers/interviews.js";
 import { hrAuth } from "../middleware/auth.js";
 
 const router = express.Router();

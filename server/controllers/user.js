@@ -9,7 +9,7 @@ import User from '../models/userModel.js'
 import isEmailValid from '../helper/authHelper.js'
 import Profile from "../models/ProfileModel.js"
 import { createToken } from '../controllers/token.js';
-import { getEventById, getEvents, addEvent, updateEvent, removeEvent } from "../models/Meeting.js";
+import { getInterviewById, getInterviews, addInterview, updateInterview, removeInterview } from "../models/Interview.js";
 
 
 async function getProfilePictureByName(name) {
