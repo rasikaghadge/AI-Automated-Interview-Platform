@@ -1,96 +1,92 @@
-/* .pageContainer {
- background-color: white;
-} */
+/* RoleSelect.module.css */
 
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    height: 60px;
-    /* background-color: white; */
-    border-bottom: 1px solid rgb(230, 230, 230);
-  }
-  .logo {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .header2 {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    border-bottom: 1px solid rgb(218, 218, 218);
-    padding-left: 20px;
-  }
-  
-  .login {
-    border: 1px solid rgb(51, 51, 216);
-    padding: 12px 30px;
-    border-radius: 50px;
-    background-color: white;
-    cursor: pointer;
-    font-size: 15px;
-    outline: none;
-    margin-right: 20px;
-    /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
-  }
-  
-  .hero {
-    width: 50%;
-    margin: 30px auto;
-    margin-top: 70px;
-    line-height: 60px;
-  }
-  
-  .hero h1 {
-    font-weight: 500;
-    font-size: 50px;
-    line-height: 50px;
-    text-align: center;
-  }
-  
-  .paragraph {
-    margin-top: 20px;
-    text-align: center;
-    line-height: 20px;
-    color: gray;
-  }
-  
-  .imgContainer {
-    margin-top: -80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .hero img {
-    width: 1200px;
-    margin: 0px auto;
-  }
-  
-  
-  .footerText {
-    border-top: solid 1px rgb(219, 219, 219);
-    width: 80%;
-    margin: 0px auto;
-    text-align: center;
-    padding: 25px;
-    text-align: center;
-  }
-  
-  
-  
-  /* Small devices (portrait tablets and large phones, 600px and up) */
-  @media only screen and (max-width: 600px) {
-  
-    .hero {
-      width: 80%;
-    }
-  
-    .hero img {
-      width: 400px;
-      margin: 70px auto;
-    }
-  
-  }
-  
+/* Styles for the header */
+.header2 {
+  background-color: #222;
+  color: white;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header2 img {
+  width: 50px;
+  cursor: pointer;
+}
+
+/* Styles for the main container */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  height: 90vh;
+  /* background-color: red; */
+  background: linear-gradient(to right, #ECF2FF, #FBFCFF);
+}
+
+.content {
+  display: flex;
+  align-items: stretch; /* Make the image and form container have the same height */
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Add box shadow */
+}
+
+
+/* Styles for the image */
+.auth_image {
+  flex: 1;
+  padding: 20px;
+}
+
+.auth_image img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Styles for the page container */
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+
+  flex: 1;
+  max-width: 400px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 20px;
+  text-align: center;
+}
+
+/* Styles for the hero section */
+.hero {
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 30px;
+  margin-bottom: 10vh;
+}
+
+/* Styles for the login buttons */
+.login {
+  background-color: #007BFF;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  margin: 10px;
+  transition: background-color 0.3s;
+}
+
+.login:hover {
+  background-color: #0056b3;
+}
