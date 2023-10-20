@@ -1,4 +1,9 @@
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import axios from 'axios';
+
+
+dotenv.config();
 
 
 const rooms = {}; // rooms[i] - users in room i
@@ -110,7 +115,6 @@ export const handleSocketEvents = (socket) => {
 	});
 }
 
-
 export const getMeetingToken = (req, res) => {
 	const API_KEY = process.env.VIDEOSDK_API_KEY;
 	const SECRET_KEY = process.env.VIDEOSDK_SECRET_KEY;
@@ -127,15 +131,19 @@ export const getMeetingToken = (req, res) => {
 	res.json({ videoSdkAuth: token, expiresIn: expirationTime });
   };
   
-  export const createMeeting = (req, res) => {
+  export const createMeeting = async (req, res) => {
 	const { token, region } = req.body;
 	const url = `${process.env.VIDEOSDK_API_ENDPOINT}/api/meetings`;
+	console.log(url);
 	const headers = { Authorization: token, "Content-Type": "application/json" };
 	const data = { region };
   
-	axios.post(url, data, { headers })
-	  .then((response) => res.json(response.data))
-	  .catch((error) => console.error("error", error));
+	try {
+	  const response = await axios.post(url, data, { headers });
+	  res.json(response.data);
+	} catch (error) {
+	  console.error("error", error);
+	}
   };
   
   export const validateMeeting = (req, res) => {
