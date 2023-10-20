@@ -2,6 +2,12 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const interviewSchema = Schema({
+    interViewId: {
+      type: String,
+      required: true,
+      unique: true,
+      default: () => uuidv4()
+    },
     interviewTitle: {
       type: String,
       required: true
@@ -39,45 +45,7 @@ const interviewSchema = Schema({
     }
   });
 
-  const applicationSchema = new mongoose.Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    jobTitle: String,
-    company: String,  
-    status: { type: String, enum: ['Pending', 'Accepted', 'Rejected'], default: 'Pending' },
-    // Add other application-specific fields as needed
-  });
-  
-export const Application = mongoose.model('Application', applicationSchema);
-  
 export const Interview = mongoose.model('Interview', interviewSchema);
-
-export function getApplicationStatus(id, callback) {
-    Application.findById(id, callback);
-}
-
-export function getApplications(callback, limit) {
-    Application.find(callback).limit(limit);
-}
-
-export function addApplication(application, callback) {
-    Application.create(application, callback);
-}
-
-export function updateApplication(id, application, options, callback) {
-    var query = { _id: id };
-    var update = {
-        user: application.user,
-        jobTitle: application.jobTitle,
-        company: application.company,
-        status: application.status
-    }
-    Application.findOneAndUpdate(query, update, options, callback);
-}
-
-export function removeApplication(id, callback) {
-    var query = { _id: id };
-    Application.remove(query, callback);
-}
 
 export function getInterviewById(id, callback) {
   Interview.findById(id, callback);
