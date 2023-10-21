@@ -92,8 +92,7 @@ export const signup = async (req, res) => {
         const profilePicture = await getProfilePictureByName(`${newUser.firstName}+${newUser.lastName}`) || ""
         const newUserProfile = await new Profile({
             email: newUser.email,
-            profilePicture: profilePicture ,
-            role: newUser.role
+            profilePicture: profilePicture
         })
         await newUserProfile.save();
         console.log(`User created successfully`)
