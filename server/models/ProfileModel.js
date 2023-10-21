@@ -47,17 +47,7 @@ const profileSchema = mongoose.Schema({
   interviews: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Interview'
-  }],
-  applications: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Application'
-  }],
-  role: {
-    type: String,
-    enum: ['hr', 'candidate', 'admin'],
-    required: true,
-    default: 'candidate'
-  }
+  }]
 })
 
 const Profile = mongoose.model('Profile', profileSchema)
