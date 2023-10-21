@@ -15,8 +15,7 @@ const profileSchema = mongoose.Schema({
   },
   phoneNumber: {
     type: String,
-    required: false,
-    unique: true,
+    required: false
   },
   city: {
     type:String,
