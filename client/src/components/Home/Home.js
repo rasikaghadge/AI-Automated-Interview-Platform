@@ -21,6 +21,12 @@ const Home = () => {
           alt="arc-invoice"
         />
         <button
+          onClick={() => navigate("/meetings")}
+          className={styles.login}
+        >
+          Meetings
+        </button>
+        <button
           onClick={() => navigate("/select")}
           className={styles.login}
         >

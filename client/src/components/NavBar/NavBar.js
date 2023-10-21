@@ -67,6 +67,11 @@ function NavBar() {
             Reviews
           </a>
         </li>
+        <button
+          onClick={() => navigate("/meetings")}
+        >
+          Meetings
+        </button>
       </ul>
       <button
         className="navbar-btn"
