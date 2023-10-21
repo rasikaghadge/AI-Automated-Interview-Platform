@@ -11,8 +11,6 @@ if (NODE_ENV === 'development') {
     url = process.env.REACT_APP_API
 }
 export const baseURL = url;
-console.log('baesurl', baseURL);
-console.log('process ', process.env);
 const API = axios.create({ baseURL: baseURL})
 
 
