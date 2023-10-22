@@ -17,7 +17,6 @@ export const createMeeting = async (req, res) => {
 	};
 	try {
 		const response = await axios.post(url, {}, { headers });
-		console.log(response)
 		const { roomId, links } = await response.data;
 		// return roomId;
 		res.status(200).json({ roomId, links });
