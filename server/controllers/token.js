@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv'
 
 // Create a token for the user
-export const createToken = (email, id, role, expiresIn, SECRET) => {
+export const createToken = (email, id, role, expiresIn, SECRET, VIDEOSDK_API_KEY) => {
     var permissions = null;
     if (role==='candidate') {
         permissions = ['allow_join', 'ask_join']
@@ -20,7 +20,8 @@ export const createToken = (email, id, role, expiresIn, SECRET) => {
         id,
         role: role,
         permissions: permissions,
-        apikey: process.env.VIDEOSDK_API_KEY
+        apikey: VIDEOSDK_API_KEY,
+        version: 2
     }, SECRET, {
         expiresIn: expiresIn
     });
