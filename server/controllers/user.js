@@ -9,8 +9,6 @@ import User from '../models/userModel.js'
 import isEmailValid from '../helper/authHelper.js'
 import Profile from "../models/ProfileModel.js"
 import { createToken } from '../controllers/token.js';
-import { getInterviewById, getInterviews, addInterview, updateInterview, removeInterview } from "../models/Interview.js";
-
 
 async function getProfilePictureByName(name) {
     try {
@@ -92,8 +90,7 @@ export const signup = async (req, res) => {
         const profilePicture = await getProfilePictureByName(`${newUser.firstName}+${newUser.lastName}`) || ""
         const newUserProfile = await new Profile({
             email: newUser.email,
-            profilePicture: profilePicture ,
-            role: newUser.role
+            profilePicture: profilePicture
         })
         await newUserProfile.save();
         console.log(`User created successfully`)
