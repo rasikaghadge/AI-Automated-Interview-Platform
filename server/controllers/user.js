@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 const SECRET = process.env.SECRET;
+const VIDEOSDK_API_KEY = process.env.VIDEOSDK_API_KEY;
 
 import User from '../models/userModel.js'
 import isEmailValid from '../helper/authHelper.js'
@@ -53,7 +54,7 @@ export const signin = async (req, res) => {
         //If crednetials are valid, create a token for the user
         // role = ["admin", "hr", "candidate"]
         // create a token for the user
-        const token = createToken(existingUser.email, userProfile.id, userProfile.role, "24h", SECRET);
+        const token = createToken(existingUser.email, userProfile.id, userProfile.role, "24h", SECRET, VIDEOSDK_API_KEY);
         const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
             return res.status(200).json({ token, expiresIn: expirationTime });
         } catch (error) {
@@ -94,7 +95,7 @@ export const signup = async (req, res) => {
         })
         await newUserProfile.save();
         console.log(`User created successfully`)
-        const token = createToken(newUser.email, newUserProfile.id, role, "24h", SECRET);
+        const token = createToken(newUser.email, newUserProfile.id, role, "24h", SECRET, VIDEOSDK_API_KEY);
         const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
         res.status(201).json({ id: newUserProfile.id, token: token, expirationTime: expirationTime, message: "User Created Successfully" });
 

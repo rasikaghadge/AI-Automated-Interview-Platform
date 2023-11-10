@@ -5,6 +5,7 @@ import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SnackbarProvider from 'react-simple-snackbar'
 import Home from './components/Home/Home';
+import Profile from './components/UpdateProfile/UpdateProfile';
 import Login from './components/Login/Login'
 import Forgot from './components/Password/Forgot'
 import Reset from './components/Password/Reset'
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<Home/>} />
           <Route path="/login" element={<Login/>} />
           <Route path="/homepage" element={<Homepage/>} />
+          <Route path="/profile" element={<Profile/>} />
           <Route path="/forgot" element={<Forgot/>} />
           <Route path="/reset/:token" element={<Reset/>} />
           <Route path="/select" element={<RoleSelect/>} />

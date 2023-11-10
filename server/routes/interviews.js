@@ -1,12 +1,12 @@
 import express from "express";
-import { getToken, createMeeting, validateMeeting } from "../controllers/interviews.js";
-import { hrAuth } from "../middleware/auth.js";
-
+import { createMeeting, validateRoom, fetchRooms } from "../controllers/interviews.js";
+import { auth } from "../middleware/auth.js"
 const router = express.Router();
 
-router.get("/token", hrAuth, getToken);
-router.post("/create", createMeeting);
-router.post("/validate/:meetingId", validateMeeting);
+router.post("/create", auth, createMeeting);
+router.get("/validate/:roomId", auth, validateRoom);
+router.get('/rooms', auth, fetchRooms);
+
 
 // meeting schedule
 router.post("/schedule", scheduleMeeting);
