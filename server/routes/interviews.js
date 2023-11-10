@@ -8,4 +8,9 @@ router.get("/validate/:roomId", auth, validateRoom);
 router.get('/rooms', auth, fetchRooms);
 
 
+// meeting schedule
+router.post("/schedule", scheduleMeeting);
+router.get("/list", listMeetings);
+router.get("/:meetingId", getMeeting);
+
 export default router;

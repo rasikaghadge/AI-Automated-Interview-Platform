@@ -46,7 +46,11 @@ const profileSchema = mongoose.Schema({
   interviews: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Interview'
-  }]
+  }],
+  skills: {
+    type: [String],
+    required: false
+  }
 })
 
 const Profile = mongoose.model('Profile', profileSchema)
