@@ -8,49 +8,64 @@ const API_BASE_URL = process.env.API_BASE_URL
 const VIDEOSDK_TOKEN = process.env.VIDEOSDK_TOKEN
 const API_AUTH_URL = null;
 
-export const getToken = async () => {
-	if (VIDEOSDK_TOKEN && API_AUTH_URL) {
-		throw new Error("Provide only ONE PARAMETER - either Token or Auth API");
-	} else if (VIDEOSDK_TOKEN) {
-		return VIDEOSDK_TOKEN;
-	} else if (API_AUTH_URL) {
-		try {
-			const response = await fetch(`${API_AUTH_URL}/get-token`);
-			const { token } = await response.json();
-			console.log(token);
-			return token;
-		} catch (error) {
-			console.error("error", error);
-		}
-	} else {
-		throw new Error("Please add a token or Auth Server URL");
-	}
-};
 
 export const createMeeting = async (req, res) => {
 	const url = `${API_BASE_URL}/v2/rooms`;
-	const headers = { Authorization: VIDEOSDK_TOKEN, "Content-Type": "application/json" };
+	const headers = { 
+		Authorization: req.headers.authorization.split(' ')[1],
+		"Content-Type": "application/json"
+	};
 	try {
-		const response = await fetch(url, { method: "POST", headers });
-		const { roomId } = await response.json();
+		const response = await axios.post(url, {}, { headers });
+		const { roomId, links } = await response.data;
 		// return roomId;
-		res.status(200).json({ roomId });
+		res.status(200).json({ roomId, links });
 	} catch (error) {
 		console.error("error", error);
 	}
 };
 
-export const validateMeeting = async (req, res) => {
-	console.log(req.params);
-	const meetingId = req.params.meetingId;
-	const url = `${API_BASE_URL}/v2/rooms/validate/${meetingId}`;
-	const headers = { Authorization: VIDEOSDK_TOKEN, "Content-Type": "application/json" };
+// Reference: https://docs.videosdk.live/api-reference/realtime-communication/validate-room
+export const validateRoom = async (req, res) => {
+	const roomId = req.params.roomId;
+	const url = `${API_BASE_URL}/v2/rooms/validate/${roomId}`;
+	const headers = { 
+		Authorization: req.headers.authorization.split(' ')[1],
+	 	"Content-Type": "application/json" 
+	};
+  
 	try {
-		const response = await fetch(url, { method: "GET", headers });
-		const result = await response.json();
-		// return result ? result.roomId === meetingId : false;
-		res.status(200).json({ result, valid: result.roomId === meetingId });
+	  const response = await axios.get(url, { headers });
+	  const data = response.data;
+	  const status = data ? data.roomId === roomId : false;
+	  if(status) {
+		  res.status(200).json({status, links: data.links, message: "Valid room code"});
+	  } else {
+		res.status(200).json({status, links: data.links, message: "Invalid room code"})
+	  }
 	} catch (error) {
-		res.status(500).json({ error });
+	  console.error("error", error);
+	  res.status(400).json({message: String(error)});
 	}
-};
+  };
+
+  export const fetchRooms = async (req, res) => {
+	var url = `${API_BASE_URL}/v2/rooms?page=1&perPage=20`;
+	const headers = { 
+		Authorization: req.headers.authorization.split(' ')[1],
+		 "Content-Type": "application/json"
+		 };
+	try {
+		if(req.query.roomId!==undefined) {
+			console.log('roomid present');
+			 url= `https://api.videosdk.live/v2/rooms/${req.query.roomId}`;
+		}
+	  const response = await axios.get(url, { headers });
+	  const data = response.data;
+	  res.status(200).json(data);
+	} catch (error) {
+	  console.error("error", error);
+	  res.status(400).json({message: String(error)})
+	}
+  };
+  
