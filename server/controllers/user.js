@@ -69,7 +69,6 @@ export const signup = async (req, res) => {
 
     const { email, password, confirmPassword, firstName, lastName, role } = req.body
     // check valid role
-    if (!["candidate", "hr", "admin"].includes(role)) return res.status(400).json({ message: "Invalid role" });
 
     if (!isEmailValid(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
