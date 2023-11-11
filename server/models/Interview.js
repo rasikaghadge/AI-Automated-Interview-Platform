@@ -2,25 +2,25 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const interviewSchema = Schema({
-    interViewId: {
+    id: {
       type: String,
       required: true,
       unique: true,
       default: () => uuidv4()
     },
-    interviewTitle: {
+    title: {
       type: String,
       required: true
     },
-    interviewDescription: {
+    description: {
       type: String,
       required: true
     },
-    interviewStartTime: {
+    startTime: {
       type: Date,
       required: true
     },
-    interviewEndTime: {
+    endTime: {
       type: Date,
       required: false
     },
@@ -33,10 +33,6 @@ const interviewSchema = Schema({
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true
-    },
-    allowedUsers: {
-      type: [Schema.Types.ObjectId],
-      required: false
     },
     status: {
       type: String,
