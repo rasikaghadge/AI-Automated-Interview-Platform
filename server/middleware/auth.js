@@ -79,6 +79,7 @@ export const admin = async (req, res, next) => {
 export const hrAuth = async (req, res, next) => {
     try {
         const authorizationHeader = req.headers.authorization;
+        console.log(authorizationHeader)
 
         // Check if the authorization header is not present
         if (!authorizationHeader) {
@@ -91,6 +92,7 @@ export const hrAuth = async (req, res, next) => {
 
         //If token is custom token do this
         decodeData = jwt.verify(token, SECRET);
+        console.log(decodeData);
         if(token && isCustomAuth) {
             decodeData = jwt.verify(token, SECRET)
             req.userId = decodeData?.id
