@@ -53,6 +53,11 @@ function NavBar() {
           </Link>
         </li>
         <li>
+          <Link to="/profile" className="navbar-links">
+            Profile
+          </Link>
+        </li>
+        <li>
           <a href="#services" className="navbar-links">
             Services
           </a>
@@ -67,6 +72,11 @@ function NavBar() {
             Reviews
           </a>
         </li>
+        <button
+          onClick={() => navigate("/meetings")}
+        >
+          Meetings
+        </button>
       </ul>
       <button
         className="navbar-btn"
@@ -94,6 +104,11 @@ function NavBar() {
           <li>
             <Link onClick={openNav} to="/">
               Home
+            </Link>
+          </li>
+          <li>
+            <Link onClick={openNav} to="/">
+              Profile
             </Link>
           </li>
           <li>

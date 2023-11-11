@@ -15,8 +15,7 @@ const profileSchema = mongoose.Schema({
   },
   phoneNumber: {
     type: String,
-    required: false,
-    unique: true,
+    required: false
   },
   city: {
     type:String,
@@ -48,15 +47,9 @@ const profileSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Interview'
   }],
-  applications: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Application'
-  }],
-  role: {
-    type: String,
-    enum: ['hr', 'candidate', 'admin'],
-    required: true,
-    default: 'candidate'
+  skills: {
+    type: [String],
+    required: false
   }
 })
 

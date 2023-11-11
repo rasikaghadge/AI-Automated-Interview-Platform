@@ -4,13 +4,12 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 const SECRET = process.env.SECRET;
+const VIDEOSDK_API_KEY = process.env.VIDEOSDK_API_KEY;
 
 import User from '../models/userModel.js'
 import isEmailValid from '../helper/authHelper.js'
 import Profile from "../models/ProfileModel.js"
 import { createToken } from '../controllers/token.js';
-import { getEventById, getEvents, addEvent, updateEvent, removeEvent } from "../models/Meeting.js";
-
 
 async function getProfilePictureByName(name) {
     try {
@@ -55,7 +54,7 @@ export const signin = async (req, res) => {
         //If crednetials are valid, create a token for the user
         // role = ["admin", "hr", "candidate"]
         // create a token for the user
-        const token = createToken(existingUser.email, userProfile.id, userProfile.role, "24h", SECRET);
+        const token = createToken(existingUser.email, userProfile.id, userProfile.role, "24h", SECRET, VIDEOSDK_API_KEY);
         const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
             return res.status(200).json({ token, expiresIn: expirationTime });
         } catch (error) {
@@ -69,6 +68,8 @@ export const signup = async (req, res) => {
     if(Object.keys(req.body).length === 0) return res.status(400).json({ message: "Request body is empty" })
 
     const { email, password, confirmPassword, firstName, lastName, role } = req.body
+    // check valid role
+    if (!["candidate", "hr", "admin"].includes(role)) return res.status(400).json({ message: "Invalid role" });
 
     if (!isEmailValid(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
@@ -79,7 +80,6 @@ export const signup = async (req, res) => {
 
     if (existingUser) return res.status(400).json({ message: "User already exist" })
 
-    try {
         const hashedPassword = await bcrypt.hash(password, 12)
         const newUser = await new User({
             email: email,
@@ -92,19 +92,13 @@ export const signup = async (req, res) => {
         const profilePicture = await getProfilePictureByName(`${newUser.firstName}+${newUser.lastName}`) || ""
         const newUserProfile = await new Profile({
             email: newUser.email,
-            profilePicture: profilePicture ,
-            role: newUser.role
+            profilePicture: profilePicture
         })
         await newUserProfile.save();
         console.log(`User created successfully`)
-        const token = createToken(newUser.email, newUserProfile.id, role, "24h", SECRET);
+        const token = createToken(newUser.email, newUserProfile.id, role, "24h", SECRET, VIDEOSDK_API_KEY);
         const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
         res.status(201).json({ id: newUserProfile.id, token: token, expirationTime: expirationTime, message: "User Created Successfully" });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Server is not respoding", err: String(error) })
-    }
 }
 
 export const forgotPassword = async (req, res) => {
