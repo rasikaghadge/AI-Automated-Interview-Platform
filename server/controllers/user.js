@@ -68,6 +68,7 @@ export const signup = async (req, res) => {
     if(Object.keys(req.body).length === 0) return res.status(400).json({ message: "Request body is empty" })
 
     const { email, password, confirmPassword, firstName, lastName, role } = req.body
+    // check valid role
 
     if (!isEmailValid(email)) {
         return res.status(400).json({ message: 'Invalid email format' });
@@ -78,7 +79,6 @@ export const signup = async (req, res) => {
 
     if (existingUser) return res.status(400).json({ message: "User already exist" })
 
-    try {
         const hashedPassword = await bcrypt.hash(password, 12)
         const newUser = await new User({
             email: email,
@@ -98,11 +98,6 @@ export const signup = async (req, res) => {
         const token = createToken(newUser.email, newUserProfile.id, role, "24h", SECRET, VIDEOSDK_API_KEY);
         const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
         res.status(201).json({ id: newUserProfile.id, token: token, expirationTime: expirationTime, message: "User Created Successfully" });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Server is not respoding", err: String(error) })
-    }
 }
 
 export const forgotPassword = async (req, res) => {

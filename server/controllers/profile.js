@@ -72,15 +72,25 @@ export const getProfilesBySearch = async (req, res) => {
 }
 
 export const updateProfile = async (req, res) => {
-  const userId = req.userId
-  const profile = req.body
-  const updatedProfile = await Profile.findOneAndUpdate(userId, {...profile}, { new: true})
-  res.json(updatedProfile)
-}
+  const userId = req.userId;
+  const profile = req.body;
+  try {
+    const updatedProfile = await Profile.findOneAndUpdate({ id: userId }, profile, { new: true });
+    if (!updatedProfile) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+    res.json(updatedProfile);
+  } catch (error) {
+    res.status(500).json({ error: error.toString() });
+  }
+};
 
 export const deleteProfile = async (req, res) => {
-    const { id } = req.params;
-    await Profile.findOneAndDelete(id);
+    const userId = req.userId;
+    const deleteProfile = await Profile.findOneAndDelete({id: userId});
+    if(!deleteProfile) {
+        return res.status(404).json({message: 'Profile not found'});
+    }
     res.json({ message: "Profile deleted successfully." });
 }
 
