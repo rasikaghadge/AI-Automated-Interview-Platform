@@ -38,9 +38,7 @@ export const listMeetings = async (req, res) => {
 export const getMeeting = async (req, res) => {
   // Sample data
   const meetingId = req.params.id;
-  const interview = await Interview.findById(meetingId)
-  .populate('user').select('-password')
-  .populate('hr').select('-password');
+  const interview = await Interview.findById(meetingId);
   if (!interview) {
     return res.status(500).json({ message: "Interview not found" });
   }
