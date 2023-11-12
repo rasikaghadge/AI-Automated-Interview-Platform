@@ -54,7 +54,7 @@ export const signin = async (req, res) => {
         //If crednetials are valid, create a token for the user
         // role = ["admin", "hr", "candidate"]
         // create a token for the user
-        const token = createToken(existingUser.email, userProfile.id, userProfile.role, "24h", SECRET, VIDEOSDK_API_KEY);
+        const token = createToken(existingUser.email, userProfile.id, existingUser.role, "24h", SECRET, VIDEOSDK_API_KEY);
         const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds
             return res.status(200).json({ token, expiresIn: expirationTime });
         } catch (error) {

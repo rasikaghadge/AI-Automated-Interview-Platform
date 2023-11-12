@@ -45,6 +45,26 @@ const profileSchema = mongoose.Schema({
   skills: {
     type: [String],
     required: false
+  },
+  experience: {
+    type: Number,
+    required: false
+  },
+  previousRolesDescription: {
+    type: String,
+    required: false
+  },
+  strengths: {
+    type: [String],
+    required: false
+  },
+  weaknesses: {
+    type: [String],
+    required: false
+  },
+  company: {  // for HR
+    type: String,
+    required: false
   }
 })
 

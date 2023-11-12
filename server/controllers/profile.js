@@ -25,13 +25,13 @@ export const getProfiles = async (req, res) => {
 
 export const getProfile = async (req, res) => { 
   const { id } = req.params;
-  const userId = req.userId;
+  const userId = req.id;
   try {
       var selfProfile = false;
       if (id == userId) {
         selfProfile = true;
       }
-      const profile = await Profile.findOne({id});
+      const profile = await Profile.findOne({_id: id});
       if(profile && profile.email) {
           const userEmail = profile.email;
           const user = await User.findOne({email: userEmail});
@@ -72,10 +72,10 @@ export const getProfilesBySearch = async (req, res) => {
 }
 
 export const updateProfile = async (req, res) => {
-  const userId = req.userId;
+  const userId = req.id;
   const profile = req.body;
   try {
-    const updatedProfile = await Profile.findOneAndUpdate({ id: userId }, profile, { new: true });
+    const updatedProfile = await Profile.findOneAndUpdate({ _id: userId }, profile, { new: true });
     if (!updatedProfile) {
       return res.status(404).json({ message: "Profile not found" });
     }
@@ -86,8 +86,8 @@ export const updateProfile = async (req, res) => {
 };
 
 export const deleteProfile = async (req, res) => {
-    const userId = req.userId;
-    const deleteProfile = await Profile.findOneAndDelete({id: userId});
+    const userId = req.id;
+    const deleteProfile = await Profile.findOneAndDelete({_id: userId});
     if(!deleteProfile) {
         return res.status(404).json({message: 'Profile not found'});
     }
