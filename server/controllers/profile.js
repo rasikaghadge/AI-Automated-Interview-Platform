@@ -72,25 +72,32 @@ export const getProfilesBySearch = async (req, res) => {
 }
 
 export const updateProfile = async (req, res) => {
-  const userId = req.id;
-  const profile = req.body;
+  const profileData = req.body;
+  const user = await User.findById(req.id).populate('profile')
   try {
-    const updatedProfile = await Profile.findOneAndUpdate({ _id: userId }, profile, { new: true });
-    if (!updatedProfile) {
-      return res.status(404).json({ message: "Profile not found" });
-    }
-    res.json(updatedProfile);
+    const profile = await Profile.findByIdAndUpdate(user.profile, profileData, { new: true });
+    // return user object in response which contains updatedProfile data
+    console.log(profile)
+    user.profile = profile;
+    await user.save();
+    res.json(user);
   } catch (error) {
-    res.status(500).json({ error: error.toString() });
+    console.log(error);
+    res.status(500).json({ message: error.message });
   }
-};
+}
 
 export const deleteProfile = async (req, res) => {
-    const userId = req.id;
-    const deleteProfile = await Profile.findOneAndDelete({_id: userId});
-    if(!deleteProfile) {
-        return res.status(404).json({message: 'Profile not found'});
-    }
+    const { id } = req.id;
+    await Profile.findOneAndDelete(id);
     res.json({ message: "Profile deleted successfully." });
 }
 
+export const selfProfile = async (req, res) => {
+  try{
+     const user = await User.findById(req.userId).populate('profile');
+     res.json(user);
+  } catch(error) {
+    console.log(error);
+  }
+}

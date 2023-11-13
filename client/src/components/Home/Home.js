@@ -1,17 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./Home.module.css";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('profile'))
-
+  
+  useEffect(() => {
     if(user) {
+      console.log('navigate to homepage')
         navigate('/homepage')
     }
-  //    <Header/>
+  }, [user, navigate])
+
   return (
-    
     <div>
       <div className={styles.header2}>
         <img
@@ -20,12 +22,6 @@ const Home = () => {
           src="https://i.postimg.cc/hGZKzdkS/logo.png"
           alt="arc-invoice"
         />
-        <button
-          onClick={() => navigate("/meetings")}
-          className={styles.login}
-        >
-          Meetings
-        </button>
         <button
           onClick={() => navigate("/select")}
           className={styles.login}
