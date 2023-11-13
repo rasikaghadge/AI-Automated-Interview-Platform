@@ -5,21 +5,12 @@ const VIDEOSDK_TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiI5Y2VkN
 const API_AUTH_URL = process.env.REACT_APP_AUTH_URL;
 
 export const getToken = async () => {
-  if (VIDEOSDK_TOKEN && API_AUTH_URL) {
-    console.error(
-      "Error: Provide only ONE PARAMETER - either Token or Auth API"
-    );
-  } else if (VIDEOSDK_TOKEN) {
-    return VIDEOSDK_TOKEN;
-  } else if (API_AUTH_URL) {
-    const res = await fetch(`${API_AUTH_URL}/get-token`, {
-      method: "GET",
-    });
-    const { token } = await res.json();
-    return token;
-  } else {
-    console.error("Error: ", Error("Please add a token or Auth Server URL"));
-  }
+      // get user token from localStorage
+      const token = JSON.parse(localStorage.getItem('profile'));
+      if (!token) {
+        return null;
+      }
+      return token.token;
 };
 
 export const createMeeting = async ({ token }) => {
@@ -38,7 +29,6 @@ export const createMeeting = async ({ token }) => {
 
 export const validateMeeting = async ({ roomId, token }) => {
   const url = `${API_BASE_URL}/v2/rooms/validate/${roomId}`;
-
   const options = {
     method: "GET",
     headers: { Authorization: token, "Content-Type": "application/json" },
