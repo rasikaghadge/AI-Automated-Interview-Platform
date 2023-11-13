@@ -5,15 +5,23 @@ import User from '../models/userModel.js';
  
 export const getProfiles = async (req, res) => { 
   try {
+    const role = req.query.role || 'candidate';
       const page = parseInt(req.query.page) || 1; // Current page (default to 1 if not provided)
       const limit = parseInt(req.query.limit) || 10; // Number of profiles per page (default to 10 if not provided)
       const skip = (page - 1) * limit; // Calculate the number of profiles to skip
 
-      const profiles = await Profile.find().skip(skip).limit(limit);
+      const users = await User.find({role: role})
+      .populate({
+        path: 'profile',
+        select: '-interviews'
+      })
+      .skip(skip)
+      .limit(limit)
+      .exec();
       const totalProfiles = await Profile.countDocuments(); // Get the total number of profiles
 
       res.status(200).json({
-        profiles,
+        users,
         currentPage: page,
         totalPages: Math.ceil(totalProfiles / limit),
       });
@@ -25,33 +33,13 @@ export const getProfiles = async (req, res) => {
 
 export const getProfile = async (req, res) => { 
   const { id } = req.params;
-  const userId = req.id;
-  try {
-      var selfProfile = false;
-      if (id == userId) {
-        selfProfile = true;
-      }
-      const profile = await Profile.findOne({_id: id});
-      if(profile && profile.email) {
-          const userEmail = profile.email;
-          const user = await User.findOne({email: userEmail});
-          if(user) {
-          res.status(200).json({
-            name: `${user.firstName} ${user.lastName}`,
-            profilePicture: profile.profilePicture,
-            website: profile.website,
-            city: profile.city,
-            country: profile.country,
-            selfProfile: selfProfile,
-            role: profile.role
-          })
-        } else {
-          res.status(404).json({message: 'User not found'})
-        }
+  try{
+    const profile = await Profile.findOne({_id: id}).populate('user');
+    if (!profile) {
+      res.status(404).json({'message': 'Profile not found'})
+    }
+    res.json(profile);
 
-      } else{
-          res.status(404).json({message: 'Profile not Found'});
-      }
   } catch (error) {
       console.log(error);
       res.status(401).json({ message: error.message });
@@ -60,7 +48,6 @@ export const getProfile = async (req, res) => {
 
 export const getProfilesBySearch = async (req, res) => {
   const { searchQuery } = req.query;
-
   try {
       const searchRegex = new RegExp(searchQuery, "i");
       const profiles = await User.find({ $or: [ { firstName: searchRegex }, { lastName: searchRegex }, { email: searchRegex } ] });
@@ -77,7 +64,6 @@ export const updateProfile = async (req, res) => {
   try {
     const profile = await Profile.findByIdAndUpdate(user.profile, profileData, { new: true });
     // return user object in response which contains updatedProfile data
-    console.log(profile)
     user.profile = profile;
     await user.save();
     res.json(user);
@@ -88,16 +74,40 @@ export const updateProfile = async (req, res) => {
 }
 
 export const deleteProfile = async (req, res) => {
-    const { id } = req.id;
-    await Profile.findOneAndDelete(id);
-    res.json({ message: "Profile deleted successfully." });
-}
+  try {
+    const userId = req.id; // Assuming you have a way to get the user ID
+    const user = await User.findById(userId);
+    console.log(user)
+
+    if (!user) {
+      return res.status(404).json({ error: 'Requested user profile not found' });
+    }
+
+    const profileId = user.profile;
+
+    // Delete the user
+    await User.deleteOne({ _id: userId });
+
+    // Delete the associated profile
+    await Profile.findOneAndDelete({_id: profileId});
+
+    res.json({ message: 'Profile deleted successfully.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 
 export const selfProfile = async (req, res) => {
   try{
-     const user = await User.findById(req.userId).populate('profile');
+     const user = await User.findById(req.id).populate('profile');
+     if (!user) {
+        return res.status(404).json({message: 'Profile Does Not Exist'})
+     }
      res.json(user);
   } catch(error) {
     console.log(error);
+    res.status(400).json({message: String(error)})
   }
 }

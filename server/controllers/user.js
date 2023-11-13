@@ -79,9 +79,9 @@ export const signup = async (req, res) => {
         password: hashedPassword,
         firstName: firstName,
         lastName: lastName,
-        role: role,
-        profile: await Profile.create({ profilePicture: profilePicture })
+        role: role
     })
+    newUser.profile = await Profile.create({user: newUser, profilePicture: profilePicture })
     await newUser.save();
     const token = createToken(newUser.email, newUser.id, role, "24h", SECRET, VIDEOSDK_API_KEY);
     const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours in milliseconds

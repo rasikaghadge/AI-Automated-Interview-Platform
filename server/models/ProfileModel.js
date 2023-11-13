@@ -49,6 +49,10 @@ const profileSchema = mongoose.Schema({
   company: {  // for HR
     type: String,
     required: false
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }
 })
 
