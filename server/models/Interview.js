@@ -32,7 +32,15 @@ const interviewSchema = Schema({
       type: String,
       enum: ["Scheduled", "Cancelled", "Completed", "Live", "Postponed", "Rescheduled"],
       default: "Scheduled"
+    },
+    room: {
+      type: Object,
+      required: false
     }
   });
 
-export const Interview = mongoose.model('Interview', interviewSchema);
+
+const Interview = mongoose.model('Interview', interviewSchema);
+
+export default Interview;
+
