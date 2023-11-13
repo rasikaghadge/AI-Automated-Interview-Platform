@@ -67,13 +67,22 @@
 }
 
 .submit_button {
-  background-color: #007bff;
+  background-color: rgb(24, 134, 20);
   color: #fff;
   border: none;
   padding: 10px;
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
+}
+
+.back_button {
+  background-color: #396491;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
 }
 
 .auth_option {

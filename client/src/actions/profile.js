@@ -73,8 +73,10 @@ export const updateProfile = (id, form, openSnackbar) => async (dispatch) => {
 
     dispatch({ type: UPDATE_PROFILE, payload: data });
     openSnackbar("Profile updated successfully")
+    window.location.href="/homepage"
   } catch (error) {
     console.log(error);
+    openSnackbar("Could not update profile")
   }
 };
 

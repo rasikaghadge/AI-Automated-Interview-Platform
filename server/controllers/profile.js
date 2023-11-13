@@ -25,13 +25,13 @@ export const getProfiles = async (req, res) => {
 
 export const getProfile = async (req, res) => { 
   const { id } = req.params;
-  const userId = req.userId;
+  const userId = req.id;
   try {
       var selfProfile = false;
       if (id == userId) {
         selfProfile = true;
       }
-      const profile = await Profile.findOne({id});
+      const profile = await Profile.findOne({_id: id});
       if(profile && profile.email) {
           const userEmail = profile.email;
           const user = await User.findOne({email: userEmail});
@@ -73,7 +73,7 @@ export const getProfilesBySearch = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   const profileData = req.body;
-  const user = await User.findById(req.userId).populate('profile')
+  const user = await User.findById(req.id).populate('profile')
   try {
     const profile = await Profile.findByIdAndUpdate(user.profile, profileData, { new: true });
     // return user object in response which contains updatedProfile data

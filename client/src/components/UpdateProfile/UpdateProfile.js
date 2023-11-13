@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { decode } from "jsonwebtoken";
 import { useEffect } from "react";
 import styles from "./UpdateProfile.module.css";
+import { updateProfile } from "../../actions/profile";
+import { useSnackbar } from 'react-simple-snackbar'
+import {useDispatch} from 'react-redux'
 
 let prevUserToken = null;
 
@@ -10,6 +13,8 @@ const UpdateProfile = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("profile"));
   const [userRole, setUserRole] = useState("");
+  const [openSnackbar, closeSnackbar] = useSnackbar()
+  const dispatch = useDispatch()
 
   if (!user) {
     navigate("/login");
@@ -63,6 +68,7 @@ const UpdateProfile = () => {
 
     try {
       // Send a request to the server to update the profile
+      dispatch(updateProfile(user.id, formData, openSnackbar))
 
       if (!response.ok) {
         // Handle non-successful response, e.g., show an error message
@@ -84,79 +90,79 @@ const UpdateProfile = () => {
           <h1 className={styles.heading}>Update Profile</h1>
 
           <form onSubmit={handleSubmit} className={styles.auth_form}>
-            <input
-              name="firstName"
-              placeholder="First name"
-              onChange={handleChange}
-              type="test"
-              className={styles.input_feild}
-            />
-            <input
-              name="lastName"
-              placeholder="Last name"
-              onChange={handleChange}
-              type="test"
-              className={styles.input_feild}
-            />
-            <input
-              type="date"
-              id="dob"
-              name="dob"
-              placeholder="Date of birth"
-              value={formData.dob}
-              onChange={handleChange}
-              className={styles.input_feild}
-              required
-            />
-            <input
-              type="text"
-              id="technicalSkills"
-              name="technicalSkills"
-              placeholder="Technical Skills (comma separated)"
-              value={formData.technicalSkills}
-              onChange={handleChange}
-              className={styles.input_feild}
-              required
-            />
-        <input
-          type="number"
-          id="experience"
-          name="experience"
-          placeholder="Years of experience"
-          value={formData.experience}
-          onChange={handleChange}
-          className={styles.input_feild}
-          required
-        />
+            {userRole === "hr" && (
+              <input
+                type="text"
+                id="company"
+                name="company"
+                placeholder="Company"
+                value={formData.company}
+                onChange={handleChange}
+                className={styles.input_feild}
+                required
+              />
+            )}
 
-        <input
-          type="text"
-          id="nonTechnicalSkills"
-          name="nonTechnicalSkills"
-          placeholder="non-technical skills (comma separated)"
-          value={formData.nonTechnicalSkills}
-          onChange={handleChange}
-          className={styles.input_feild}
-        />
+            {userRole === "candidate" && (
+              <input
+                type="text"
+                id="skills"
+                name="skills"
+                placeholder="Skills (comma separated)"
+                value={formData.skills}
+                onChange={handleChange}
+                className={styles.input_feild}
+                required
+              />
+            )}
+            {userRole === "candidate" && (
+              <input
+                type="number"
+                id="experience"
+                name="experience"
+                placeholder="Years of experience"
+                value={formData.experience}
+                onChange={handleChange}
+                className={styles.input_feild}
+                required
+              />
+            )}
 
-        <textarea
-          id="strengths"
-          name="strengths"
-          value={formData.strengths}
-          onChange={handleChange}
-          className={styles.input_feild}
-          placeholder="Strengths"
-        />
+            { userRole === "candidate" && formData.experience > 0  && (
+              <input
+                type="text"
+                id="previousRoleDescription"
+                name="previousRoleDescription"
+                placeholder="Description of previous roles"
+                value={formData.previousRolesDescription}
+                onChange={handleChange}
+                className={styles.input_feild}
+              />
+            )}
 
-        <textarea
-          id="weaknesses"
-          name="weaknesses"
-          value={formData.weaknesses}
-          onChange={handleChange}
-          className={styles.input_feild}
-          placeholder="Weaknesses"
-        />
-        <button className={styles.submit_button} >Update</button>
+            {userRole === "candidate" && (
+              <textarea
+                id="strengths"
+                name="strengths"
+                value={formData.strengths}
+                onChange={handleChange}
+                className={styles.input_feild}
+                placeholder="Strengths"
+              />
+            )}
+
+            {userRole === "candidate" && (
+              <textarea
+                id="weaknesses"
+                name="weaknesses"
+                value={formData.weaknesses}
+                onChange={handleChange}
+                className={styles.input_feild}
+                placeholder="Weaknesses"
+              />
+            )}
+            <button className={styles.submit_button}>Update</button>
+            <Link to={"/homepage"}><button className={styles.back_button}>Back</button></Link>
           </form>
         </div>
       </div>
