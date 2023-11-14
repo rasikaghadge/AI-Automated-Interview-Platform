@@ -60,8 +60,9 @@ export const getProfilesBySearch = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   const profileData = req.body;
-  const user = await User.findById(req.id).populate('profile')
+
   try {
+    const user = await User.findById(req.id).populate('profile')
     const profile = await Profile.findByIdAndUpdate(user.profile, profileData, { new: true });
     // return user object in response which contains updatedProfile data
     user.profile = profile;
@@ -77,8 +78,6 @@ export const deleteProfile = async (req, res) => {
   try {
     const userId = req.id; // Assuming you have a way to get the user ID
     const user = await User.findById(userId);
-    console.log(user)
-
     if (!user) {
       return res.status(404).json({ error: 'Requested user profile not found' });
     }

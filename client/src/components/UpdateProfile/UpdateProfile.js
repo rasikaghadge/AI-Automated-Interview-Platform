@@ -15,12 +15,13 @@ const UpdateProfile = () => {
   const [userRole, setUserRole] = useState("");
   const [openSnackbar, closeSnackbar] = useSnackbar()
   const dispatch = useDispatch()
-
-  if (!user) {
-    navigate("/login");
-  }
-
+  
   useEffect(() => {
+    
+      if (!user) {
+        console.log('navigating')
+        navigate("/login");
+      }
     const checkUserRole = async () => {
       // console.log(user.token)
       try {

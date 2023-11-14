@@ -15,7 +15,7 @@ export const getToken = async () => {
 
 export const createMeeting = async ({ token }) => {
   const url = `${API_BASE_URL}/v2/rooms`;
-  const options = {
+    const options = {
     method: "POST",
     headers: { Authorization: token, "Content-Type": "application/json" },
   };
