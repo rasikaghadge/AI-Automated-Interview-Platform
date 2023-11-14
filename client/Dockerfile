@@ -1,25 +1,23 @@
-FROM node:14-alpine AS builder
-ENV NODE_ENV production
+# Use an official Node.js runtime (version 18) as a base image
+FROM node:18
 
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /usr/src/app
 
-COPY client/package.json .
-COPY client/yarn.lock .
-RUN yarn install --production
+# Copy package.json and yarn.lock to the working directory
+COPY package*.json yarn.lock ./
 
-COPY client .
+# Install project dependencies using Yarn
+RUN yarn install
 
-RUN npm run build
+# Copy the remaining application files to the working directory
+COPY . .
 
+# Build the React app
+RUN yarn build
 
-ENV NODE_ENV production
+# Expose the port on which the app will run (adjust as needed)
+EXPOSE 3000
 
-ENV REACT_APP_API https://ai-interviewer-backend.onrender.com
-
-COPY --from=builder /app/build /usr/share/nginx/html
-
-COPY ./client/nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Define the command to run your application
+CMD ["yarn", "start"]
