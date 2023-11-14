@@ -7,6 +7,9 @@ WORKDIR /usr/src/app
 # Copy package.json and yarn.lock to the working directory
 COPY package*.json yarn.lock ./
 
+# Set NODE_OPTIONS to include --openssl-legacy-provider
+ENV NODE_OPTIONS=--openssl-legacy-provider
+
 # Install project dependencies using Yarn
 RUN yarn install
 
