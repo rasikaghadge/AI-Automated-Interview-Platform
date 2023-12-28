@@ -39,6 +39,8 @@ const interviewSchema = Schema({
     }
   });
 
+
 const Interview = mongoose.model('Interview', interviewSchema);
 
 export default Interview;
+
