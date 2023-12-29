@@ -1,4 +1,5 @@
-FROM node:14-alpine AS builder
+FROM node:18
+
 ENV NODE_ENV production
 
 RUN mkdir -p /usr/src/app

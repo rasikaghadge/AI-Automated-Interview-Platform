@@ -8,12 +8,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - '80:80'
-    depends_on:
-      - server
-      - mongo
-    links:
-      - server
-      - mongo
   server:
     container_name: ai-server-container
     image: ai-server-image
