@@ -1,14 +1,6 @@
 import mongoose from 'mongoose'
 
 const profileSchema = mongoose.Schema({
-  phoneNumber: {
-    type: String,
-    required: false
-  },
-  city: {
-    type:String,
-    required: false
-  },
   country: {
     type: String,
     required: false,
@@ -18,21 +10,27 @@ const profileSchema = mongoose.Schema({
     type: String,
     required: false,
   },
-  website: {
-    type: String,
-    required: false,
-  },
   interviews: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Interview'
   }],
-  skills: {
+  technicalSkills: {
     type: [String],
+    required: false
+  },
+  softSkills: {
+    type: [String],
+    required: false
+  },
+  education: {
+    type: Object, // three fields: degree, college, isGraduated
     required: false
   },
   experience: {
     type: Number,
-    required: false
+    required: false,
+    min: 0,
+    max: 50
   },
   previousRolesDescription: {
     type: String,
