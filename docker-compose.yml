@@ -1,11 +1,11 @@
 version: '3.1'
 services:
   client:
-    container_name: client
-    image: client-prod
+    container_name: ai-client-container
+    image: ai-client-image
     build:
-      dockerfile: ./client/Dockerfile
-      target: production
+      context: ./client
+      dockerfile: Dockerfile
     ports:
       - '80:80'
     depends_on:
@@ -15,18 +15,10 @@ services:
       - server
       - mongo
   server:
-    container_name: server
-    image: server-prod
+    container_name: ai-server-container
+    image: ai-server-image
     build:
-      dockerfile: ./server/Dockerfile
+      context: ./server
+      dockerfile: Dockerfile
     ports:
       - '5000:5000'
-    depends_on:
-      - mongo
-    links:
-      - mongo
-  mongo:
-    image: mongo
-    container_name: MONGODB
-    ports:
-      - '27017'
