@@ -1,17 +1,20 @@
+# Use an official Node.js runtime as a base image
 FROM node:18-alpine
 
+# Set the working directory in the container
 WORKDIR /usr/src/app
 
-COPY server/package.json .
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
 
+# Install application dependencies
 RUN npm install
 
-COPY server/ .
+# Copy the application code to the container
+COPY . .
 
-ENV NODE_ENV production
-
-RUN npm install && npm install nodemon --save-dev
-
+# Expose the port on which the app will run
 EXPOSE 5000
 
-CMD ["yarn", "start"]
+# Define the command to run your application
+CMD ["node", "index.js"]

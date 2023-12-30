@@ -2,14 +2,20 @@ version: '3.8'
 
 services:
   client:
+    container_name: ai-client-container
+    image: ai-client-image
     build:
       context: ./client
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+      - '80:80'
   server:
+    container_name: ai-server-container
+    image: ai-server-image
     build:
       context: ./server
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
+      - '5000:5000'
