@@ -146,8 +146,13 @@ const parseTimeString = (timeString) => {
         </table>
       )}
       <Link to={"/homepage"}>
-        <button className={styles.back_button}>Back</button>
+        <button className="btn btn-secondary" style={{marginRight: "20px", marginTop: "10px"}} >Back</button>
       </Link>
+      {/* TODO change the route to schedule page */}
+      {userRole==="hr" && <Link to={"/homepage"}>
+        <button className="btn btn-primary"style={{marginTop: "10px"}}>Schedule Interview</button>
+      </Link>}
+
     </div>
   );
 };

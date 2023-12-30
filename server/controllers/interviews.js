@@ -47,7 +47,7 @@ export const getMeeting = async (req, res) => {
 
 export const scheduleMeeting = async (req, res) => {
   // Get meeting details from request body
-  const { title, description, date, startTime, endTime, email } = req.body;
+  const { title, description, startDate, startTime, endTime, email } = req.body;
   const options = {
     method: "GET",
     headers: {
@@ -56,7 +56,6 @@ export const scheduleMeeting = async (req, res) => {
     },
   };
   const sdkMeeting = await createVideoSdkRoom(options);
-
   if (!sdkMeeting) {
     return res.status(500).json({ message: "Error in creating meeting" });
   }
@@ -66,12 +65,11 @@ export const scheduleMeeting = async (req, res) => {
   }
   // concat user and userProfile
   let hr = await User.findOne({ email: req.email }).select('-password');
-  console.log(user);
   const interview = new Interview({
     id: sdkMeeting.id,
     title: title,
     description: description,
-    startDate: date,
+    startDate: startDate,
     startTime: startTime,
     endTime: endTime,
     candidate: user,
