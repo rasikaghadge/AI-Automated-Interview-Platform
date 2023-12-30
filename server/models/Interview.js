@@ -10,12 +10,16 @@ const interviewSchema = Schema({
       type: String,
       required: true
     },
-    startTime: {
+    startDate: {
       type: Date,
       required: true
     },
+    startTime: {
+      type: String,
+      required: true
+    },
     endTime: {
-      type: Date,
+      type: String,
       required: false
     },
     hr: {
