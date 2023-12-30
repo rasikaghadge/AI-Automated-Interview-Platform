@@ -47,7 +47,7 @@ export const getMeeting = async (req, res) => {
 
 export const scheduleMeeting = async (req, res) => {
   // Get meeting details from request body
-  const { title, description, startTime, endTime, email } = req.body;
+  const { title, description, date, startTime, endTime, email } = req.body;
   const options = {
     method: "GET",
     headers: {
@@ -71,6 +71,7 @@ export const scheduleMeeting = async (req, res) => {
     id: sdkMeeting.id,
     title: title,
     description: description,
+    startDate: date,
     startTime: startTime,
     endTime: endTime,
     candidate: user,
@@ -90,8 +91,30 @@ export const scheduleMeeting = async (req, res) => {
 export const listInterviewsCandidate = async (req, res) => {
   const candidateId = req.id;
   try {
+    // Fetch all interviews for the given HR
     const interviews = await Interview.find({ candidate: candidateId });
-    res.status(200).json(interviews);
+
+    // Iterate through the interviews array and add candidateName field
+    const interviewsWithHRNames = await Promise.all(
+      interviews.map(async (interview) => {
+        try {
+          const hrUser = await User.findById(interview.hr);
+          const hrName = hrUser
+            ? `${hrUser.firstName} ${hrUser.lastName}`
+            : '';
+          
+          return {
+            ...interview._doc,
+            hrName,
+          };
+        } catch (error) {
+          console.error('Error fetching hr user:', error);
+          return interview;
+        }
+      })
+    );
+
+    res.status(200).json(interviewsWithHRNames);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -100,8 +123,30 @@ export const listInterviewsCandidate = async (req, res) => {
 export const listInterviewsHR = async (req, res) => {
   const hrId = req.id;
   try {
+    // Fetch all interviews for the given HR
     const interviews = await Interview.find({ hr: hrId });
-    res.status(200).json(interviews);
+
+    // Iterate through the interviews array and add candidateName field
+    const interviewsWithCandidateNames = await Promise.all(
+      interviews.map(async (interview) => {
+        try {
+          const candidateUser = await User.findById(interview.candidate);
+          const candidateName = candidateUser
+            ? `${candidateUser.firstName} ${candidateUser.lastName}`
+            : '';
+          
+          return {
+            ...interview._doc,
+            candidateName,
+          };
+        } catch (error) {
+          console.error('Error fetching candidate user:', error);
+          return interview;
+        }
+      })
+    );
+
+    res.status(200).json(interviewsWithCandidateNames);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
