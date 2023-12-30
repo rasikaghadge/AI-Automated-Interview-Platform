@@ -1,0 +1,31 @@
+.scheduled_interviews_container {
+    max-width: 800px;
+    margin: 20px auto;
+  }
+  
+  .interview_card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .join_button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  
+.back_button {
+  background-color: #396491;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+  

@@ -23,7 +23,7 @@ const interviewSchema = Schema({
         ref: 'User',
         required: true
       },
-    user: {
+    candidate: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true

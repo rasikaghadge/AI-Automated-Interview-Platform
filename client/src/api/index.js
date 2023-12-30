@@ -49,3 +49,6 @@ export const fetchProfilesByUser = (searchQuery) => API.get(`/profiles?searchQue
 export const createProfile = (newProfile) => API.post('/profiles', newProfile);
 export const updateProfile = (id, updatedProfile) => API.patch(`/profiles`, updatedProfile);
 export const deleteProfile = (id) => API.delete(`/profiles/${id}`);
+
+export const getInterviewsCandidate = (id) => API.get(`/interviews/candidate/${id}`);
+export const getInterviewsHR = (id) => API.get(`/interviews/hr/${id}`);

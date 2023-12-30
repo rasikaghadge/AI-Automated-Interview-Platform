@@ -73,7 +73,7 @@ export const scheduleMeeting = async (req, res) => {
     description: description,
     startTime: startTime,
     endTime: endTime,
-    user: user,
+    candidate: user,
     hr: hr,
     status: "Scheduled",
     room: sdkMeeting
@@ -84,5 +84,25 @@ export const scheduleMeeting = async (req, res) => {
     res.status(201).json(interview);
   } catch (error) {
     res.status(409).json({ message: error.message });
+  }
+};
+
+export const listInterviewsCandidate = async (req, res) => {
+  const candidateId = req.id;
+  try {
+    const interviews = await Interview.find({ candidate: candidateId });
+    res.status(200).json(interviews);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+export const listInterviewsHR = async (req, res) => {
+  const hrId = req.id;
+  try {
+    const interviews = await Interview.find({ hr: hrId });
+    res.status(200).json(interviews);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
   }
 };
