@@ -129,18 +129,26 @@ const parseTimeString = (timeString, startDate) => {
             </tr>
           </thead>
           <tbody>
+          {console.log(interviews)}
             {interviews.map((interview) => (
               <tr key={interview._id}>
                 <td>{interview.title}</td>
                 <td>{interview.description}</td>
                 <td>{new Date(interview.startDate).toLocaleDateString()}</td>
                 <td>{`${interview.startTime} - ${interview.endTime}`}</td>
-                {userRole === "candidate" ? <td>{interview.hrName}</td> : null}
-                {userRole === "hr" ? <td>{interview.candidateName}</td> : null}   
+                <td>{userRole === "candidate" ? <img
+                    src={`data:image/png;base64, ${interview.profilePicture}`}
+                    alt="HR Profile"
+                    style={{ width: '85px', height: '50px', borderRadius: '50%' }}
+                  />: <img
+                    src={`data:image/png;base64, ${interview.profilePicture}`} 
+                    alt="HR Profile"
+                    style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+                  />}</td>  
                 <td>{interview.status}</td>
-                {userRole === "candidate" && isTimeBetween(interview.startTime, interview.endTime, interview.startDate) ? (
+               <td> {userRole === "candidate" && isTimeBetween(interview.startTime, interview.endTime, interview.startDate) ? (
                 <button className="btn btn-success btn-sm" style={{margin: "5px", marginTop: "10px"}}>Join Interview</button>
-              ) : <button className="btn btn-success btn-sm disabled" style={{margin: "5px", marginTop: "10px"}}>Join Interview</button>}
+              ) : <button className="btn btn-success btn-sm disabled" style={{margin: "5px", marginTop: "10px"}}>Join Interview</button>}</td>
               </tr>
             ))}
           </tbody>

@@ -60,9 +60,15 @@ export const getProfilesBySearch = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   const profileData = req.body;
+  console.log(profileData)
 
   try {
-    const user = await User.findById(req.id).populate('profile')
+    const user = await User.findById(req.id);
+    if (!user) {
+      return res.status(404).json({message: 'User not found'})
+    }
+    user.firstName = profileData.firstName ? profileData.firstName: user.firstName
+    user.lastName = profileData.lastName ? profileData.lastName: user.lastName
     const profile = await Profile.findByIdAndUpdate(user.profile, profileData, { new: true });
     // return user object in response which contains updatedProfile data
     user.profile = profile;
