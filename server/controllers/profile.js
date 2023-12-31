@@ -60,8 +60,6 @@ export const getProfilesBySearch = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   const profileData = req.body;
-  console.log(profileData)
-
   try {
     const user = await User.findById(req.id);
     if (!user) {
