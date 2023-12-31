@@ -102,7 +102,6 @@ export const listInterviewsCandidate = async (req, res) => {
             ? `${hrUser.firstName} ${hrUser.lastName}`
             : '';
           const profilePicture = hrProfile.profilePicture;
-          console.log(profilePicture)
           return {
             ...interview._doc,
             hrName,
