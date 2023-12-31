@@ -17,7 +17,6 @@ const SeeScheduledInterviews = () => {
   const [openSnackbar, closeSnackbar] = useSnackbar();
   const dispatch = useDispatch();
   const [interviews, setInterviews] = useState([]);
-  let prevUserToken = null;
   const [dataFetched, setDataFetched] = useState(false);
 
   const checkUserRole = async () => {
@@ -78,11 +77,9 @@ const SeeScheduledInterviews = () => {
 
     let id = null;
 
-    if (user && user.token !== prevUserToken) {
+    if (user) {
       id = checkUserRole();
     }
-
-    prevUserToken = user.token;
 
     if (id && interviews.length === 0 && !dataFetched) {
       fetchData(id);
