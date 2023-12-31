@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
-import Interview from '../models/Interview.js';
-import User from '../models/userModel.js';
-import Profile from '../models/ProfileModel.js';
-import { createVideoSdkRoom, fetchVideoSdkRooms, validateVideoSdkRoom, deactivateVideoSdkRoom } from "../helper/videosdkHelper.js";
+import Interview from '../models/Interview.ts';
+import User from '../models/userModel.ts';
+import Profile from '../models/ProfileModel.ts';
+
+import { createVideoSdkRoom, fetchVideoSdkRooms, validateVideoSdkRoom, deactivateVideoSdkRoom } from "../helper/videosdkHelper.ts";
 
 
 dotenv.config();
@@ -134,7 +135,7 @@ export const listInterviewsHR = async (req, res) => {
             : '';
           
           return {
-            ...interview._doc,
+            // ...interview._doc,
             candidateName,
           };
         } catch (error) {

@@ -1,7 +1,7 @@
 import express from "express";
-import { scheduleMeeting, listMeetings, getMeeting, listInterviewsCandidate, listInterviewsHR } from "../controllers/interviews.js";
-import { hrAuth, auth } from "../middleware/auth.js";
-import { createMeeting, validateRoom, fetchRooms, deactivateRoom } from "../controllers/videosdk.js";
+import { scheduleMeeting, listMeetings, getMeeting, listInterviewsCandidate, listInterviewsHR } from "../controllers/interviews.ts";
+import { hrAuth, auth } from "../middleware/auth.ts";
+import { createMeeting, validateRoom, fetchRooms, deactivateRoom } from "../controllers/videosdk.ts";
 
 const router = express.Router();
 
