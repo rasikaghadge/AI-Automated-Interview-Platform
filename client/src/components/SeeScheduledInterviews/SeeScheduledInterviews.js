@@ -90,9 +90,9 @@ const SeeScheduledInterviews = () => {
   }, [user, interviews, dataFetched]);
 
   // Function to parse time string (HH:MM) and create a Date object
-const parseTimeString = (timeString) => {
+const parseTimeString = (timeString, startDate) => {
   const [hours, minutes] = timeString.split(':');
-  const date = new Date();
+  const date = new Date(startDate);
   date.setHours(parseInt(hours, 10));
   date.setMinutes(parseInt(minutes, 10));
   date.setSeconds(0);
@@ -101,10 +101,10 @@ const parseTimeString = (timeString) => {
 };
 
   // Function to check if the current time is between start and end time
-  const isTimeBetween = (startTime, endTime) => {
+  const isTimeBetween = (startTime, endTime, startDate) => {
     const now = new Date();
-    const start = parseTimeString(startTime);
-    const end = parseTimeString(endTime);
+    const start = parseTimeString(startTime, startDate);
+    const end = parseTimeString(endTime, startDate);
     return start <= now && now <= end;
   };
 
@@ -125,6 +125,7 @@ const parseTimeString = (timeString) => {
               {userRole === "candidate" ? <th>HR</th> : null}
               {userRole === "hr" ? <th>Candidate</th> : null}
               <th>Status</th>
+              <th>Join</th>
             </tr>
           </thead>
           <tbody>
@@ -137,17 +138,22 @@ const parseTimeString = (timeString) => {
                 {userRole === "candidate" ? <td>{interview.hrName}</td> : null}
                 {userRole === "hr" ? <td>{interview.candidateName}</td> : null}   
                 <td>{interview.status}</td>
-                {userRole === "candidate" && isTimeBetween(interview.startTime, interview.endTime) ? (
-                <button className={styles.join_button}>Join Interview</button>
-              ) : null}
+                {userRole === "candidate" && isTimeBetween(interview.startTime, interview.endTime, interview.startDate) ? (
+                <button className="btn btn-success btn-sm" style={{margin: "5px", marginTop: "10px"}}>Join Interview</button>
+              ) : <button className="btn btn-success btn-sm disabled" style={{margin: "5px", marginTop: "10px"}}>Join Interview</button>}
               </tr>
             ))}
           </tbody>
         </table>
       )}
       <Link to={"/homepage"}>
-        <button className={styles.back_button}>Back</button>
+        <button className="btn btn-secondary" style={{marginRight: "20px", marginTop: "10px"}} >Back</button>
       </Link>
+      {/* TODO change the route to schedule page */}
+      {userRole==="hr" && <Link to={"/homepage"}>
+        <button className="btn btn-primary"style={{marginTop: "10px"}}>Schedule Interview</button>
+      </Link>}
+
     </div>
   );
 };
