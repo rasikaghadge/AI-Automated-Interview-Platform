@@ -1,0 +1,41 @@
+/* SeeScheduledInterviews.module.css */
+
+.scheduled_interviews_container {
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.interview-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.interview-table th,
+.interview-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.interview-table th {
+  background-color: #f2f2f2;
+}
+
+.join_button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.back_button {
+  background-color: #396491;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+}

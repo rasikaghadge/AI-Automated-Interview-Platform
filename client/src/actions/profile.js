@@ -7,8 +7,10 @@ export const getProfile = (id) => async (dispatch) => {
     const { data } = await api.fetchProfile(id);
 
 
-    dispatch({ type: FETCH_PROFILE, payload: data });
+    // dispatch({ type: FETCH_PROFILE, payload: data });
     // dispatch({ type: END_LOADING })
+
+    return data;
 
   } catch (error) {
     console.log(error.response);

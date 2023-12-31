@@ -7,8 +7,6 @@ import Footer from "../Footer/Footer";
 import { decode } from "jsonwebtoken";
 import { useState, useEffect } from "react";
 
-let prevUserToken = null;
-
 const Homepage = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("profile"));
@@ -20,7 +18,6 @@ const Homepage = () => {
 
   useEffect(() => {
     const checkUserRole = async () => {
-      // console.log(user.token)
       try {
         const decodedToken = decode(user.token);
         if (decodedToken) {
@@ -34,14 +31,9 @@ const Homepage = () => {
         setUserRole("");
       }
     };
-
-    // Check if the user data has changed before making the request
-    if (user && user.token !== prevUserToken) {
+    if (user) {
       checkUserRole();
     }
-
-    // Update the previous user token for the next comparison
-    prevUserToken = user.token;
   }, [user]);
 
   return (
