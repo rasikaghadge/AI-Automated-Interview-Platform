@@ -125,6 +125,7 @@ const parseTimeString = (timeString) => {
               {userRole === "candidate" ? <th>HR</th> : null}
               {userRole === "hr" ? <th>Candidate</th> : null}
               <th>Status</th>
+              <th>Join</th>
             </tr>
           </thead>
           <tbody>
@@ -138,8 +139,8 @@ const parseTimeString = (timeString) => {
                 {userRole === "hr" ? <td>{interview.candidateName}</td> : null}   
                 <td>{interview.status}</td>
                 {userRole === "candidate" && isTimeBetween(interview.startTime, interview.endTime) ? (
-                <button className={styles.join_button}>Join Interview</button>
-              ) : null}
+                <button className="btn btn-success btn-sm">Join Interview</button>
+              ) : <button className="btn btn-success btn-sm disabled" style={{margin: "5px", marginTop: "10px"}}>Join Interview</button>}
               </tr>
             ))}
           </tbody>
