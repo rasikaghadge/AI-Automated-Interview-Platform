@@ -76,6 +76,16 @@
   cursor: pointer;
 }
 
+.submit_button_disabled {
+  background-color: #e0e0e0;
+  color: #bdbdbd;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: not-allowed; 
+}
+
 .back_button {
   background-color: #396491;
   color: #fff;
@@ -103,4 +113,18 @@
   text-align: center;
   color: #1d7dd6;
   margin-top: 20px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #333; /* Adjust the color to match your design */
+  text-align: left; /* Align the text to the left */
+}
+
+.select-box {
+  border: 1px solid black; /* Adjust the border color as needed */
+  border-radius: 5px; /* Optional: Add border radius for a rounded appearance */
+  padding: 8px; /* Optional: Add padding for some space inside the select box */
 }

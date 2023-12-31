@@ -1,7 +1,6 @@
 
 import Profile from '../models/ProfileModel.js';
 import User from '../models/userModel.js';
-
  
 export const getProfiles = async (req, res) => { 
   try {
@@ -34,7 +33,7 @@ export const getProfiles = async (req, res) => {
 export const getProfile = async (req, res) => { 
   const { id } = req.params;
   try{
-    const profile = await Profile.findOne({_id: id}).populate('user');
+    const profile = await Profile.findOne({user: id}).populate('user');
     if (!profile) {
       res.status(404).json({'message': 'Profile not found'})
     }
