@@ -1,40 +1,20 @@
-import dotenv from 'dotenv';
-import Interview from '../models/Interview.ts';
-import User from '../models/userModel.ts';
-import Profile from '../models/ProfileModel.ts';
+import dotenv from "dotenv";
+import Interview from "../models/Interview.ts";
+import User from "../models/userModel.ts";
+import Profile from "../models/ProfileModel.ts";
 
-import { createVideoSdkRoom, fetchVideoSdkRooms, validateVideoSdkRoom, deactivateVideoSdkRoom } from "../helper/videosdkHelper.ts";
-
+import {
+  createVideoSdkRoom,
+  fetchVideoSdkRooms,
+  validateVideoSdkRoom,
+  deactivateVideoSdkRoom,
+} from "../helper/videosdkHelper.ts";
 
 dotenv.config();
 
-const API_BASE_URL = process.env.API_BASE_URL
-const VIDEOSDK_TOKEN = process.env.VIDEOSDK_TOKEN
+const API_BASE_URL = process.env.API_BASE_URL;
+const VIDEOSDK_TOKEN = process.env.VIDEOSDK_TOKEN;
 const API_AUTH_URL = null;
-
-
-export const listMeetings = async (req, res) => {
-  // Sample data
-  const meetings = [
-    {
-      id: 1,
-      title: "Meeting 1",
-      description: "This is meeting 1",
-      startTime: "2022-01-01T10:00:00Z",
-      endTime: "2022-01-01T11:00:00Z",
-    },
-    {
-      id: 2,
-      title: "Meeting 2",
-      description: "This is meeting 2",
-      startTime: "2022-01-02T10:00:00Z",
-      endTime: "2022-01-02T11:00:00Z",
-    },
-    // Add more meetings as needed
-  ];
-
-  res.json(meetings);
-};
 
 export const getMeeting = async (req, res) => {
   // Sample data
@@ -53,19 +33,19 @@ export const scheduleMeeting = async (req, res) => {
     method: "GET",
     headers: {
       Authorization: req.headers.authorization.split(" ")[1],
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
   };
   const sdkMeeting = await createVideoSdkRoom(options);
   if (!sdkMeeting) {
     return res.status(500).json({ message: "Error in creating meeting" });
   }
-  let user = await User.findOne({ email: email }).select('-password');
+  let user = await User.findOne({ email: email }).select("-password");
   if (!user) {
     return res.status(500).json({ message: "User not found" });
   }
   // concat user and userProfile
-  let hr = await User.findOne({ email: req.email }).select('-password');
+  let hr = await User.findOne({ email: req.email }).select("-password");
   const interview = new Interview({
     id: sdkMeeting.id,
     title: title,
@@ -76,7 +56,7 @@ export const scheduleMeeting = async (req, res) => {
     candidate: user,
     hr: hr,
     status: "Scheduled",
-    room: sdkMeeting
+    room: sdkMeeting,
   });
 
   try {
@@ -98,16 +78,14 @@ export const listInterviewsCandidate = async (req, res) => {
       interviews.map(async (interview) => {
         try {
           const hrUser = await User.findById(interview.hr);
-          const hrName = hrUser
-            ? `${hrUser.firstName} ${hrUser.lastName}`
-            : '';
-          
+          const hrName = hrUser ? `${hrUser.firstName} ${hrUser.lastName}` : "";
+
           return {
             ...interview._doc,
             hrName,
           };
         } catch (error) {
-          console.error('Error fetching hr user:', error);
+          console.error("Error fetching hr user:", error);
           return interview;
         }
       })
@@ -132,14 +110,14 @@ export const listInterviewsHR = async (req, res) => {
           const candidateUser = await User.findById(interview.candidate);
           const candidateName = candidateUser
             ? `${candidateUser.firstName} ${candidateUser.lastName}`
-            : '';
-          
+            : "";
+
           return {
-            // ...interview._doc,
+            ...interview._doc,
             candidateName,
           };
         } catch (error) {
-          console.error('Error fetching candidate user:', error);
+          console.error("Error fetching candidate user:", error);
           return interview;
         }
       })
