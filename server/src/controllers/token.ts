@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv'
 
 // Create a token for the user
 export const createToken = (email: string, id: any, role: string, expiresIn: any, SECRET: any, VIDEOSDK_API_KEY: any) => {

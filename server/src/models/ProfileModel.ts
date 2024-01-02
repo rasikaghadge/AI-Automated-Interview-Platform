@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 const { Schema } = mongoose;
-import Profile from '../types/ProfileType';
+import Profile from '../schemas/ProfileType.js';
 
 
 const profileSchema = new mongoose.Schema<Profile>({

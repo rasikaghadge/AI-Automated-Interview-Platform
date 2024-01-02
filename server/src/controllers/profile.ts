@@ -1,7 +1,7 @@
-import Profile from "../models/ProfileModel.ts";
-import User from "../models/userModel.ts";
+import Profile from "../models/ProfileModel.js";
+import User from "../models/userModel.js";
 
-export const getProfiles = async (req, res) => {
+export const getProfiles = async (req: any, res: any) => {
   try {
     const role = req.query.role || "candidate";
     const page = parseInt(req.query.page) || 1; // Current page (default to 1 if not provided)
@@ -23,13 +23,13 @@ export const getProfiles = async (req, res) => {
       currentPage: page,
       totalPages: Math.ceil(totalProfiles / limit),
     });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
     res.status(404).json({ message: error.message });
   }
 };
 
-export const getProfile = async (req, res) => {
+export const getProfile = async (req: any, res: any) => {
   const { id } = req.params;
   try {
     const profile = await Profile.findOne({ user: id }).populate("user");
@@ -37,13 +37,13 @@ export const getProfile = async (req, res) => {
       res.status(404).json({ message: "Profile not found" });
     }
     res.json(profile);
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
     res.status(401).json({ message: error.message });
   }
 };
 
-export const getProfilesBySearch = async (req, res) => {
+export const getProfilesBySearch = async (req: any, res: any) => {
   const { searchQuery } = req.query;
   try {
     const searchRegex = new RegExp(searchQuery, "i");
@@ -55,17 +55,17 @@ export const getProfilesBySearch = async (req, res) => {
       ],
     });
     res.json({ data: profiles });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
     res.status(404).json({ message: error.message });
   }
 };
 
-export const updateProfile = async (req, res) => {
+export const updateProfile = async (req: any, res: any) => {
   const profileData = req.body;
 
   try {
-    const user = await User.findById(req.id).populate("profile");
+    const user: any = await User.findById(req.id).populate("profile");
     const profile = await Profile.findByIdAndUpdate(user.profile, profileData, {
       new: true,
     });
@@ -73,13 +73,13 @@ export const updateProfile = async (req, res) => {
     user.profile = profile;
     await user.save();
     res.json(user);
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteProfile = async (req, res) => {
+export const deleteProfile = async (req: any, res: any) => {
   try {
     const userId = req.id; // Assuming you have a way to get the user ID
     const user = await User.findById(userId);
@@ -104,14 +104,14 @@ export const deleteProfile = async (req, res) => {
   }
 };
 
-export const selfProfile = async (req, res) => {
+export const selfProfile = async (req: any, res: any) => {
   try {
     const user = await User.findById(req.id).populate("profile");
     if (!user) {
       return res.status(404).json({ message: "Profile Does Not Exist" });
     }
     res.json(user);
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
     res.status(400).json({ message: String(error) });
   }

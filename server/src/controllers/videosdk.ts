@@ -1,3 +1,4 @@
+// @ts-ignore
 import dotenv from 'dotenv';
 import axios from 'axios';
 
@@ -10,7 +11,7 @@ const API_AUTH_URL = null;
 
 // function to create videosdk meeting
 // this function will used internally or by direct client
-export const createMeeting = async (req, res) => {
+export const createMeeting = async (req: any, res: any) => {
 	const url = `${API_BASE_URL}/v2/rooms`;
 	const headers = { 
 		Authorization: req.headers.authorization.split(' ')[1],
@@ -28,7 +29,7 @@ export const createMeeting = async (req, res) => {
 
 // function to validate room code
 // Reference: https://docs.videosdk.live/api-reference/realtime-communication/validate-room
-export const validateRoom = async (req, res) => {
+export const validateRoom = async (req: any, res: any) => {
 	const roomId = req.params.roomId;
 	const url = `${API_BASE_URL}/v2/rooms/validate/${roomId}`;
 	const headers = { 
@@ -48,7 +49,7 @@ export const validateRoom = async (req, res) => {
   };
 
 
-export const fetchRooms = async (req, res) => {
+export const fetchRooms = async (req: any, res: any) => {
   const options = {
     method: "GET",
     headers: { 
@@ -67,13 +68,13 @@ export const fetchRooms = async (req, res) => {
   try {
     const response = await axios(url, options);
     res.json(response.data);
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ error: error.toString() });
   }
 };
 
 
-export const deactivateRoom = async (req, res) => {
+export const deactivateRoom = async (req: any, res: any) => {
   const roomId = req.body.roomId;
     if (!roomId) {
         res.status(400).json({message: "Invalid room id or Room Id not provided"})
@@ -95,7 +96,7 @@ export const deactivateRoom = async (req, res) => {
   try {
     const response = await axios(url, options);
     res.json(response.data);
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ error: error.toString() });
   }
 };

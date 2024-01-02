@@ -1,12 +1,13 @@
 import axios from "axios";
 import bcrypt from "bcryptjs";
+// @ts-ignore
 import dotenv from "dotenv";
 import { Request, Response } from "express";
 
-import User from "../models/userModel";
-import isEmailValid from "../helper/authHelper";
-import Profile from "../models/ProfileModel";
-import { createToken } from "../controllers/token";
+import User from "../models/userModel.js";
+import isEmailValid from "../helper/authHelper.js";
+import Profile from "../models/ProfileModel.js";
+import { createToken } from "../controllers/token.js";
 
 dotenv.config();
 const SECRET: string | undefined = process.env.SECRET;

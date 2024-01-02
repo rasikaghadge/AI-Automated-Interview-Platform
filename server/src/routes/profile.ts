@@ -1,6 +1,6 @@
 import express from 'express'
-import { getProfiles, updateProfile, deleteProfile, getProfile, getProfilesBySearch, selfProfile } from '../controllers/profile.ts'
-import { auth } from '../middleware/auth.ts';
+import { getProfiles, updateProfile, deleteProfile, getProfile, getProfilesBySearch, selfProfile } from '../controllers/profile.js'
+import { auth } from '../middleware/auth.js';
 
 const router = express.Router()
 router.get('/',auth, selfProfile);

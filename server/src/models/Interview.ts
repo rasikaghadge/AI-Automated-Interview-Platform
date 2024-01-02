@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 const { Schema } = mongoose;
-import Interview from "../types/InterviewType";
+import Interview from "../schemas/InterviewType.js";
 
 const interviewSchema = new Schema<Interview>({
   title: {

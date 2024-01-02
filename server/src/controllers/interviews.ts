@@ -1,14 +1,15 @@
+// @ts-ignore
 import dotenv from "dotenv";
-import Interview from "../models/Interview.ts";
-import User from "../models/userModel.ts";
-import Profile from "../models/ProfileModel.ts";
+import Interview from "../models/Interview.js";
+import User from "../models/userModel.js";
+import Profile from "../models/ProfileModel.js";
 
 import {
   createVideoSdkRoom,
   fetchVideoSdkRooms,
   validateVideoSdkRoom,
   deactivateVideoSdkRoom,
-} from "../helper/videosdkHelper.ts";
+} from "../helper/videosdkHelper.js";
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ const API_BASE_URL = process.env.API_BASE_URL;
 const VIDEOSDK_TOKEN = process.env.VIDEOSDK_TOKEN;
 const API_AUTH_URL = null;
 
-export const getMeeting = async (req, res) => {
+export const getMeeting = async (req: any, res: any) => {
   // Sample data
   const meetingId = req.params.id;
   const interview = await Interview.findById(meetingId);
@@ -26,7 +27,7 @@ export const getMeeting = async (req, res) => {
   res.json(interview);
 };
 
-export const scheduleMeeting = async (req, res) => {
+export const scheduleMeeting = async (req: any, res: any) => {
   // Get meeting details from request body
   const { title, description, startDate, startTime, endTime, email } = req.body;
   const options = {
@@ -62,12 +63,12 @@ export const scheduleMeeting = async (req, res) => {
   try {
     await interview.save();
     res.status(201).json(interview);
-  } catch (error) {
+  } catch (error: any) {
     res.status(409).json({ message: error.message });
   }
 };
 
-export const listInterviewsCandidate = async (req, res) => {
+export const listInterviewsCandidate = async (req: any, res: any) => {
   const candidateId = req.id;
   try {
     // Fetch all interviews for the given HR
@@ -75,7 +76,7 @@ export const listInterviewsCandidate = async (req, res) => {
 
     // Iterate through the interviews array and add candidateName field
     const interviewsWithHRNames = await Promise.all(
-      interviews.map(async (interview) => {
+      interviews.map(async (interview: any) => {
         try {
           const hrUser = await User.findById(interview.hr);
           const hrName = hrUser ? `${hrUser.firstName} ${hrUser.lastName}` : "";
@@ -92,12 +93,12 @@ export const listInterviewsCandidate = async (req, res) => {
     );
 
     res.status(200).json(interviewsWithHRNames);
-  } catch (error) {
+  } catch (error: any) {
     res.status(404).json({ message: error.message });
   }
 };
 
-export const listInterviewsHR = async (req, res) => {
+export const listInterviewsHR = async (req: any, res: any) => {
   const hrId = req.id;
   try {
     // Fetch all interviews for the given HR
@@ -105,7 +106,7 @@ export const listInterviewsHR = async (req, res) => {
 
     // Iterate through the interviews array and add candidateName field
     const interviewsWithCandidateNames = await Promise.all(
-      interviews.map(async (interview) => {
+      interviews.map(async (interview: any) => {
         try {
           const candidateUser = await User.findById(interview.candidate);
           const candidateName = candidateUser
@@ -124,7 +125,7 @@ export const listInterviewsHR = async (req, res) => {
     );
 
     res.status(200).json(interviewsWithCandidateNames);
-  } catch (error) {
+  } catch (error: any) {
     res.status(404).json({ message: error.message });
   }
 };

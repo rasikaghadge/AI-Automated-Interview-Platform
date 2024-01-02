@@ -1,6 +1,6 @@
 // User.ts
 import mongoose, { Document } from 'mongoose';
-import Profile from './ProfileType';
+import Profile from './ProfileType.js';
 
 interface User extends Document {
   email: string;

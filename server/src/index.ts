@@ -1,12 +1,14 @@
 import express, { Application, Request, Response } from "express";
 import { createServer, Server as HttpServer } from "http";
 import { Server as SocketIOServer, Socket } from "socket.io"; // Import Server class
-import userRoutes from './routes/userRoutes';
-import profileRoutes from './routes/profile';
-import interviewRoutes from './routes/interviews';
+import userRoutes from './routes/userRoutes.js';
+import profileRoutes from './routes/profile.js';
+import interviewRoutes from './routes/interviews.js';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import dotenv from 'dotenv';
+// @ts-ignore
+import dotenv from 'dotenv'; // @ts-ignore
+
 
 dotenv.config();
 

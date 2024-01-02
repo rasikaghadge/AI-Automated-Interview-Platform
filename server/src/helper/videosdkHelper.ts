@@ -1,3 +1,5 @@
+// @ts-ignore
+
 import dotenv from 'dotenv';
 import axios from 'axios';
 
@@ -9,7 +11,7 @@ const VIDEOSDK_TOKEN = process.env.VIDEOSDK_TOKEN
 const API_AUTH_URL = null;
 
 
-export const createVideoSdkRoom = async (options) => {
+export const createVideoSdkRoom = async (options: any) => {
     const url = `${API_BASE_URL}/v2/rooms`;
     try {
         const response = await axios.post(url, {}, options);
@@ -20,7 +22,7 @@ export const createVideoSdkRoom = async (options) => {
     }
 }
 
-export const validateVideoSdkRoom = async (roomId) => {
+export const validateVideoSdkRoom = async (roomId: any) => {
     const url = `${API_BASE_URL}/v2/rooms/validate/${roomId}`;
     const headers = {
         Authorization: `Bearer ${VIDEOSDK_TOKEN}`,
@@ -36,7 +38,7 @@ export const validateVideoSdkRoom = async (roomId) => {
     }
 }
 
-export const fetchVideoSdkRooms = async (roomId) => {
+export const fetchVideoSdkRooms = async (roomId: any) => {
     const options = {
         method: "GET",
         headers: {
@@ -60,7 +62,7 @@ export const fetchVideoSdkRooms = async (roomId) => {
     }
 }
 
-export const deactivateVideoSdkRoom = async (roomId) => {
+export const deactivateVideoSdkRoom = async (roomId: any) => {
     const options = {
         method: "POST",
         headers: {

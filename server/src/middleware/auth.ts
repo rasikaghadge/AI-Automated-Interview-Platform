@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+// @ts-ignore
+import dotenv from "dotenv"; 
 import { Request, Response, NextFunction } from "express";
 
 dotenv.config();
@@ -21,7 +22,7 @@ export const auth = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<any> => {
   try {
     const authorizationHeader = req.headers.authorization;
 
