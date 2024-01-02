@@ -98,11 +98,11 @@ const SeeScheduledInterviews = () => {
   };
 
   const isJoinEnabled = useMemo(() => {
-    return (startTime, endTime, startDate) => {
+    return (startTime, endTime, startDate, userRole) => {
       const now = new Date();
       const start = parseTimeString(startTime, startDate);
       const end = parseTimeString(endTime, startDate);
-      return start <= now && now <= end;
+      return start <= now && now <= end && userRole === "candidate";
     };
   }, []);
 
@@ -151,19 +151,13 @@ const SeeScheduledInterviews = () => {
                       !isJoinEnabled(
                         interview.startTime,
                         interview.endTime,
-                        interview.startDate
+                        interview.startDate,
+                        userRole
                       )
                         ? "disabled"
                         : ""
                     }`}
                     style={{ margin: "5px", marginTop: "10px" }}
-                    disabled={
-                      !isJoinEnabled(
-                        interview.startTime,
-                        interview.endTime,
-                        interview.startDate
-                      )
-                    }
                   >
                     Join Interview
                   </button>
