@@ -90,7 +90,7 @@ function NavBar({ userRole }) {
         className="navbar-btn"
         type="button"
         disabled={isButtonDisabled}
-        onClick={handleChatBtnClick}
+        onClick={() => navigate("/scheduledinterviews")}
       >
         <FontAwesomeIcon icon={faCalendarDays} /> See scheduled interviews
       </button>

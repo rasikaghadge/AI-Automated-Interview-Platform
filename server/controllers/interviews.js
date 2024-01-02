@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import Interview from '../models/Interview.js';
 import User from '../models/userModel.js';
-import Profile from '../models/ProfileModel.js';
+// import Profile from '../models/ProfileModel.js';
 import { createVideoSdkRoom, fetchVideoSdkRooms, validateVideoSdkRoom, deactivateVideoSdkRoom } from "../helper/videosdkHelper.js";
 
 
@@ -56,7 +56,6 @@ export const scheduleMeeting = async (req, res) => {
     },
   };
   const sdkMeeting = await createVideoSdkRoom(options);
-
   if (!sdkMeeting) {
     return res.status(500).json({ message: "Error in creating meeting" });
   }
@@ -67,7 +66,7 @@ export const scheduleMeeting = async (req, res) => {
   }
   // concat user and userProfile
   let hr = await User.findOne({ email: req.email }).select('-password');
-  // console.log(user);
+  console.log(user);
   const interview = new Interview({
     id: sdkMeeting.id,
     title: title,
@@ -75,7 +74,7 @@ export const scheduleMeeting = async (req, res) => {
     startDate: startDate,
     startTime: startTime,
     endTime: endTime,
-    user: user,
+    candidate: user,
     hr: hr,
     status: "Scheduled",
     room: sdkMeeting
@@ -86,5 +85,69 @@ export const scheduleMeeting = async (req, res) => {
     res.status(201).json(interview);
   } catch (error) {
     res.status(409).json({ message: error.message });
-  } 
-}
+  }
+};
+
+export const listInterviewsCandidate = async (req, res) => {
+  const candidateId = req.id;
+  try {
+    // Fetch all interviews for the given HR
+    const interviews = await Interview.find({ candidate: candidateId });
+
+    // Iterate through the interviews array and add candidateName field
+    const interviewsWithHRNames = await Promise.all(
+      interviews.map(async (interview) => {
+        try {
+          const hrUser = await User.findById(interview.hr);
+          const hrName = hrUser
+            ? `${hrUser.firstName} ${hrUser.lastName}`
+            : '';
+          
+          return {
+            ...interview._doc,
+            hrName,
+          };
+        } catch (error) {
+          console.error('Error fetching hr user:', error);
+          return interview;
+        }
+      })
+    );
+
+    res.status(200).json(interviewsWithHRNames);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+export const listInterviewsHR = async (req, res) => {
+  const hrId = req.id;
+  try {
+    // Fetch all interviews for the given HR
+    const interviews = await Interview.find({ hr: hrId });
+
+    // Iterate through the interviews array and add candidateName field
+    const interviewsWithCandidateNames = await Promise.all(
+      interviews.map(async (interview) => {
+        try {
+          const candidateUser = await User.findById(interview.candidate);
+          const candidateName = candidateUser
+            ? `${candidateUser.firstName} ${candidateUser.lastName}`
+            : '';
+          
+          return {
+            ...interview._doc,
+            candidateName,
+          };
+        } catch (error) {
+          console.error('Error fetching candidate user:', error);
+          return interview;
+        }
+      })
+    );
+
+    res.status(200).json(interviewsWithCandidateNames);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};

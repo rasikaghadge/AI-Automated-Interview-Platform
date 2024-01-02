@@ -50,6 +50,9 @@ export const createProfile = (newProfile) => API.post('/profiles', newProfile);
 export const updateProfile = (id, updatedProfile) => API.patch(`/profiles`, updatedProfile);
 export const deleteProfile = (id) => API.delete(`/profiles/${id}`);
 
+export const getInterviewsCandidate = (id) => API.get(`/interviews/candidate/${id}`);
+export const getInterviewsHR = (id) => API.get(`/interviews/hr/${id}`);
+
 export const listMeetings = () => API.get('/meetings');
 export const getMeeting = (id) => API.get(`/meetings/${id}`);
 // export const scheduleMeeting = (meetingData) => API.post('/schedule', meetingData);

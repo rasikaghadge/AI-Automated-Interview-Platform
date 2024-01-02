@@ -13,6 +13,7 @@ import Homepage from './components/Homepage/Homepage';
 import RoleSelect from './components/RoleSelect/RoleSelect';
 import VideosdkMeeting from './components/VideosdkMeeting/VideosdkMeeting';
 import Schedule from './components/Schedule/Schedule';
+import SeeScheduledInterviews from './components/SeeScheduledInterviews/SeeScheduledInterviews';
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/login" element={<Login/>} />
           <Route path="/homepage" element={<Homepage/>} />
           <Route path="/profile" element={<Profile/>} />
+          <Route path="/scheduledinterviews" element={<SeeScheduledInterviews/>} />
           <Route path="/forgot" element={<Forgot/>} />
           <Route path="/reset/:token" element={<Reset/>} />
           <Route path="/select" element={<RoleSelect/>} />
