@@ -100,10 +100,16 @@ export const listInterviewsCandidate = async (req, res) => {
           const hrName = hrUser
             ? `${hrUser.firstName} ${hrUser.lastName}`
             : '';
+
+          const candidateUser = await User.findById(interview.candidate);
+          const candidateName = candidateUser
+            ? `${candidateUser.firstName} ${candidateUser.lastName}`
+            : '';
           
           return {
             ...interview._doc,
             hrName,
+            candidateName,
           };
         } catch (error) {
           console.error('Error fetching hr user:', error);
