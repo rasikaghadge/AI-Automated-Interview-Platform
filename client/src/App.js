@@ -12,6 +12,7 @@ import Reset from './components/Password/Reset'
 import Homepage from './components/Homepage/Homepage';
 import RoleSelect from './components/RoleSelect/RoleSelect';
 import VideosdkMeeting from './components/VideosdkMeeting/VideosdkMeeting';
+import Schedule from './components/Schedule/Schedule';
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/forgot" element={<Forgot/>} />
           <Route path="/reset/:token" element={<Reset/>} />
           <Route path="/select" element={<RoleSelect/>} />
+          <Route path="/schedule" element={<Schedule/>} />
         </Routes>
         </SnackbarProvider>
       </BrowserRouter>

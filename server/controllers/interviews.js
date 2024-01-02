@@ -47,7 +47,7 @@ export const getMeeting = async (req, res) => {
 
 export const scheduleMeeting = async (req, res) => {
   // Get meeting details from request body
-  const { title, description, startTime, endTime, email } = req.body;
+  const { title, description, startDate, startTime, endTime, email } = req.body;
   const options = {
     method: "GET",
     headers: {
@@ -60,17 +60,19 @@ export const scheduleMeeting = async (req, res) => {
   if (!sdkMeeting) {
     return res.status(500).json({ message: "Error in creating meeting" });
   }
+  // console.log(email);
   let user = await User.findOne({ email: email }).select('-password');
   if (!user) {
     return res.status(500).json({ message: "User not found" });
   }
   // concat user and userProfile
   let hr = await User.findOne({ email: req.email }).select('-password');
-  console.log(user);
+  // console.log(user);
   const interview = new Interview({
     id: sdkMeeting.id,
     title: title,
     description: description,
+    startDate: startDate,
     startTime: startTime,
     endTime: endTime,
     user: user,
@@ -84,5 +86,5 @@ export const scheduleMeeting = async (req, res) => {
     res.status(201).json(interview);
   } catch (error) {
     res.status(409).json({ message: error.message });
-  }
-};
+  } 
+}
