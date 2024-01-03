@@ -6,8 +6,13 @@ import { LeaveScreen } from "../screens/LeaveScreen";
 import { JoiningScreen } from "../screens/JoiningScreen";
 import { MeetingContainer } from '../../meeting/MeetingContainer';
 import { MeetingAppProvider } from "./MeetingAppContextDef";
+import { useLocation } from 'react-router-dom';
 
 const VideosdkMeeting = () => {
+
+  const location = useLocation();
+  const { roomIDFromDB, participantNameFromDB} = location.state || {};
+
   const [token, setToken] = useState("");
   const [meetingId, setMeetingId] = useState("");
   const [participantName, setParticipantName] = useState("");
@@ -27,13 +32,16 @@ const VideosdkMeeting = () => {
     "only screen and (max-width: 768px)"
   ).matches;
 
+
   useEffect(() => {
     if (isMobile) {
       window.onbeforeunload = () => {
         return "Are you sure you want to exit?";
       };
     }
-  }, [isMobile]);
+    setMeetingId(roomIDFromDB);
+    setParticipantName(participantNameFromDB);
+  }, [isMobile, roomIDFromDB, participantNameFromDB]);
 
   return (
     <>
@@ -84,6 +92,7 @@ const VideosdkMeeting = () => {
         <JoiningScreen
           participantName={participantName}
           setParticipantName={setParticipantName}
+          meetingId={meetingId}
           setMeetingId={setMeetingId}
           setToken={setToken}
           setMicOn={setMicOn}

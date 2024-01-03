@@ -77,8 +77,10 @@ export const admin = async (req, res, next) => {
 }
 
 export const hrAuth = async (req, res, next) => {
+
     try {
         const authorizationHeader = req.headers.authorization;
+        // console.log("Authorization header", authorizationHeader);
 
         // Check if the authorization header is not present
         if (!authorizationHeader) {
