@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import Interview from '../models/Interview.js';
 import User from '../models/userModel.js';
-import Profile from '../models/ProfileModel.js';
+// import Profile from '../models/ProfileModel.js';
 import { createVideoSdkRoom, fetchVideoSdkRooms, validateVideoSdkRoom, deactivateVideoSdkRoom } from "../helper/videosdkHelper.js";
 
 
@@ -59,12 +59,14 @@ export const scheduleMeeting = async (req, res) => {
   if (!sdkMeeting) {
     return res.status(500).json({ message: "Error in creating meeting" });
   }
+  // console.log(email);
   let user = await User.findOne({ email: email }).select('-password');
   if (!user) {
     return res.status(500).json({ message: "User not found" });
   }
   // concat user and userProfile
   let hr = await User.findOne({ email: req.email }).select('-password');
+  console.log(user);
   const interview = new Interview({
     id: sdkMeeting.id,
     title: title,

@@ -12,6 +12,7 @@ const API_AUTH_URL = null;
 // this function will used internally or by direct client
 export const createMeeting = async (req, res) => {
 	const url = `${API_BASE_URL}/v2/rooms`;
+  // console.log(url);
 	const headers = { 
 		Authorization: req.headers.authorization.split(' ')[1],
 		"Content-Type": "application/json"
