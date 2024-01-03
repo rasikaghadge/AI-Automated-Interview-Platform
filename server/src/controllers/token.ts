@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv'
 
 // Create a token for the user
-export const createToken = (email, id, role, expiresIn, SECRET, VIDEOSDK_API_KEY) => {
+export const createToken = (email: string, id: any, role: string, expiresIn: any, SECRET: any, VIDEOSDK_API_KEY: any) => {
     var permissions = null;
     if (role==='candidate') {
         permissions = ['allow_join', 'ask_join']
