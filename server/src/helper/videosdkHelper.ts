@@ -9,10 +9,13 @@ dotenv.config();
 const API_BASE_URL = process.env.API_BASE_URL
 const VIDEOSDK_TOKEN = process.env.VIDEOSDK_TOKEN
 const API_AUTH_URL = null;
+const VIDEOSDK_API_ENDPOINT = process.env.VIDEOSDK_API_ENDPOINT
 
 
-export const createVideoSdkRoom = async (options: any) => {
-    const url = `${API_BASE_URL}/v2/rooms`;
+export const createVideoSdkRoom = async (options) => {
+
+    const url = `https://api.videosdk.live/v2/rooms`;
+    // console.log(url);
     try {
         const response = await axios.post(url, {}, options);
         return response.data;

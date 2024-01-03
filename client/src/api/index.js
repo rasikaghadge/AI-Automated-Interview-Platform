@@ -18,7 +18,7 @@ API.interceptors.request.use((req) => {
     if(localStorage.getItem('profile')) {
         req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
     }
-
+    // console.log(req);
     return req
 })
 
@@ -52,3 +52,8 @@ export const deleteProfile = (id) => API.delete(`/profiles/${id}`);
 
 export const getInterviewsCandidate = (id) => API.get(`/interviews/candidate/${id}`);
 export const getInterviewsHR = (id) => API.get(`/interviews/hr/${id}`);
+
+export const listMeetings = () => API.get('/meetings');
+export const getMeeting = (id) => API.get(`/meetings/${id}`);
+// export const scheduleMeeting = (meetingData) => API.post('/schedule', meetingData);
+export const scheduleMeeting = (formData) => API.post(`/interviews/schedule`, formData);

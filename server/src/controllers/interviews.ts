@@ -1,8 +1,8 @@
-// @ts-ignore
-import dotenv from "dotenv";
-import Interview from "../models/Interview.js";
-import User from "../models/userModel.js";
-import Profile from "../models/ProfileModel.js";
+import dotenv from 'dotenv';
+import Interview from '../models/Interview.js';
+import User from '../models/userModel.js';
+// import Profile from '../models/ProfileModel.js';
+import { createVideoSdkRoom, fetchVideoSdkRooms, validateVideoSdkRoom, deactivateVideoSdkRoom } from "../helper/videosdkHelper.js";
 
 import {
   createVideoSdkRoom,
@@ -41,12 +41,14 @@ export const scheduleMeeting = async (req: any, res: any) => {
   if (!sdkMeeting) {
     return res.status(500).json({ message: "Error in creating meeting" });
   }
-  let user = await User.findOne({ email: email }).select("-password");
+  // console.log(email);
+  let user = await User.findOne({ email: email }).select('-password');
   if (!user) {
     return res.status(500).json({ message: "User not found" });
   }
   // concat user and userProfile
-  let hr = await User.findOne({ email: req.email }).select("-password");
+  let hr = await User.findOne({ email: req.email }).select('-password');
+  console.log(user);
   const interview = new Interview({
     id: sdkMeeting.id,
     title: title,
@@ -79,11 +81,21 @@ export const listInterviewsCandidate = async (req: any, res: any) => {
       interviews.map(async (interview: any) => {
         try {
           const hrUser = await User.findById(interview.hr);
-          const hrName = hrUser ? `${hrUser.firstName} ${hrUser.lastName}` : "";
+          const hrProfile = await Profile.findById(hrUser.profile);
+          const hrName = hrUser
+            ? `${hrUser.firstName} ${hrUser.lastName}`
+            : '';
 
+          const candidateUser = await User.findById(interview.candidate);
+          const candidateName = candidateUser
+            ? `${candidateUser.firstName} ${candidateUser.lastName}`
+            : '';
+          const profilePicture = hrProfile.profilePicture;
           return {
             ...interview._doc,
             hrName,
+            candidateName,
+            profilePicture
           };
         } catch (error) {
           console.error("Error fetching hr user:", error);
@@ -109,13 +121,15 @@ export const listInterviewsHR = async (req: any, res: any) => {
       interviews.map(async (interview: any) => {
         try {
           const candidateUser = await User.findById(interview.candidate);
+          const candidateProfile = await Profile.findById(candidateUser.profile);
           const candidateName = candidateUser
             ? `${candidateUser.firstName} ${candidateUser.lastName}`
-            : "";
-
+            : '';
+          const profilePicture = candidateProfile.profilePicture;
           return {
             ...interview._doc,
             candidateName,
+            profilePicture
           };
         } catch (error) {
           console.error("Error fetching candidate user:", error);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo  } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { decode } from "jsonwebtoken";
 import { useEffect } from "react";
@@ -38,13 +38,13 @@ const SeeScheduledInterviews = () => {
   const fetchData = async (id) => {
     try {
       let response = null;
-  
+
       if (userRole === "candidate") {
         response = await dispatch(getInterviewsCandidate(id));
       } else if (userRole === "hr") {
         response = await dispatch(getInterviewsHR(id));
       }
-  
+
       if (response && response[0]) {
         // Sort interviews by date and time before setting the state
         const sortedInterviews = response.sort((a, b) => {
@@ -53,11 +53,11 @@ const SeeScheduledInterviews = () => {
           if (dateComparison !== 0) {
             return dateComparison;
           }
-  
+
           // If start dates are equal, compare start times
           return a.startTime.localeCompare(b.startTime);
         });
-  
+
         setInterviews(sortedInterviews);
         setDataFetched(true);
       } else if (!response[0]) {
@@ -87,22 +87,32 @@ const SeeScheduledInterviews = () => {
   }, [user, interviews, dataFetched]);
 
   // Function to parse time string (HH:MM) and create a Date object
-const parseTimeString = (timeString, startDate) => {
-  const [hours, minutes] = timeString.split(':');
-  const date = new Date(startDate);
-  date.setHours(parseInt(hours, 10));
-  date.setMinutes(parseInt(minutes, 10));
-  date.setSeconds(0);
+  const parseTimeString = (timeString, startDate) => {
+    const [hours, minutes] = timeString.split(":");
+    const date = new Date(startDate);
+    date.setHours(parseInt(hours, 10));
+    date.setMinutes(parseInt(minutes, 10));
+    date.setSeconds(0);
 
-  return date;
-};
+    return date;
+  };
 
-  // Function to check if the current time is between start and end time
-  const isTimeBetween = (startTime, endTime, startDate) => {
-    const now = new Date();
-    const start = parseTimeString(startTime, startDate);
-    const end = parseTimeString(endTime, startDate);
-    return start <= now && now <= end;
+  const isJoinEnabled = useMemo(() => {
+    return (startTime, endTime, startDate, userRole) => {
+      const now = new Date();
+      const start = parseTimeString(startTime, startDate);
+      const end = parseTimeString(endTime, startDate);
+      return start <= now && now <= end && userRole === "candidate";
+    };
+  }, []);
+
+  const navigateToVideosdkMeeting = (roomId, participantName) => {
+    navigate('/meetings', {
+      state: {
+        roomIDFromDB: roomId,
+        participantNameFromDB: participantName,
+      },
+    });
   };
 
   return (
@@ -126,31 +136,54 @@ const parseTimeString = (timeString, startDate) => {
             </tr>
           </thead>
           <tbody>
+          {console.log(interviews)}
             {interviews.map((interview) => (
               <tr key={interview._id}>
                 <td>{interview.title}</td>
                 <td>{interview.description}</td>
                 <td>{new Date(interview.startDate).toLocaleDateString()}</td>
                 <td>{`${interview.startTime} - ${interview.endTime}`}</td>
-                {userRole === "candidate" ? <td>{interview.hrName}</td> : null}
-                {userRole === "hr" ? <td>{interview.candidateName}</td> : null}   
+                <td>{userRole === "candidate" ? <img
+                    src={`data:image/png;base64, ${interview.profilePicture}`}
+                    alt="HR Profile"
+                    style={{ width: '85px', height: '50px', borderRadius: '50%' }}
+                  />: <img
+                    src={`data:image/png;base64, ${interview.profilePicture}`} 
+                    alt="HR Profile"
+                    style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+                  />}</td>  
                 <td>{interview.status}</td>
-                {userRole === "candidate" && isTimeBetween(interview.startTime, interview.endTime, interview.startDate) ? (
-                <button className="btn btn-success btn-sm" style={{margin: "5px", marginTop: "10px"}}>Join Interview</button>
-              ) : <button className="btn btn-success btn-sm disabled" style={{margin: "5px", marginTop: "10px"}}>Join Interview</button>}
+                  <button
+                    onClick={() => navigateToVideosdkMeeting(interview.room.roomId, interview.candidateName)}
+                    className={`btn btn-success btn-sm ${
+                      !isJoinEnabled(
+                        interview.startTime,
+                        interview.endTime,
+                        interview.startDate,
+                        userRole
+                      )
+                        ? "disabled"
+                        : ""
+                    }`}
+                    style={{ margin: "5px", marginTop: "10px" }}
+                  >
+                    Join Interview
+                  </button>
               </tr>
             ))}
           </tbody>
         </table>
       )}
       <Link to={"/homepage"}>
-        <button className="btn btn-secondary" style={{marginRight: "20px", marginTop: "10px"}} >Back</button>
+        <button className="btn btn-secondary" style={{ marginRight: "20px", marginTop: "10px" }}>Back</button>
       </Link>
-      {/* TODO change the route to schedule page */}
-      {userRole==="hr" && <Link to={"/homepage"}>
-        <button className="btn btn-primary"style={{marginTop: "10px"}}>Schedule Interview</button>
-      </Link>}
-
+      {userRole === "hr" && (
+        <Link to={"/schedule"}>
+          <button className="btn btn-primary" style={{ marginTop: "10px" }}>
+            Schedule Interview
+          </button>
+        </Link>
+      )}
     </div>
   );
 };

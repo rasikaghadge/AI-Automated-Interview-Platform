@@ -15,6 +15,7 @@ import MicOnIcon from "../../icons/Bottombar/MicOnIcon";
 export function JoiningScreen({
   participantName,
   setParticipantName,
+  meetingId,
   setMeetingId,
   setToken,
   setSelectedMic,
@@ -440,6 +441,8 @@ export function JoiningScreen({
                   <MeetingDetailsScreen
                     participantName={participantName}
                     setParticipantName={setParticipantName}
+                    meetingId={meetingId}
+                    setMeetingId={setMeetingId}
                     videoTrack={videoTrack}
                     setVideoTrack={setVideoTrack}
                     onClickStartMeeting={onClickStartMeeting}
