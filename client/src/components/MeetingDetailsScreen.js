@@ -6,15 +6,19 @@ export function MeetingDetailsScreen({
   _handleOnCreateMeeting,
   participantName,
   setParticipantName,
+  meetingId,
+  setMeetingId,
   videoTrack,
   setVideoTrack,
   onClickStartMeeting,
 }) {
-  const [meetingId, setMeetingId] = useState("");
+
+  // BELOW LINE: Kept because might be required later
+  // const [meetingId, setMeetingId] = useState("");
   const [meetingIdError, setMeetingIdError] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [iscreateMeetingClicked, setIscreateMeetingClicked] = useState(false);
-  const [isJoinMeetingClicked, setIsJoinMeetingClicked] = useState(false);
+  const [isJoinMeetingClicked, setIsJoinMeetingClicked] = useState(true);
 
   return (
     <div
@@ -50,7 +54,8 @@ export function MeetingDetailsScreen({
               setMeetingId(e.target.value);
             }}
             placeholder={"Enter meeting Id"}
-            className="px-4 py-3 bg-gray-650 rounded-xl text-white w-full text-center"
+            className="px-4 py-3 bg-gray-650 rounded-xl w-full text-center"
+            disabled
           />
           {meetingIdError && (
             <p className="text-xs text-red-600">{`Please enter valid meetingId`}</p>
@@ -64,7 +69,7 @@ export function MeetingDetailsScreen({
             value={participantName}
             onChange={(e) => setParticipantName(e.target.value)}
             placeholder="Enter your name"
-            className="px-4 py-3 mt-5 bg-gray-650 rounded-xl text-white w-full text-center"
+            className="px-4 py-3 mt-5 bg-gray-650 rounded-xl w-full text-center"
           />
 
           {/* <p className="text-xs text-white mt-1 text-center">
@@ -89,7 +94,7 @@ export function MeetingDetailsScreen({
               }
             }}
           >
-            {iscreateMeetingClicked ? "Start a meeting" : "Join a meeting"}
+            {iscreateMeetingClicked ? "Start a meeting" : "Start Interview"}
           </button>
         </>
       )}

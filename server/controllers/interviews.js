@@ -101,10 +101,16 @@ export const listInterviewsCandidate = async (req, res) => {
           const hrName = hrUser
             ? `${hrUser.firstName} ${hrUser.lastName}`
             : '';
+
+          const candidateUser = await User.findById(interview.candidate);
+          const candidateName = candidateUser
+            ? `${candidateUser.firstName} ${candidateUser.lastName}`
+            : '';
           const profilePicture = hrProfile.profilePicture;
           return {
             ...interview._doc,
             hrName,
+            candidateName,
             profilePicture
           };
         } catch (error) {
