@@ -136,14 +136,22 @@ const SeeScheduledInterviews = () => {
             </tr>
           </thead>
           <tbody>
+          {console.log(interviews)}
             {interviews.map((interview) => (
               <tr key={interview._id}>
                 <td>{interview.title}</td>
                 <td>{interview.description}</td>
                 <td>{new Date(interview.startDate).toLocaleDateString()}</td>
                 <td>{`${interview.startTime} - ${interview.endTime}`}</td>
-                {userRole === "candidate" ? <td>{interview.hrName}</td> : null}
-                {userRole === "hr" ? <td>{interview.candidateName}</td> : null}
+                <td>{userRole === "candidate" ? <img
+                    src={`data:image/png;base64, ${interview.profilePicture}`}
+                    alt="HR Profile"
+                    style={{ width: '85px', height: '50px', borderRadius: '50%' }}
+                  />: <img
+                    src={`data:image/png;base64, ${interview.profilePicture}`} 
+                    alt="HR Profile"
+                    style={{ width: '50px', height: '50px', borderRadius: '50%' }}
+                  />}</td>  
                 <td>{interview.status}</td>
                   <button
                     onClick={() => navigateToVideosdkMeeting(interview.room.roomId, interview.candidateName)}

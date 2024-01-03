@@ -97,6 +97,7 @@ export const listInterviewsCandidate = async (req, res) => {
       interviews.map(async (interview) => {
         try {
           const hrUser = await User.findById(interview.hr);
+          const hrProfile = await Profile.findById(hrUser.profile);
           const hrName = hrUser
             ? `${hrUser.firstName} ${hrUser.lastName}`
             : '';
@@ -105,11 +106,12 @@ export const listInterviewsCandidate = async (req, res) => {
           const candidateName = candidateUser
             ? `${candidateUser.firstName} ${candidateUser.lastName}`
             : '';
-          
+          const profilePicture = hrProfile.profilePicture;
           return {
             ...interview._doc,
             hrName,
             candidateName,
+            profilePicture
           };
         } catch (error) {
           console.error('Error fetching hr user:', error);
@@ -135,13 +137,15 @@ export const listInterviewsHR = async (req, res) => {
       interviews.map(async (interview) => {
         try {
           const candidateUser = await User.findById(interview.candidate);
+          const candidateProfile = await Profile.findById(candidateUser.profile);
           const candidateName = candidateUser
             ? `${candidateUser.firstName} ${candidateUser.lastName}`
             : '';
-          
+          const profilePicture = candidateProfile.profilePicture;
           return {
             ...interview._doc,
             candidateName,
+            profilePicture
           };
         } catch (error) {
           console.error('Error fetching candidate user:', error);
