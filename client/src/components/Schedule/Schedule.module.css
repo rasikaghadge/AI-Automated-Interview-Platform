@@ -1,0 +1,107 @@
+.auth_container {
+    justify-content: center;
+    align-items: center;
+    max-width: 80%;
+    height: 100vh;
+    padding: 100px;
+    background: linear-gradient(to right, #ECF2FF, #FBFCFF);
+  }
+  
+  .auth_content {
+    display: flex;
+    align-items: stretch; /* Make the image and form container have the same height */
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Add box shadow */
+  }
+  
+  .auth_image {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  .auth_image img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+  
+  .auth_form_container {
+    flex: 1;
+    max-width: 100%;
+    padding: 20px;
+    background-color: white;
+    border-radius: 20px;
+    text-align: center;
+    /* border-left: 1px solid blue; */
+  }
+  
+  .heading {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .auth_form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .input_feild {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .input_container {
+    display: flex;
+    justify-content: space-between; /* Add spacing between the input fields */
+  }
+  
+  .half_width {
+    flex: 1;
+    margin: 0 5px; /* Adjust the spacing between the input fields */
+  }
+  
+  .submit_button {
+    background-color: rgb(24, 134, 20);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .back_button {
+    background-color: #396491;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .auth_option {
+    margin: 10px 0;
+    font-size: 16px;
+    color: #777;
+  }
+  
+  .auth_switch {
+    margin-top: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: underline;
+    color: #007bff;
+  }
+  
+  .forgot_password {
+    text-align: center;
+    color: #1d7dd6;
+    margin-top: 20px;
+  }
+  
