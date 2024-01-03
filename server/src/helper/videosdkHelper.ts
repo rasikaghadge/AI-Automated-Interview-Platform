@@ -12,7 +12,7 @@ const API_AUTH_URL = null;
 const VIDEOSDK_API_ENDPOINT = process.env.VIDEOSDK_API_ENDPOINT
 
 
-export const createVideoSdkRoom = async (options) => {
+export const createVideoSdkRoom = async (options: any) => {
 
     const url = `https://api.videosdk.live/v2/rooms`;
     // console.log(url);
