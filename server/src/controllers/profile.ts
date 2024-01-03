@@ -65,7 +65,7 @@ export const updateProfile = async (req: any, res: any) => {
   const profileData = req.body;
 
   try {
-    const user: any = await User.findById(req.id).populate("profile");
+    const user: any = await User.findByIdAndUpdate(req.id, profileData, {new: true});
     const profile = await Profile.findByIdAndUpdate(user.profile, profileData, {
       new: true,
     });
@@ -81,8 +81,7 @@ export const updateProfile = async (req: any, res: any) => {
 
 export const deleteProfile = async (req: any, res: any) => {
   try {
-    const userId = req.id; // Assuming you have a way to get the user ID
-    const user = await User.findById(userId);
+    const user = await User.findById(req.id);
     if (!user) {
       return res
         .status(404)
@@ -92,7 +91,7 @@ export const deleteProfile = async (req: any, res: any) => {
     const profileId = user.profile;
 
     // Delete the user
-    await User.deleteOne({ _id: userId });
+    await User.deleteOne({ _id: req.id });
 
     // Delete the associated profile
     await Profile.findOneAndDelete({ _id: profileId });
