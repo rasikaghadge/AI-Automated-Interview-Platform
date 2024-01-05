@@ -1,3 +1,5 @@
+// @ts-ignore
+
 import dotenv from 'dotenv';
 import axios from 'axios';
 
@@ -10,7 +12,7 @@ const API_AUTH_URL = null;
 const VIDEOSDK_API_ENDPOINT = process.env.VIDEOSDK_API_ENDPOINT
 
 
-export const createVideoSdkRoom = async (options) => {
+export const createVideoSdkRoom = async (options: any) => {
 
     const url = `https://api.videosdk.live/v2/rooms`;
     // console.log(url);
@@ -23,7 +25,7 @@ export const createVideoSdkRoom = async (options) => {
     }
 }
 
-export const validateVideoSdkRoom = async (roomId) => {
+export const validateVideoSdkRoom = async (roomId: any) => {
     const url = `${API_BASE_URL}/v2/rooms/validate/${roomId}`;
     const headers = {
         Authorization: `Bearer ${VIDEOSDK_TOKEN}`,
@@ -39,7 +41,7 @@ export const validateVideoSdkRoom = async (roomId) => {
     }
 }
 
-export const fetchVideoSdkRooms = async (roomId) => {
+export const fetchVideoSdkRooms = async (roomId: any) => {
     const options = {
         method: "GET",
         headers: {
@@ -63,7 +65,7 @@ export const fetchVideoSdkRooms = async (roomId) => {
     }
 }
 
-export const deactivateVideoSdkRoom = async (roomId) => {
+export const deactivateVideoSdkRoom = async (roomId: any) => {
     const options = {
         method: "POST",
         headers: {
