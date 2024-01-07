@@ -1,5 +1,6 @@
 import { createCameraVideoTrack } from "@videosdk.live/react-sdk";
 import { useMeetingAppContext } from "../components/VideosdkMeeting/MeetingAppContextDef";
+import { createMicrophoneAudioTrack } from "@videosdk.live/react-sdk";
 
 const useMediaStream = () => {
   const { selectedWebcam, webCamResolution } = useMeetingAppContext();
@@ -19,7 +20,27 @@ const useMediaStream = () => {
     }
   };
 
-  return { getVideoTrack };
+  const getAudioTrack = async () => {
+    try {
+      let customTrack = await createMicrophoneAudioTrack({
+        encoderConfig: "speech_standard",
+        noiseConfig: {
+          noiseSuppression: true,
+          echoCancellation: true,
+          autoGainControl: true,
+        },
+      });
+      console.log('returning audio track')
+      console.log(customTrack);
+      return customTrack;
+    } catch (error) {
+      console.log('error in creating audio trakc')
+      console.log(error);
+      return null;
+    }
+  };
+
+  return { getVideoTrack, getAudioTrack };
 };
 
 export default useMediaStream;

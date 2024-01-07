@@ -28,6 +28,9 @@ import { Dialog, Popover, Transition } from "@headlessui/react";
 import { createPopper } from "@popperjs/core";
 import { useMeetingAppContext } from "../../components/VideosdkMeeting/MeetingAppContextDef";
 import useMediaStream from "../../hooks/useMediaStream";
+import VAD from "../../vad.js-master/lib/vad.js";
+
+// const VAD = window.VAD;
 
 function PipBTN({ isMobile, isTab }) {
   const { pipMode, setPipMode } = useMeetingAppContext();
@@ -246,6 +249,7 @@ export function BottomBar({
     const [mics, setMics] = useState([]);
     const localMicOn = mMeeting?.localMicOn;
     const changeMic = mMeeting?.changeMic;
+    const { getAudioTrack } = useMediaStream();
 
     const getMics = async (mGetMics) => {
       const mics = await mGetMics();
@@ -271,8 +275,89 @@ export function BottomBar({
       <>
         <OutlinedButton
           Icon={localMicOn ? MicOnIcon : MicOffIcon}
-          onClick={() => {
+          onClick={async () => {
             mMeeting.toggleMic();
+            if (!localMicOn) {
+              // audioTrack = await getAudioTrack();
+              async function downloadAudio(audioBlob) {
+                console.log('download audio');
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(audioBlob);
+                downloadLink.download = 'recorded_audio.wav';
+
+                // Trigger the download
+                downloadLink.click();
+              }
+
+              async function captureAndSaveAudio() {
+                if (!localMicOn) {
+                  const audioTrack = await getAudioTrack(); // Replace with your audio track acquisition logic
+                  console.log('audio track')
+                  console.log(audioTrack);
+                  if (audioTrack) {
+                    // Create an audio context
+                    console.log('AUDO TRACK IN if')
+                    console.log(audioTrack);
+                    const audioContext = new AudioContext();
+                    const source = audioContext.createMediaStreamSource(audioTrack);
+
+                    // Create a MediaRecorder to capture audio
+                    const mediaRecorder = new MediaRecorder(audioTrack);
+                    const audioChunks = [];
+
+                    // Handle audio data
+                    mediaRecorder.ondataavailable = (event) => {
+                      if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                      }
+                    };
+
+                    // Start recording
+                    console.log("Starting recording")
+                    
+                    // detect audio from audio track and start recording
+                    // stop recording after an interval of 3 seconds of silence
+                    var options = {
+                      source: source,
+                      voice_start: () => {
+                        console.log('Voice start detected. Start recording.');
+                        mediaRecorder.start();
+                      },
+                      voice_stop: () => {
+                        console.log('Voice stop detected. Stop recording.');
+                        mediaRecorder.stop();
+                      },
+                    }
+
+                    const vad = new VAD(options);
+                    
+                    vad.start();
+
+                    // Wait for some time (e.g., 10 seconds) while the user speaks
+                    await new Promise((resolve) => setTimeout(resolve, 10000));
+                    //TODO: wait for 3 seonds of silence
+
+                    // Stop recording
+                    console.log("Stopping recording")
+                    vad.stop();
+
+                    // When the recording is stopped, create a Blob with the captured audio
+                    mediaRecorder.onstop = () => {
+                      const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+
+                      // Save the audio file to the client-side
+                      // saveAs(audioBlob, 'recorded-audio.wav');
+                      downloadAudio(audioBlob);
+
+                      // Send the audio file to the server
+                    };
+                  }
+                }
+              }
+
+              captureAndSaveAudio();
+
+            }
           }}
           bgColor={localMicOn ? "bg-gray-750" : "bg-white"}
           borderColor={localMicOn && "#ffffff33"}
@@ -326,16 +411,14 @@ export function BottomBar({
                                 <div className="flex flex-col">
                                   {mics.map(({ deviceId, label }, index) => (
                                     <div
-                                      className={`px-3 py-1 my-1 pl-6 text-white text-left ${
-                                        deviceId === selectMicDeviceId &&
+                                      className={`px-3 py-1 my-1 pl-6 text-white text-left ${deviceId === selectMicDeviceId &&
                                         "bg-gray-150"
-                                      }`}
+                                        }`}
                                     >
                                       <button
-                                        className={`flex flex-1 w-full ${
-                                          deviceId === selectMicDeviceId &&
+                                        className={`flex flex-1 w-full ${deviceId === selectMicDeviceId &&
                                           "bg-gray-150"
-                                        }`}
+                                          }`}
                                         key={`mics_${deviceId}`}
                                         onClick={() => {
                                           setSelectMicDeviceId(deviceId);
@@ -358,9 +441,8 @@ export function BottomBar({
                 </Popover>
                 <div
                   style={{ zIndex: 999 }}
-                  className={`${
-                    tooltipShow ? "" : "hidden"
-                  } overflow-hidden flex flex-col items-center justify-center pb-4`}
+                  className={`${tooltipShow ? "" : "hidden"
+                    } overflow-hidden flex flex-col items-center justify-center pb-4`}
                   ref={tooltipRef}
                 >
                   <div className={"rounded-md p-1.5 bg-black "}>
