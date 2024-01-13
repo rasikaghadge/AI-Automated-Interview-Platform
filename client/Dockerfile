@@ -9,6 +9,15 @@ COPY package*.json yarn.lock ./
 
 # Set NODE_OPTIONS to include --openssl-legacy-provider
 ENV NODE_OPTIONS=--openssl-legacy-provider
+ENV REACT_APP_API=https://ai-interviewer-backend.onrender.com
+ENV API_BASE_URL=https://api.videosdk.live
+ENV SKIP_PREFLIGHT_CHECK=true
+ENV NODE_ENV=production
+ENV VIDEOSDK_API_KEY=$VIDEOSDK_API_KEY
+ENV VIDEOSDK_SECRET_KEY=$VIDEOSDK_SECRET_KEY
+ENV VIDEOSDK_API_ENDPOINT=https://api.videosdk.live
+ENV CI=true
+ENV REACT_APP_VIDEOSDK_TOKEN=$REACT_APP_VIDEOSDK_TOKEN
 
 # Install project dependencies using Yarn
 RUN yarn install
