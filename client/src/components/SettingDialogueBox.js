@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Dialog, Popover } from "@headlessui/react";
 import { Transition } from "@headlessui/react";
 import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";

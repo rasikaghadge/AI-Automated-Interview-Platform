@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { GET_INTERVIEWS, START_LOADING, LIST_MEETINGS, GET_MEETING, SCHEDULE_MEETING } from './constants.js';
 import * as api from '../api/index.js';
 

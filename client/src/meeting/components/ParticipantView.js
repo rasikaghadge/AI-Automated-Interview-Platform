@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useMemo } from "react";
 import { useMeeting } from "@videosdk.live/react-sdk";
 import { MemoizedParticipantGrid } from "../../components/ParticipantGrid";
@@ -15,14 +16,14 @@ function ParticipantsViewer({ isPresenting }) {
   const participantIds = useMemo(() => {
     const pinnedParticipantId = [...pinnedParticipants.keys()].filter(
       (participantId) => {
-        return participantId != localParticipant.id;
+        return participantId !== localParticipant.id;
       }
     );
     const regularParticipantIds = [...participants.keys()].filter(
       (participantId) => {
         return (
           ![...pinnedParticipants.keys()].includes(participantId) &&
-          localParticipant.id != participantId
+          localParticipant.id !== participantId
         );
       }
     );

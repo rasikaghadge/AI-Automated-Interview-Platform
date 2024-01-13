@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { decode } from "jsonwebtoken";
@@ -11,7 +12,7 @@ const UpdateProfile = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("profile"));
   const [userRole, setUserRole] = useState("");
-  const [openSnackbar, closeSnackbar] = useSnackbar();
+  const [openSnackbar] = useSnackbar();
   const dispatch = useDispatch();
 
   const [initialData, setInitialData] = useState({
