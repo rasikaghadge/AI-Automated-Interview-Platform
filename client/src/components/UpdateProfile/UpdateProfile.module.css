@@ -1,130 +1,98 @@
 .auth_container {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  max-width: 80%;
-  height: 100vh;
-  padding: 100px;
-  background: linear-gradient(to right, #ECF2FF, #FBFCFF);
+  flex-grow: 1;
+  background-color: #EDF1FC;
 }
 
 .auth_content {
-  display: flex;
-  align-items: stretch; /* Make the image and form container have the same height */
-  background-color: white;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Add box shadow */
-}
-
-.auth_image {
-  flex: 1;
-  padding: 20px;
-}
-
-.auth_image img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
+  max-width: 900px;
+  width: 100%;
+  margin-top: 50px; /* Increased top margin for more space */
+  margin-bottom: 50px;
 }
 
 .auth_form_container {
-  flex: 1;
-  max-width: 100%;
-  padding: 20px;
-  background-color: white;
+  background-color: #fff;
+  padding: 30px;
   border-radius: 20px;
-  text-align: center;
-  /* border-left: 1px solid blue; */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Add box shadow */
+  transition: transform 0.3s ease-in-out;
 }
 
 .heading {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.auth_form {
-  display: flex;
-  flex-direction: column;
-}
-
-.input_feild {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.input_container {
-  display: flex;
-  justify-content: space-between; /* Add spacing between the input fields */
-}
-
-.half_width {
-  flex: 1;
-  margin: 0 5px; /* Adjust the spacing between the input fields */
-}
-
-.submit_button {
-  background-color: rgb(24, 134, 20);
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.submit_button_disabled {
-  background-color: #e0e0e0;
-  color: #bdbdbd;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: not-allowed; 
-}
-
-.back_button {
-  background-color: #396491;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.auth_option {
-  margin: 10px 0;
-  font-size: 16px;
-  color: #777;
-}
-
-.auth_switch {
-  margin-top: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  text-decoration: underline;
-  color: #007bff;
-}
-
-.forgot_password {
   text-align: center;
-  color: #1d7dd6;
-  margin-top: 20px;
+  color: #333;
+  font-size: 30px;
+  margin-bottom: 20px;
+  font-weight: bolder;
+  margin-bottom: 10px;
 }
 
 .label {
   display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #333; /* Adjust the color to match your design */
-  text-align: left; /* Align the text to the left */
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #555;
 }
 
-.select-box {
-  border: 1px solid black; /* Adjust the border color as needed */
-  border-radius: 5px; /* Optional: Add border radius for a rounded appearance */
-  padding: 8px; /* Optional: Add padding for some space inside the select box */
+.input_feild,
+.select_box,
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.input_feild:focus,
+.select_box:focus,
+textarea:focus {
+  border-color: #3498db;
+}
+
+.select_box {
+  cursor: pointer;
+}
+
+.submit_button,
+.submit_button_disabled,
+.back_button {
+  display: block;
+  width: 25%;
+  margin: 0 auto; /* Center the buttons horizontally */
+  padding: 12px;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.submit_button {
+  background-color: #198EFF;
+}
+
+.submit_button:hover {
+  background-color: #0070da;
+}
+
+.submit_button_disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.back_button {
+  background-color: #e74c3c;
+}
+
+.back_button:hover {
+  background-color: #c0392b;
 }
