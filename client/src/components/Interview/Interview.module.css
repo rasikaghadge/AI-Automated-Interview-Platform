@@ -1,0 +1,94 @@
+ body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+}
+
+.interview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.question-container {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+#question {
+  font-size: 24px;
+  margin: 0;
+}
+
+.video-container {
+  width: 80%;
+  max-width: 800px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  border: 2px solid #333;
+  border-radius: 8px;
+}
+
+.live-player {
+  width: 100%;
+  height: auto;
+}
+
+.controls-container {
+  display: flex;
+  flex-wrap: wrap; /* Allow controls to wrap to the next line on smaller screens */
+  justify-content: center;
+}
+
+button {
+  background-color: #fff;
+  border: none;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+}
+
+.header-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.candidate-name {
+  margin-right: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.end-interview-button {
+  padding: 8px 12px;
+  background-color: #ff0000; /* You can change the color */
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Media Queries for Responsiveness */
+@media only screen and (max-width: 600px) {
+  .video-container {
+      width: 90%;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  #question {
+      font-size: 20px;
+  }
+} 
