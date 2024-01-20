@@ -1,7 +1,3 @@
-/* eslint-disable no-unused-vars */
-
-//Copyright (c) 2022 Panshak Solomon
-
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SnackbarProvider from 'react-simple-snackbar'
@@ -12,9 +8,9 @@ import Forgot from './components/Password/Forgot'
 import Reset from './components/Password/Reset'
 import Homepage from './components/Homepage/Homepage';
 import RoleSelect from './components/RoleSelect/RoleSelect';
-import VideosdkMeeting from './components/VideosdkMeeting/VideosdkMeeting';
 import Schedule from './components/Schedule/Schedule';
 import SeeScheduledInterviews from './components/SeeScheduledInterviews/SeeScheduledInterviews';
+import Interview from './components/Interview/Interview'
 
 function App() {
 
@@ -25,7 +21,7 @@ function App() {
       <BrowserRouter>
       <SnackbarProvider>
         <Routes>
-          <Route path="/meetings" element={<VideosdkMeeting/>} />
+          <Route path="/interview" element={<Interview/>} />
           <Route path="/" element={<Home/>} />
           <Route path="/login" element={<Login/>} />
           <Route path="/homepage" element={<Homepage/>} />
