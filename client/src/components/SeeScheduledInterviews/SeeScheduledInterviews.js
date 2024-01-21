@@ -9,6 +9,7 @@ import {
   getInterviewsCandidate,
   getInterviewsHR,
 } from "../../actions/interviews";
+import NavBar from "../NavBar/NavBar";
 
 const SeeScheduledInterviews = () => {
   const navigate = useNavigate();
@@ -116,7 +117,11 @@ const SeeScheduledInterviews = () => {
   };
 
   return (
+    <div className={styles.navbar_container}>
+      <NavBar />
+    
     <div className={styles.scheduled_interviews_container}>
+       
       <h2>Scheduled Interviews</h2>
 
       {interviews.length === 0 ? (
@@ -174,6 +179,7 @@ const SeeScheduledInterviews = () => {
           </tbody>
         </table>
       )}
+      <div className=".btn_container">
       <Link to={"/homepage"}>
         <button className="btn btn-secondary" style={{ marginRight: "20px", marginTop: "10px" }}>Back</button>
       </Link>
@@ -184,6 +190,8 @@ const SeeScheduledInterviews = () => {
           </button>
         </Link>
       )}
+      </div>
+    </div>
     </div>
   );
 };
