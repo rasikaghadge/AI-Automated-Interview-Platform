@@ -1,0 +1,23 @@
+name: Greetings
+
+on:
+  pull_request_target:
+    types:
+      - opened
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - name: Get pull request creator's username
+      id: pr_info
+      run: echo "::set-output name=pr_creator::${{ github.event.pull_request.user.login }}"
+
+    - name: Greet on Pull Request
+      uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        pr-message: "Hi, @${{ steps.pr_info.outputs.pr_creator }}! Thanks for your contribution. We will review your pull request."
