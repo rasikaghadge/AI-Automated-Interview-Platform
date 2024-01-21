@@ -13,7 +13,6 @@ export const createToken = (email: string, id: any, role: string, expiresIn: any
     else {
         permissions = ['ask_join']
     }
-    // referecence: https://docs.videosdk.live/react/guide/video-and-audio-calling-api-sdk/authentication-and-token#payload-while-generating-token
     return jwt.sign({ 
         email, 
         id,
