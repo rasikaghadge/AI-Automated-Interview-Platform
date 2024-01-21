@@ -118,7 +118,6 @@ const SeeScheduledInterviews = () => {
 
   return (
     <div className={styles.navbar_container}>
-      <NavBar />
     
     <div className={styles.scheduled_interviews_container}>
        

@@ -38,7 +38,7 @@ const Homepage = () => {
 
   return (
     <div className="homepage">
-      <NavBar />
+      <NavBar userRole={userRole}/>
       <Hero userRole={userRole} />
       <Info />
       <About />
