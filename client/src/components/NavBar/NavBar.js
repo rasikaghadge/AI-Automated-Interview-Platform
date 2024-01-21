@@ -73,19 +73,14 @@ function NavBar({ userRole }) {
             Reviews
           </a>
         </li>
-        <button
-          onClick={() => navigate("/meetings")}
-        >
-          Meetings
-        </button>
         
-        {/* {userRole === "hr" && ( */}
+        {userRole === "hr" && (
             <button
             onClick={() => navigate("/schedule")}
           >
             Schedule Interviews
           </button>
-          {/* )} */}
+          )}
       </ul>
       <button
         className="navbar-btn"

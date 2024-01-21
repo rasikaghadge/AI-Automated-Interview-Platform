@@ -143,7 +143,6 @@ const UpdateProfile = () => {
 
   return (
     <div className={styles.auth_container}>
-    <NavBar/>
       <div className={styles.auth_content}>
         <div className={styles.auth_form_container}>
           <h1 className={styles.heading}>Update Profile</h1>
