@@ -7,6 +7,7 @@ import styles from "./UpdateProfile.module.css";
 import { updateProfile, getProfile } from "../../actions/profile";
 import { useSnackbar } from "react-simple-snackbar";
 import { useDispatch } from "react-redux";
+import NavBar from "../NavBar/NavBar";
 
 const UpdateProfile = () => {
   const navigate = useNavigate();
@@ -142,6 +143,7 @@ const UpdateProfile = () => {
 
   return (
     <div className={styles.auth_container}>
+    <NavBar/>
       <div className={styles.auth_content}>
         <div className={styles.auth_form_container}>
           <h1 className={styles.heading}>Update Profile</h1>
@@ -297,9 +299,9 @@ const UpdateProfile = () => {
             ) : (
               <button className={styles.submit_button_disabled}>Update</button>
             )}
-            <Link to={"/homepage"}>
+            {/* <Link to={"/homepage"}>
               <button className={styles.back_button}>Back</button>
-            </Link>
+            </Link> */}
           </form>
         </div>
       </div>

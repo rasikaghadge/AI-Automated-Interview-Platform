@@ -86,6 +86,10 @@ const Schedule = () => {
 
           <form onSubmit={handleSubmit} className={styles.auth_form}>
   {userRole === "hr" && (
+    <>
+    <label htmlFor="title" className={styles.label}>
+    Title:
+  </label>
     <input
       type="text"
       id="title"
@@ -96,8 +100,13 @@ const Schedule = () => {
       className={styles.input_feild}
       required
     />
+    </>
   )}
   {userRole === "hr" && (
+    <>
+    <label htmlFor="description" className={styles.label}>
+    Description:
+  </label>
     <input
       type="text"
       id="description"
@@ -108,8 +117,13 @@ const Schedule = () => {
       className={styles.input_feild}
       required
     />
+    </>
   )}
   {userRole === "hr" && (
+    <>
+    <label htmlFor="start-date" className={styles.label}>
+    Start Date:
+  </label>
     <input
       type="date"
       id="startDate"
@@ -119,9 +133,14 @@ const Schedule = () => {
       className={styles.input_field}
       required
     />
+    </>
   )}
 
   {userRole === "hr" && (
+    <>
+    <label htmlFor="start-time" className={styles.label}>
+      Start Time:
+    </label>
     <input
       type="time"
       id="startTime"
@@ -131,9 +150,14 @@ const Schedule = () => {
       className={styles.input_field}
       required
     />
+    </>
   )}
 
   {userRole === "hr" && (
+    <>
+    <label htmlFor="end-time" className={styles.label}>
+    End Time:
+  </label>
     <input
       type="time"
       id="endTime"
@@ -142,9 +166,14 @@ const Schedule = () => {
       onChange={handleChange}
       className={styles.input_field}
     />
+    </>
   )}
   {/* User field (disabled or hidden based on your UI/UX decision) */}
   {userRole === "hr" && (
+    <>
+    <label htmlFor="email" className={styles.label}>
+    Registered Email:
+  </label>
     <input
       type="text"
       id="email"
@@ -156,8 +185,13 @@ const Schedule = () => {
       // required
       // disabled
     />
+    </>
   )}
   {userRole === "hr" && (
+    <>
+    <label htmlFor="status" className={styles.label}>
+    Status:
+  </label>
     <select
       id="status"
       name="status"
@@ -173,9 +207,10 @@ const Schedule = () => {
       <option value="Postponed">Postponed</option>
       <option value="Rescheduled">Rescheduled</option>
     </select>
+    </>
   )}
   <button className={styles.submit_button}>Schedule</button>
-  <Link to={"/homepage"}><button className={styles.back_button}>Back</button></Link>
+  {/* <Link to={"/homepage"}><button className={styles.back_button}>Back</button></Link> */}
 </form>
         </div>
       </div>
