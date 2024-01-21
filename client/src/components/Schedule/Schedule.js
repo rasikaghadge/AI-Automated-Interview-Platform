@@ -6,8 +6,8 @@ import { decode } from "jsonwebtoken";
 import { useEffect } from "react";
 import styles from "./Schedule.module.css";
 import { scheduleMeeting } from "../../actions/interviews";
-import { useSnackbar } from 'react-simple-snackbar'
-import { useDispatch } from 'react-redux'
+import { useSnackbar } from "react-simple-snackbar";
+import { useDispatch } from "react-redux";
 
 let prevUserToken = null;
 
@@ -15,12 +15,12 @@ const Schedule = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("profile"));
   const [userRole, setUserRole] = useState("");
-  const [openSnackbar, closeSnackbar] = useSnackbar()
-  const dispatch = useDispatch()
+  const [openSnackbar, closeSnackbar] = useSnackbar();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!user) {
-      console.log('navigating')
+      console.log("navigating");
       navigate("/login");
     }
     const checkUserRole = async () => {
@@ -58,17 +58,17 @@ const Schedule = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const newValue = name === 'startDate' ? new Date(value) : value;
+    const newValue = name === "startDate" ? new Date(value) : value;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       // Send a request to the server to schedule the interview
       await dispatch(scheduleMeeting(formData));
-  
+
       // Interview scheduled successfully
       openSnackbar("Interview scheduled successfully!");
       navigate("/homepage");
@@ -85,98 +85,137 @@ const Schedule = () => {
           <h1 className={styles.heading}>Schedule Interview</h1>
 
           <form onSubmit={handleSubmit} className={styles.auth_form}>
-  {userRole === "hr" && (
-    <input
-      type="text"
-      id="title"
-      name="title"
-      placeholder="Title"
-      value={formData.title}
-      onChange={handleChange}
-      className={styles.input_feild}
-      required
-    />
-  )}
-  {userRole === "hr" && (
-    <input
-      type="text"
-      id="description"
-      name="description"
-      placeholder="Description"
-      value={formData.description}
-      onChange={handleChange}
-      className={styles.input_feild}
-      required
-    />
-  )}
-  {userRole === "hr" && (
-    <input
-      type="date"
-      id="startDate"
-      name="startDate"
-      value={formData.startDate}
-      onChange={handleChange}
-      className={styles.input_field}
-      required
-    />
-  )}
+            {userRole === "hr" && (
+              <>
+                <label htmlFor="title" className={styles.label}>
+                  Title:
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  placeholder="Title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  className={styles.input_feild}
+                  required
+                />
+              </>
+            )}
+            {userRole === "hr" && (
+              <>
+                <label htmlFor="description" className={styles.label}>
+                  Description:
+                </label>
+                <input
+                  type="text"
+                  id="description"
+                  name="description"
+                  placeholder="Description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className={styles.input_feild}
+                  required
+                />
+              </>
+            )}
+            {userRole === "hr" && (
+              <>
+                <label htmlFor="start-date" className={styles.label}>
+                  Start Date:
+                </label>
+                <input
+                  type="date"
+                  id="startDate"
+                  name="startDate"
+                  value={formData.startDate}
+                  onChange={handleChange}
+                  className={styles.input_field}
+                  required
+                />
+              </>
+            )}
 
-  {userRole === "hr" && (
-    <input
-      type="time"
-      id="startTime"
-      name="startTime"
-      value={formData.startTime}
-      onChange={handleChange}
-      className={styles.input_field}
-      required
-    />
-  )}
+            {userRole === "hr" && (
+              <>
+                <label htmlFor="start-time" className={styles.label}>
+                  Start Time:
+                </label>
+                <input
+                  type="time"
+                  id="startTime"
+                  name="startTime"
+                  value={formData.startTime}
+                  onChange={handleChange}
+                  className={styles.input_field}
+                  required
+                />
+              </>
+            )}
 
-  {userRole === "hr" && (
-    <input
-      type="time"
-      id="endTime"
-      name="endTime"
-      value={formData.endTime}
-      onChange={handleChange}
-      className={styles.input_field}
-    />
-  )}
-  {/* User field (disabled or hidden based on your UI/UX decision) */}
-  {userRole === "hr" && (
-    <input
-      type="text"
-      id="email"
-      name="email"
-      placeholder="Candidate email"
-      value={formData.email}
-      onChange={handleChange}
-      className={styles.input_feild}
-      // required
-      // disabled
-    />
-  )}
-  {userRole === "hr" && (
-    <select
-      id="status"
-      name="status"
-      value={formData.status}
-      onChange={handleChange}
-      className={styles.input_field}
-      required
-    >
-      <option value="Scheduled">Scheduled</option>
-      <option value="Cancelled">Cancelled</option>
-      <option value="Completed">Completed</option>
-      <option value="Live">Live</option>
-      <option value="Postponed">Postponed</option>
-      <option value="Rescheduled">Rescheduled</option>
-    </select>
-  )}
-  <button className={styles.submit_button}>Schedule</button>
-  <Link to={"/homepage"}><button className={styles.back_button}>Back</button></Link>
-</form>
+            {userRole === "hr" && (
+              <>
+                <label htmlFor="end-time" className={styles.label}>
+                  End Time:
+                </label>
+                <input
+                  type="time"
+                  id="endTime"
+                  name="endTime"
+                  value={formData.endTime}
+                  onChange={handleChange}
+                  className={styles.input_field}
+                />
+              </>
+            )}
+            {/* User field (disabled or hidden based on your UI/UX decision) */}
+            {userRole === "hr" && (
+              <>
+                <label htmlFor="email" className={styles.label}>
+                  Registered Email:
+                </label>
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  placeholder="Candidate email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={styles.input_feild}
+                  // required
+                  // disabled
+                />
+              </>
+            )}
+            {userRole === "hr" && (
+              <>
+                <label htmlFor="status" className={styles.label}>
+                  Status:
+                </label>
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className={styles.input_field}
+                  required
+                >
+                  <option value="Scheduled">Scheduled</option>
+                  <option value="Cancelled">Cancelled</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Live">Live</option>
+                  <option value="Postponed">Postponed</option>
+                  <option value="Rescheduled">Rescheduled</option>
+                </select>
+              </>
+            )}
+            <div className="btn_container">
+              <button className={styles.submit_button}>Schedule</button>
+              <Link to={"/homepage"}>
+                <button className={styles.back_button}>Back</button>
+              </Link>
+            </div>
+          </form>
         </div>
       </div>
     </div>
