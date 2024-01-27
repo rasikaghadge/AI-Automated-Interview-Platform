@@ -11,7 +11,6 @@ interface Interview extends Document {
   hr: mongoose.Schema.Types.ObjectId;
   candidate: mongoose.Schema.Types.ObjectId;
   status: 'Scheduled' | 'Cancelled' | 'Completed' | 'Live' | 'Postponed' | 'Rescheduled';
-  room?: Record<string, any>;
 }
 
 export default Interview;

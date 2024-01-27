@@ -2,12 +2,6 @@ import dotenv from "dotenv";
 import Interview from "../models/Interview.js";
 import User from "../models/userModel.js";
 import Profile from "../models/ProfileModel.js";
-import {
-  createVideoSdkRoom,
-  fetchVideoSdkRooms,
-  validateVideoSdkRoom,
-  deactivateVideoSdkRoom,
-} from "../helper/videosdkHelper.js";
 
 dotenv.config();
 
@@ -35,10 +29,7 @@ export const scheduleMeeting = async (req: any, res: any) => {
       "Content-Type": "application/json",
     },
   };
-  const sdkMeeting = await createVideoSdkRoom(options);
-  if (!sdkMeeting) {
-    return res.status(500).json({ message: "Error in creating meeting" });
-  }
+  // TODO - need to figure out library to use for making http requests
   // console.log(email);
   let user = await User.findOne({ email: email }).select("-password");
   if (!user) {
@@ -48,7 +39,6 @@ export const scheduleMeeting = async (req: any, res: any) => {
   let hr = await User.findOne({ email: req.email }).select("-password");
   console.log(user);
   const interview = new Interview({
-    id: sdkMeeting.id,
     title: title,
     description: description,
     startDate: startDate,
@@ -57,7 +47,6 @@ export const scheduleMeeting = async (req: any, res: any) => {
     candidate: user,
     hr: hr,
     status: "Scheduled",
-    room: sdkMeeting,
   });
 
   try {
