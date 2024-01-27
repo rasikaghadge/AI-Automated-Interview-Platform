@@ -6,9 +6,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./Interview.module.css";
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import SeeScheduledInterviews from '../SeeScheduledInterviews/SeeScheduledInterviews';
 
-const Interview = () => {
+const Interview = (props) => {
+  console.log(props);
+
+  const navigate = useNavigate();
+  const { id } = useParams();
+  console.log(id);
   const location = useLocation();
   const candidateName = location?.state?.participantNameFromDB;
   const [permission, setPermission] = useState(false);
@@ -89,13 +95,122 @@ const Interview = () => {
     };
   };
 
+  const directToScheduledInterviews = () => {
+    setTimeout(() => {
+      window.alert('Interview ended. Redirecting to scheduled interviews.');
+      window.location.replace('/scheduledinterviews');
+    }, 1000);
+  };
+
+  const redirectToScheduledInterviews = async () => {
+    try {
+
+      if (!id) {
+        console.error('Interview id is undefined');
+        return;
+      }
+
+      const fetchUrl = `/api/interview/${id}/endtime`;
+    console.log('Fetch URL:', fetchUrl);
+
+    console.log('Interview id:', id);
+      
+      // Fetch endTime from the server
+      const response = await fetch(`/api/interview/${id}/endtime`);
+      const data = await response.json();
+
+      console.log('Fetch response:', response);
+    console.log('Fetched data:', data);
+
+      if (response.ok) {
+        const endTime = data.endTime;
+
+        if (endTime) {
+          const currentTime = new Date();
+          const endDateTime = new Date(endTime);
+
+          console.log('Current Time:', currentTime);
+        console.log('End Time:', endDateTime);
+
+          if (currentTime > endDateTime) {
+            window.alert(`Interview ended. Redirecting to scheduled interviews. End Time: ${endTime}`);
+            navigate("/scheduledinterviews");
+          } else {
+            const remainingTime = endDateTime - currentTime;
+            setTimeout(() => {
+              window.alert(`Interview ended. Redirecting to scheduled interviews. End Time: ${endTime}`);
+              navigate("/scheduledinterviews");
+            }, remainingTime);
+          }
+        } else {
+          window.alert("End time not available.");
+        }
+      } else {
+        console.error('Failed to fetch endTime:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching endTime:', error);
+    }
+  };
+
+  useEffect(() => {
+    redirectToScheduledInterviews();
+  }, []);
+
+
+  // const redirectToScheduledInterviews = async () => {
+  //   try {
+
+  //     const url = `/api/interview/${id}/endtime`;
+  //     console.log('Constructed URL:', url);
+      
+  //     if (id) {
+  //     const response = await fetch(`/api/interview/${id}/endtime`);
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       const endTime = data.endTime;
+
+  //       if (endTime) {
+  //         const currentTime = new Date();
+  //         const endDateTime = new Date(endTime);
+
+  //         if (currentTime > endDateTime) {
+  //           window.alert(`Interview ended. Redirecting to scheduled interviews. End Time: ${endTime}`);
+  //           navigate("/scheduledinterviews");
+  //         } else {
+  //           const remainingTime = endDateTime - currentTime;
+  //           setTimeout(() => {
+  //             window.alert(`Interview ended. Redirecting to scheduled interviews. End Time: ${endTime}`);
+  //             navigate("/scheduledinterviews");
+  //           }, remainingTime);
+  //         }
+  //       } else {
+  //         window.alert("End time not available.");
+  //       }
+  //     } else {
+  //       console.error('Failed to fetch endTime:', data.message);
+  //     }
+  //   } else {
+  //     console.error('Interview ID is undefined.');
+  //   }
+  //   } catch (error) {
+  //     console.error('Error fetching endTime:', error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   redirectToScheduledInterviews();
+  // }, [id]);
+
   return (
+    
     <div className={styles["interview-container"]}>
       <div className={styles["header-container"]}>
         <span className={styles["candidate-name"]}>{candidateName}</span>
-        <Link to={"/scheduledinterviews"}>
-        <button className={styles["end-interview-button"]}>End Interview</button>
-        </Link>
+        {/* <Link to={"/scheduledinterviews"}> */}
+        <button className={styles["end-interview-button"]} onClick={directToScheduledInterviews}>End Interview</button>
+        {/* </Link> */}
       </div>
       <div className={styles["question-container"]}>
         <p id="question">Question text here</p>
