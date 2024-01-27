@@ -37,11 +37,7 @@ const interviewSchema = new Schema<Interview>({
     type: String,
     enum: ["Scheduled", "Cancelled", "Completed", "Live", "Postponed", "Rescheduled"],
     default: "Scheduled",
-  },
-  room: {
-    type: Object,
-    required: false,
-  },
+  }
 });
 
 const Interview = mongoose.model<Interview>('Interview', interviewSchema);
