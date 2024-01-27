@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./Interview.module.css";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 const Interview = () => {
   const location = useLocation();
@@ -17,13 +17,12 @@ const Interview = () => {
   const [audioStream, setAudioStream] = useState(null);
   const [audioChunks, setAudioChunks] = useState([]);
   const [audio, setAudio] = useState(null);
-  const mimeType = "audio/mp3";
+  const mimeType = "audio/wav";
   const liveVideoFeed = useRef(null);
 
   useEffect(() => {
     getMicrophonePermission();
     getCameraPermission();
-    console.log(location.state)
   }, []);
 
   const getMicrophonePermission = async () => {
@@ -83,25 +82,81 @@ const Interview = () => {
     mediaRecorder.current.stop();
     mediaRecorder.current.onstop = () => {
       const audioBlob = new Blob(audioChunks, { type: mimeType });
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = () => {
+        const audioBase64 = reader.result.split(",")[1];
+
+        sendAudioAndGetNextQuestion(audioBase64);
+      };
       const audioUrl = URL.createObjectURL(audioBlob);
       setAudio(audioUrl);
       setAudioChunks([]);
     };
   };
 
+  const startInterviewAndGetFirstQuestion = () => {
+    // Make a request to the server to get the first question
+  }
+
+  const sendAudioAndGetNextQuestion = (audioBase64) => {
+    const url = process.env.AI_APP_API || "http://127.0.0.1:8000" // Replace with your server endpoint
+    const apiUrl = url + "/process";
+    const requestBody = { audioBase64 };
+
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    })
+      .then((response) => response.json())
+      .then((data) => {        
+        startRecording();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+      let str = generateString(10);
+      displayNextQuestion(str);
+      console.log("Generated string: ", str);
+  };
+
+  const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  function generateString(length) {
+      let result = ' ';
+      const charactersLength = characters.length;
+      for ( let i = 0; i < length; i++ ) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+      return result;
+  }
+
+  const displayNextQuestion = (question) => {
+    document.getElementById("question").innerHTML = question;
+  }
+
   return (
     <div className={styles["interview-container"]}>
       <div className={styles["header-container"]}>
         <span className={styles["candidate-name"]}>{candidateName}</span>
         <Link to={"/scheduledinterviews"}>
-        <button className={styles["end-interview-button"]}>End Interview</button>
+          <button className={styles["end-interview-button"]}>
+            End Interview
+          </button>
         </Link>
       </div>
       <div className={styles["question-container"]}>
         <p id="question">Question text here</p>
       </div>
       <div className={styles["video-container"]}>
-        <video ref={liveVideoFeed} autoPlay className={styles["live-player"]}></video>
+        <video
+          ref={liveVideoFeed}
+          autoPlay
+          className={styles["live-player"]}
+        ></video>
       </div>
       <div className={styles["controls-container"]}>
         <button onClick={startRecording}>
