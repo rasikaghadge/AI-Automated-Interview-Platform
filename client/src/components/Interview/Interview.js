@@ -11,6 +11,8 @@ import { useLocation } from "react-router-dom";
 const Interview = () => {
   const location = useLocation();
   const candidateName = location?.state?.participantNameFromDB;
+  const endTime = location?.state?.endTimeFromDB;
+  const interviewDate = location?.state?.startDateFromDB;
   const [permission, setPermission] = useState(false);
   const mediaRecorder = useRef(null);
   const [recordingStatus, setRecordingStatus] = useState("inactive");
@@ -19,11 +21,42 @@ const Interview = () => {
   const [audio, setAudio] = useState(null);
   const mimeType = "audio/wav";
   const liveVideoFeed = useRef(null);
+  const [remainingTime, setRemainingTime] = useState(null);
 
   useEffect(() => {
     getMicrophonePermission();
     getCameraPermission();
-  }, []);
+
+    const interviewEndTime = new Date(interviewDate);
+    interviewEndTime.setHours(
+      interviewEndTime.getHours() + parseInt(endTime.split(":")[0] - 5)
+    );
+    interviewEndTime.setMinutes(parseInt(endTime.split(":")[1]));
+
+    const intervalId = setInterval(() => {
+      const now = new Date();
+      const difference = interviewEndTime - now;
+
+      if (difference <= 0) {
+        setRemainingTime(0);
+        clearInterval(intervalId);
+      } else {
+        const hours = Math.floor(difference / (1000 * 60 * 60));
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        setRemainingTime(
+          `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+            .toString()
+            .padStart(2, "0")}`
+        );
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [endTime]);
 
   const getMicrophonePermission = async () => {
     if ("MediaRecorder" in window) {
@@ -118,6 +151,7 @@ const Interview = () => {
       .catch((error) => {
         console.error("Error:", error);
       });
+      // TODO: Change it to the question from response
       let str = generateString(10);
       displayNextQuestion(str);
       console.log("Generated string: ", str);
@@ -142,6 +176,11 @@ const Interview = () => {
     <div className={styles["interview-container"]}>
       <div className={styles["header-container"]}>
         <span className={styles["candidate-name"]}>{candidateName}</span>
+        {remainingTime !== null && (
+          <span className={styles["remaining-time"]}>
+            Remaining Time: {(remainingTime)}
+          </span>
+        )}
         <Link to={"/scheduledinterviews"}>
           <button className={styles["end-interview-button"]}>
             End Interview
@@ -149,7 +188,7 @@ const Interview = () => {
         </Link>
       </div>
       <div className={styles["question-container"]}>
-        <p id="question">Question text here</p>
+        <p id="question">Question will be shown here</p>
       </div>
       <div className={styles["video-container"]}>
         <video
