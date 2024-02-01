@@ -22,11 +22,10 @@ Note, complex types like lists are read as json-encoded strings.
 """
 
 import tomllib
-from functools import cached_property
 from pathlib import Path
 from typing import Literal
 
-from pydantic import AnyHttpUrl, EmailStr, PostgresDsn, computed_field
+from pydantic import AnyHttpUrl, EmailStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_DIR = Path(__file__).parent.parent.parent
@@ -39,8 +38,8 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ENVIRONMENT: Literal["DEV", "PYTEST", "STG", "PRD"] = "DEV"
     SECURITY_BCRYPT_ROUNDS: int = 12
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 11520  # 8 days
-    REFRESH_TOKEN_EXPIRE_MINUTES: int = 40320  # 28 days
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 1 day
+    REFRESH_TOKEN_EXPIRE_MINUTES: int = 1440  # 4 days
     BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
     ALLOWED_HOSTS: list[str] = ["localhost", "127.0.0.1"]
 
@@ -67,34 +66,11 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_EMAIL: EmailStr
     FIRST_SUPERUSER_PASSWORD: str
 
-    @computed_field
-    @cached_property
-    def DEFAULT_SQLALCHEMY_DATABASE_URI(self) -> str:
-        return str(
-            PostgresDsn.build(
-                scheme="postgresql+asyncpg",
-                username=self.DEFAULT_DATABASE_USER,
-                password=self.DEFAULT_DATABASE_PASSWORD,
-                host=self.DEFAULT_DATABASE_HOSTNAME,
-                port=self.DEFAULT_DATABASE_PORT,
-                path=self.DEFAULT_DATABASE_DB,
-            )
-        )
+    # SUPABASE
+    SUPABASE_URL: str
+    SUPABASE_KEY: str
 
-    @computed_field
-    @cached_property
-    def TEST_SQLALCHEMY_DATABASE_URI(self) -> str:
-        return str(
-            PostgresDsn.build(
-                scheme="postgresql+asyncpg",
-                username=self.TEST_DATABASE_USER,
-                password=self.TEST_DATABASE_PASSWORD,
-                host=self.TEST_DATABASE_HOSTNAME,
-                port=self.TEST_DATABASE_PORT,
-                path=self.TEST_DATABASE_DB,
-            )
-        )
-
+    # model_config is used to read .env file
     model_config = SettingsConfigDict(
         env_file=f"{PROJECT_DIR}/.env", case_sensitive=True
     )

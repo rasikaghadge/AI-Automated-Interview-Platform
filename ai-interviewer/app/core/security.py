@@ -1,5 +1,3 @@
-"""Black-box security shortcuts to generate JWT tokens and password hashing and verifcation."""
-
 import time
 
 import jwt
@@ -27,14 +25,6 @@ class JWTTokenPayload(BaseModel):
 
 
 def create_jwt_token(subject: str | int, exp_secs: int, refresh: bool):
-    """Creates jwt access or refresh token for user.
-
-    Args:
-        subject: anything unique to user, id or email etc.
-        exp_secs: expire time in seconds
-        refresh: if True, this is refresh token
-    """
-
     issued_at = int(time.time())
     expires_at = issued_at + exp_secs
 
@@ -72,18 +62,8 @@ def generate_access_token_response(subject: str | int):
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verifies plain and hashed password matches
-
-    Applies passlib context based on bcrypt algorithm on plain passoword.
-    It takes about 0.3s for default 12 rounds of SECURITY_BCRYPT_DEFAULT_ROUNDS.
-    """
     return PWD_CONTEXT.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
-    """Creates hash from password
-
-    Applies passlib context based on bcrypt algorithm on plain passoword.
-    It takes about 0.3s for default 12 rounds of SECURITY_BCRYPT_DEFAULT_ROUNDS.
-    """
     return PWD_CONTEXT.hash(password)

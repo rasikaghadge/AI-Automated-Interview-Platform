@@ -18,3 +18,17 @@ class AccessTokenResponse(BaseResponse):
 class UserResponse(BaseResponse):
     id: str
     email: EmailStr
+
+
+class InterviewBaseResponse(BaseResponse):
+    id: str
+    title: str
+    description: str
+
+
+class InterviewCreateResponse(InterviewBaseResponse):
+    pass
+
+
+class InterviewUpdateResponse(InterviewBaseResponse):
+    pass
