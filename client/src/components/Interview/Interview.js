@@ -7,6 +7,7 @@ import {
 import { Link } from "react-router-dom";
 import styles from "./Interview.module.css";
 import { useLocation } from "react-router-dom";
+import { questions } from "./FirstQuestions";
 
 const Interview = () => {
   const location = useLocation();
@@ -57,6 +58,11 @@ const Interview = () => {
 
     return () => clearInterval(intervalId);
   }, [endTime]);
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * questions.length);
+    displayQuestion(questions[randomIndex]);
+  }, []);
 
   const getMicrophonePermission = async () => {
     if ("MediaRecorder" in window) {
@@ -128,10 +134,6 @@ const Interview = () => {
     };
   };
 
-  const startInterviewAndGetFirstQuestion = () => {
-    // Make a request to the server to get the first question
-  }
-
   const sendAudioAndGetNextQuestion = (audioBase64) => {
     const url = process.env.AI_APP_API || "http://127.0.0.1:8000" // Replace with your server endpoint
     const apiUrl = url + "/process";
@@ -153,7 +155,7 @@ const Interview = () => {
       });
       // TODO: Change it to the question from response
       let str = generateString(10);
-      displayNextQuestion(str);
+      displayQuestion(str);
       console.log("Generated string: ", str);
   };
 
@@ -168,7 +170,7 @@ const Interview = () => {
       return result;
   }
 
-  const displayNextQuestion = (question) => {
+  const displayQuestion = (question) => {
     document.getElementById("question").innerHTML = question;
   }
 
@@ -178,7 +180,7 @@ const Interview = () => {
         <span className={styles["candidate-name"]}>{candidateName}</span>
         {remainingTime !== null && (
           <span className={styles["remaining-time"]}>
-            Remaining Time: {(remainingTime)}
+            {(remainingTime)}
           </span>
         )}
         <Link to={"/scheduledinterviews"}>
