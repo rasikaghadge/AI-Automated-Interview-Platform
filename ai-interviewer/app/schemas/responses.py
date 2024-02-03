@@ -8,6 +8,7 @@ class BaseResponse(BaseModel):
 
 
 class UserResponse(BaseResponse):
+    id: str
     access_token: str
     refresh_token: str
 

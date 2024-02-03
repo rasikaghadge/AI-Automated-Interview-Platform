@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import List, Literal
-
+from typing import Dict
 from pydantic import BaseModel, EmailStr, Field, ValidationError, field_validator
 
 
@@ -13,7 +13,6 @@ class UserCreateRequest(BaseUserRequest):
     first_name: str
     last_name: str
     role: Literal['candidate', 'hr'] = 'candidate'
-    profile: int | str | EmailStr | None = None
 
 
 class UserLoginRequest(BaseUserRequest):
@@ -74,7 +73,6 @@ class InterviewBaseRequest(BaseModel):
 class InterviewCreateRequest(InterviewBaseRequest):
     start_datetime: datetime | str
     end_datetime: datetime | str
-    hr: str
     candidate: str
     status: Literal['scheduled', 'completed',
                     'cancelled', 'live'] = 'scheduled'
