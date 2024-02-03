@@ -7,7 +7,7 @@ import {
 import { Link } from "react-router-dom";
 import styles from "./Interview.module.css";
 import { useLocation } from "react-router-dom";
-import { questions } from "./FirstQuestions";
+import { questions, introduction } from "./FirstQuestions";
 
 const Interview = () => {
   const location = useLocation();
@@ -60,8 +60,12 @@ const Interview = () => {
   }, [endTime]);
 
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * questions.length);
-    displayQuestion(questions[randomIndex]);
+    const startInterview = async () => {
+      await readQuestion(introduction[0]);
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      await displayAndReadQuestion(questions[randomIndex]);
+    };
+    startInterview();
   }, []);
 
   const getMicrophonePermission = async () => {
@@ -135,7 +139,7 @@ const Interview = () => {
   };
 
   const sendAudioAndGetNextQuestion = (audioBase64) => {
-    const url = process.env.AI_APP_API || "http://127.0.0.1:8000" // Replace with your server endpoint
+    const url = process.env.AI_APP_API || "http://127.0.0.1:8000"; // Replace with your server endpoint
     const apiUrl = url + "/process";
     const requestBody = { audioBase64 };
 
@@ -147,41 +151,56 @@ const Interview = () => {
       body: JSON.stringify(requestBody),
     })
       .then((response) => response.json())
-      .then((data) => {        
+      .then((data) => {
         startRecording();
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-      // TODO: Change it to the question from response
-      let str = generateString(10);
-      displayQuestion(str);
-      console.log("Generated string: ", str);
+    // TODO: Change it to the question from response
+    let str = generateString(10);
+    displayAndReadQuestion(str);
+    console.log("Generated string: ", str);
   };
 
-  const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   function generateString(length) {
-      let result = ' ';
-      const charactersLength = characters.length;
-      for ( let i = 0; i < length; i++ ) {
-          result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      }
-      return result;
+    let result = " ";
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
   }
 
-  const displayQuestion = (question) => {
-    document.getElementById("question").innerHTML = question;
+  const readQuestion = (question) => {
+    const speech = new SpeechSynthesisUtterance(question);
+    return new Promise((resolve) => {
+      if (speechSynthesis.getVoices().length > 0) {
+        speech.voice = speechSynthesis.getVoices()[7];
+        speechSynthesis.speak(speech);
+      }
+      window.speechSynthesis.onvoiceschanged = function () {
+        speech.voice = speechSynthesis.getVoices()[7];
+        speechSynthesis.speak(speech);
+        resolve();
+      };
+    });
   }
+
+  const displayAndReadQuestion = async (question) => {
+    document.getElementById("question").innerHTML = question;
+    readQuestion(question);
+  };
 
   return (
     <div className={styles["interview-container"]}>
       <div className={styles["header-container"]}>
         <span className={styles["candidate-name"]}>{candidateName}</span>
         {remainingTime !== null && (
-          <span className={styles["remaining-time"]}>
-            {(remainingTime)}
-          </span>
+          <span className={styles["remaining-time"]}>{remainingTime}</span>
         )}
         <Link to={"/scheduledinterviews"}>
           <button className={styles["end-interview-button"]}>

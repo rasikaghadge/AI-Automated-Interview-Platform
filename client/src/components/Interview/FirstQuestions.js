@@ -4,3 +4,7 @@ export const questions = [
   "What programming languages have you worked on/are comfortable with?",
   "What technologies have you worked on?",
 ];
+
+export const introduction = [
+  "Hi, I am your Interviewer for today. Let me start with my first question."
+];
