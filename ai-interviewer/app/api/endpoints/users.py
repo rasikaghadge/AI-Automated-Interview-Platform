@@ -1,6 +1,9 @@
 import base64
+from datetime import timedelta
+from typing import Annotated
 
 import requests
+from app.api.deps import get_current_user
 from app.core.session import supabase
 from app.schemas.requests import (
     UserCreateRequest,
@@ -8,8 +11,9 @@ from app.schemas.requests import (
     UserProfileCreateRequest,
 )
 from app.schemas.responses import UserResponse
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordRequestForm
 from gotrue.errors import AuthApiError
 
 router = APIRouter()
@@ -78,7 +82,7 @@ async def get_user_profile(
         return data
     except Exception as e:
         return JSONResponse(content={"message": f"Unexpected Error. Try Again", "error": str(e)}, status_code=401)
-    
+
 
 @router.get("/profile/{user_id}")
 async def get_user_profile(
@@ -90,7 +94,7 @@ async def get_user_profile(
         return data
     except Exception as e:
         return JSONResponse(content={"message": f"Unexpected Error. Try Again", "error": str(e)}, status_code=401)
-    
+
 
 @router.put("/profile")
 async def update_user_profile(
@@ -102,5 +106,20 @@ async def update_user_profile(
         return data
     except Exception as e:
         return JSONResponse(content={"message": f"Unexpected Error. Try Again", "error": str(e)}, status_code=401)
-    
 
+
+@router.post("/token")
+async def login_for_access_token(
+        form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user = supabase.auth.sign_in_with_password({
+        "email": form_data.username,
+        "password": form_data.password
+    }).model_dump()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return UserResponse(access_token=user['session']['access_token'], refresh_token=user['session']['refresh_token'])

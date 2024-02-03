@@ -1,4 +1,4 @@
-from app.api.endpoints import users
+from app.api.endpoints import users, meetings
 from app.core import config
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +12,7 @@ app = FastAPI(
     docs_url="/",
 )
 app.include_router(users.router, prefix="/users", tags=["users"])
+app.include_router(meetings.router, prefix="/interviews", tags=["users"])
 
 
 # Sets all CORS enabled origins

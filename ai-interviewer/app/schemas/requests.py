@@ -1,6 +1,7 @@
+from datetime import datetime
 from typing import List, Literal
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, ValidationError, field_validator
 
 
 class BaseUserRequest(BaseModel):
@@ -59,6 +60,11 @@ class UserProfileCreateRequest(BaseModel):
     experience: int = 0
     external_attributes: ExternalAttributes | None = None
 
+    @field_validator('experience')
+    def experience_validator(cls, v):
+        if v < 0:
+            raise ValidationError('experience cannot be negative')
+
 
 class InterviewBaseRequest(BaseModel):
     title: str
@@ -66,7 +72,31 @@ class InterviewBaseRequest(BaseModel):
 
 
 class InterviewCreateRequest(InterviewBaseRequest):
-    pass
+    start_datetime: datetime | str
+    end_datetime: datetime | str
+    hr: str
+    candidate: str
+    status: Literal['scheduled', 'completed',
+                    'cancelled', 'live'] = 'scheduled'
+
+    # convert start_datetime and end_datetime to json serializable format
+
+    @field_validator('start_datetime', mode="before")
+    def start_datetime_validator(cls, v):
+        v = datetime.fromisoformat(v)
+        return v.isoformat()
+
+    @field_validator('end_datetime', mode="before")
+    def end_datetime_validator(cls, v):
+        v = datetime.fromisoformat(v)
+        return v.isoformat()
+
+    @field_validator('end_datetime', mode="before")
+    def end_datetime_must_be_greater_than_start_datetime(cls, end_datetime, values):
+        if 'start_datetime' in values.data and end_datetime < values.data['start_datetime']:
+            raise ValueError(
+                'end_datetime must be greater than start_datetime')
+        return end_datetime
 
 
 class InterviewUpdateRequest(InterviewBaseRequest):
