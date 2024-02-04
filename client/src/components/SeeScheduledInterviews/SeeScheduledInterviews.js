@@ -107,11 +107,12 @@ const SeeScheduledInterviews = () => {
     };
   }, []);
 
-  const navigateToVideosdkMeeting = (roomId, participantName) => {
+  const navigateToVideosdkMeeting = (participantName, startDate, endTime) => {
     navigate('/interview', {
       state: {
-        roomIDFromDB: roomId,
         participantNameFromDB: participantName,
+        endTimeFromDB: endTime,
+        startDateFromDB: startDate
       },
     });
   };
@@ -140,7 +141,6 @@ const SeeScheduledInterviews = () => {
             </tr>
           </thead>
           <tbody>
-          {console.log(interviews)}
             {interviews.map((interview) => (
               <tr key={interview._id}>
                 <td>{interview.title}</td>
@@ -158,7 +158,7 @@ const SeeScheduledInterviews = () => {
                   />}</td>  
                 <td>{interview.status}</td>
                   <button
-                    onClick={() => navigateToVideosdkMeeting(interview.room.roomId, interview.candidateName)}
+                    onClick={() => navigateToVideosdkMeeting(interview.candidateName, interview.startDate, interview.endTime)}
                     className={`btn btn-success btn-sm ${
                       !isJoinEnabled(
                         interview.startTime,
