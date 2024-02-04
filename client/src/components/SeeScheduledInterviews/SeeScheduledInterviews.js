@@ -141,7 +141,6 @@ const SeeScheduledInterviews = () => {
             </tr>
           </thead>
           <tbody>
-          {console.log(interviews)}
             {interviews.map((interview) => (
               <tr key={interview._id}>
                 <td>{interview.title}</td>

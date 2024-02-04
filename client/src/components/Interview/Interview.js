@@ -139,6 +139,7 @@ const Interview = () => {
   };
 
   const sendAudioAndGetNextQuestion = (audioBase64) => {
+    // TODO: Test with django server
     const url = process.env.AI_APP_API || "http://127.0.0.1:8000"; // Replace with your server endpoint
     const apiUrl = url + "/process";
     const requestBody = { audioBase64 };
