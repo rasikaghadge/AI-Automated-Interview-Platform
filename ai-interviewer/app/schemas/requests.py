@@ -57,6 +57,7 @@ class UserProfileCreateRequest(BaseModel):
     interviews: List[str] | None = None
     company: str | None = None  # for HR
     experience: int = 0
+    role: Literal['candidate', 'hr'] = 'candidate'
     external_attributes: ExternalAttributes | None = None
 
     @field_validator('experience')

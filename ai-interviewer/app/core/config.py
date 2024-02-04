@@ -42,6 +42,10 @@ class Settings(BaseSettings):
     SUPABASE_URL: str
     SUPABASE_KEY: str
 
+    # OPENAI
+    OPENAI_API_KEY: str
+    OPENAI_ORGANIZATION: str
+
     # model_config is used to read .env file
     model_config = SettingsConfigDict(
         env_file=f"{PROJECT_DIR}/.env", case_sensitive=True

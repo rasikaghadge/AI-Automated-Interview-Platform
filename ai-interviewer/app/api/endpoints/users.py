@@ -3,7 +3,11 @@ from datetime import timedelta
 from typing import Annotated
 
 import requests
-from app.api.deps import get_current_active_user, get_current_user
+from app.api.deps import (
+    get_current_active_hr,
+    get_current_active_user,
+    get_current_user,
+)
 from app.core.session import supabase
 from app.schemas.requests import (
     UserCreateRequest,
@@ -45,7 +49,7 @@ async def register_new_user(
     try:
         res = supabase.auth.sign_up(new_user.model_dump()).model_dump()
         create_profile(UserProfileCreateRequest(
-            user_id=res['user']['id'], first_name=new_user.first_name, last_name=new_user.last_name))
+            user_id=res['user']['id'], first_name=new_user.first_name, last_name=new_user.last_name, role=new_user.role))
         return UserResponse(id=res['user']['id'], access_token=res['session']['access_token'], refresh_token=res['session']['refresh_token'])
     except AuthApiError as e:
         return JSONResponse(content={"message": f"User already exist with {new_user.email}", "error": str(e)}, status_code=401)
@@ -99,20 +103,23 @@ async def update_user_profile(
 @router.post("/login", response_model=UserResponse)
 async def login_for_access_token(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    user = supabase.auth.sign_in_with_password({
-        "email": form_data.username,
-        "password": form_data.password
-    }).model_dump()
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        user = supabase.auth.sign_in_with_password({
+            "email": form_data.username,
+            "password": form_data.password
+        }).model_dump()
+    except AuthApiError as e:
+        credentials_exception
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
+        credentials_exception
     return UserResponse(id=user['user']['id'], access_token=user['session']['access_token'], refresh_token=user['session']['refresh_token'])
 
 
-@router.get('/users/me')
-def get_user_me(current_user: dict = Depends(get_current_active_user)):
+@router.get('/me')
+def get_user_me(current_user: dict = Depends(get_current_active_hr)):
     return current_user

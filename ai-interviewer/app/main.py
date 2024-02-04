@@ -1,4 +1,4 @@
-from app.api.endpoints import users, meetings
+from app.api.endpoints import meetings, users
 from app.core import config
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

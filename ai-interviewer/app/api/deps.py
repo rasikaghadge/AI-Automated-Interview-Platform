@@ -36,3 +36,16 @@ def get_current_active_user(current_user: dict = Depends(get_current_user)):
     if not data:
         raise HTTPException(status_code=404, detail='User not found')
     return data[1][0]
+
+
+def get_current_active_hr(current_user: dict = Depends(get_current_user)):
+    if not current_user:
+        raise HTTPException(status_code=403, detail='Unauthorized')
+    # fetch user from data from profile table using user_id
+    data, count = supabase.table('profile').select(
+        "*").eq('user_id', current_user['id']).execute()
+    if not data[1]:
+        raise HTTPException(status_code=404, detail='User not found')
+    if data[1][0]['role'] != 'hr':
+        raise HTTPException(status_code=403, detail='Unauthorized')
+    return data[1][0]
