@@ -6,8 +6,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./Interview.module.css";
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import SeeScheduledInterviews from '../SeeScheduledInterviews/SeeScheduledInterviews';
+import { useLocation } from "react-router-dom";
+import { questions, introduction } from "./FirstQuestions";
 
 const Interview = (props) => {
   console.log(props);
@@ -17,19 +17,60 @@ const Interview = (props) => {
   console.log(id);
   const location = useLocation();
   const candidateName = location?.state?.participantNameFromDB;
+  const endTime = location?.state?.endTimeFromDB;
+  const interviewDate = location?.state?.startDateFromDB;
   const [permission, setPermission] = useState(false);
   const mediaRecorder = useRef(null);
   const [recordingStatus, setRecordingStatus] = useState("inactive");
   const [audioStream, setAudioStream] = useState(null);
   const [audioChunks, setAudioChunks] = useState([]);
   const [audio, setAudio] = useState(null);
-  const mimeType = "audio/mp3";
+  const mimeType = "audio/wav";
   const liveVideoFeed = useRef(null);
+  const [remainingTime, setRemainingTime] = useState(null);
 
   useEffect(() => {
     getMicrophonePermission();
     getCameraPermission();
-    console.log(location.state)
+
+    const interviewEndTime = new Date(interviewDate);
+    interviewEndTime.setHours(
+      interviewEndTime.getHours() + parseInt(endTime.split(":")[0] - 5)
+    );
+    interviewEndTime.setMinutes(parseInt(endTime.split(":")[1]));
+
+    const intervalId = setInterval(() => {
+      const now = new Date();
+      const difference = interviewEndTime - now;
+
+      if (difference <= 0) {
+        setRemainingTime(0);
+        clearInterval(intervalId);
+      } else {
+        const hours = Math.floor(difference / (1000 * 60 * 60));
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        setRemainingTime(
+          `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+            .toString()
+            .padStart(2, "0")}`
+        );
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [endTime]);
+
+  useEffect(() => {
+    const startInterview = async () => {
+      await readQuestion(introduction[0]);
+      const randomIndex = Math.floor(Math.random() * questions.length);
+      await displayAndReadQuestion(questions[randomIndex]);
+    };
+    startInterview();
   }, []);
 
   const getMicrophonePermission = async () => {
@@ -89,134 +130,100 @@ const Interview = (props) => {
     mediaRecorder.current.stop();
     mediaRecorder.current.onstop = () => {
       const audioBlob = new Blob(audioChunks, { type: mimeType });
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = () => {
+        const audioBase64 = reader.result.split(",")[1];
+
+        sendAudioAndGetNextQuestion(audioBase64);
+      };
       const audioUrl = URL.createObjectURL(audioBlob);
       setAudio(audioUrl);
       setAudioChunks([]);
     };
   };
 
-  const directToScheduledInterviews = () => {
-    setTimeout(() => {
-      window.alert('Interview ended. Redirecting to scheduled interviews.');
-      window.location.replace('/scheduledinterviews');
-    }, 1000);
+  const sendAudioAndGetNextQuestion = (audioBase64) => {
+    // TODO: Test with django server
+    const url = process.env.AI_APP_API || "http://127.0.0.1:8000"; // Replace with your server endpoint
+    const apiUrl = url + "/process";
+    const requestBody = { audioBase64 };
+
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        startRecording();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    // TODO: Change it to the question from response
+    let str = generateString(10);
+    displayAndReadQuestion(str);
+    console.log("Generated string: ", str);
   };
 
-  const redirectToScheduledInterviews = async () => {
-    try {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-      if (!id) {
-        console.error('Interview id is undefined');
-        return;
-      }
-
-      const fetchUrl = `/api/interview/${id}/endtime`;
-    console.log('Fetch URL:', fetchUrl);
-
-    console.log('Interview id:', id);
-      
-      // Fetch endTime from the server
-      const response = await fetch(`/api/interview/${id}/endtime`);
-      const data = await response.json();
-
-      console.log('Fetch response:', response);
-    console.log('Fetched data:', data);
-
-      if (response.ok) {
-        const endTime = data.endTime;
-
-        if (endTime) {
-          const currentTime = new Date();
-          const endDateTime = new Date(endTime);
-
-          console.log('Current Time:', currentTime);
-        console.log('End Time:', endDateTime);
-
-          if (currentTime > endDateTime) {
-            window.alert(`Interview ended. Redirecting to scheduled interviews. End Time: ${endTime}`);
-            navigate("/scheduledinterviews");
-          } else {
-            const remainingTime = endDateTime - currentTime;
-            setTimeout(() => {
-              window.alert(`Interview ended. Redirecting to scheduled interviews. End Time: ${endTime}`);
-              navigate("/scheduledinterviews");
-            }, remainingTime);
-          }
-        } else {
-          window.alert("End time not available.");
-        }
-      } else {
-        console.error('Failed to fetch endTime:', data.message);
-      }
-    } catch (error) {
-      console.error('Error fetching endTime:', error);
+  function generateString(length) {
+    let result = " ";
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
+    return result;
+  }
+
+  const readQuestion = (question) => {
+    const speech = new SpeechSynthesisUtterance(question);
+    return new Promise((resolve) => {
+      if (speechSynthesis.getVoices().length > 0) {
+        speech.voice = speechSynthesis.getVoices()[7];
+        speechSynthesis.speak(speech);
+      }
+      window.speechSynthesis.onvoiceschanged = function () {
+        speech.voice = speechSynthesis.getVoices()[7];
+        speechSynthesis.speak(speech);
+        resolve();
+      };
+    });
+  }
+
+  const displayAndReadQuestion = async (question) => {
+    document.getElementById("question").innerHTML = question;
+    readQuestion(question);
   };
-
-  useEffect(() => {
-    redirectToScheduledInterviews();
-  }, []);
-
-
-  // const redirectToScheduledInterviews = async () => {
-  //   try {
-
-  //     const url = `/api/interview/${id}/endtime`;
-  //     console.log('Constructed URL:', url);
-      
-  //     if (id) {
-  //     const response = await fetch(`/api/interview/${id}/endtime`);
-  //     const data = await response.json();
-
-  //     if (response.ok) {
-  //       const endTime = data.endTime;
-
-  //       if (endTime) {
-  //         const currentTime = new Date();
-  //         const endDateTime = new Date(endTime);
-
-  //         if (currentTime > endDateTime) {
-  //           window.alert(`Interview ended. Redirecting to scheduled interviews. End Time: ${endTime}`);
-  //           navigate("/scheduledinterviews");
-  //         } else {
-  //           const remainingTime = endDateTime - currentTime;
-  //           setTimeout(() => {
-  //             window.alert(`Interview ended. Redirecting to scheduled interviews. End Time: ${endTime}`);
-  //             navigate("/scheduledinterviews");
-  //           }, remainingTime);
-  //         }
-  //       } else {
-  //         window.alert("End time not available.");
-  //       }
-  //     } else {
-  //       console.error('Failed to fetch endTime:', data.message);
-  //     }
-  //   } else {
-  //     console.error('Interview ID is undefined.');
-  //   }
-  //   } catch (error) {
-  //     console.error('Error fetching endTime:', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   redirectToScheduledInterviews();
-  // }, [id]);
 
   return (
     
     <div className={styles["interview-container"]}>
       <div className={styles["header-container"]}>
         <span className={styles["candidate-name"]}>{candidateName}</span>
-        {/* <Link to={"/scheduledinterviews"}> */}
-        <button className={styles["end-interview-button"]} onClick={directToScheduledInterviews}>End Interview</button>
-        {/* </Link> */}
+        {remainingTime !== null && (
+          <span className={styles["remaining-time"]}>{remainingTime}</span>
+        )}
+        <Link to={"/scheduledinterviews"}>
+          <button className={styles["end-interview-button"]}>
+            End Interview
+          </button>
+        </Link>
       </div>
       <div className={styles["question-container"]}>
-        <p id="question">Question text here</p>
+        <p id="question">Question will be shown here</p>
       </div>
       <div className={styles["video-container"]}>
-        <video ref={liveVideoFeed} autoPlay className={styles["live-player"]}></video>
+        <video
+          ref={liveVideoFeed}
+          autoPlay
+          className={styles["live-player"]}
+        ></video>
       </div>
       <div className={styles["controls-container"]}>
         <button onClick={startRecording}>
