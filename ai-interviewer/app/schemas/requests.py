@@ -48,8 +48,7 @@ class ExternalAttributes(BaseModel):
     experience: List[Experience] | None = None
 
 
-class UserProfileCreateRequest(BaseModel):
-    user_id: str
+class UserProfileRequest(BaseModel):
     first_name: str | None = None
     last_name: str | None = None
     country: str | None = 'India'
@@ -60,12 +59,16 @@ class UserProfileCreateRequest(BaseModel):
     role: Literal['candidate', 'hr'] = 'candidate'
     external_attributes: ExternalAttributes | None = None
 
+class UserProfileCreateRequest(UserProfileRequest):
+    user_id: str
+
     @field_validator('experience')
     def experience_validator(cls, v):
         if v < 0:
             raise ValidationError('experience cannot be negative')
 
-
+class UserProfileUpdateRequest(UserProfileRequest):
+    updated_at: datetime | str = datetime.now()
 class InterviewBaseRequest(BaseModel):
     title: str
     description: str

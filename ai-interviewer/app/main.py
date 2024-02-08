@@ -12,7 +12,7 @@ app = FastAPI(
     docs_url="/",
 )
 app.include_router(users.router, prefix="/users", tags=["users"])
-app.include_router(meetings.router, prefix="/interviews", tags=["users"])
+app.include_router(meetings.router, prefix="/interviews", tags=["Interviews"])
 
 
 # Sets all CORS enabled origins

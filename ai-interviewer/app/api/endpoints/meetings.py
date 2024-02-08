@@ -5,7 +5,7 @@ import requests
 from app.api.deps import (
     get_current_active_hr,
     get_current_active_user,
-    get_current_user,
+    get_current_user
 )
 from app.core import config
 from app.core.session import supabase

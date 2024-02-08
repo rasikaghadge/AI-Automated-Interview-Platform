@@ -35,6 +35,10 @@ def get_current_active_user(current_user: dict = Depends(get_current_user)):
         "*").eq('user_id', current_user['id']).execute()
     if not data:
         raise HTTPException(status_code=404, detail='User not found')
+    if data[1] is None or len(data[1]) == 0:
+        # raise exception and redirect to create new profile
+        raise HTTPException(
+            status_code=404, detail='User profile does not exist.')
     return data[1][0]
 
 

@@ -25,3 +25,10 @@ class InterviewCreateResponse(InterviewBaseResponse):
     hr: str
     candidate: str
     status: str
+
+
+class UserProfileResponse(BaseModel):
+    pass 
+
+class SelfUserProfileResponse(UserProfileResponse):
+    pass
