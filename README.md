@@ -6,8 +6,12 @@
 <a href="https://github.com/rasikaghadge/AI-Automated-Interview-Platform/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/rasikaghadge/AI-Automated-Interview-Platform?color=2b9348"></a>
 <a href="https://github.com/rasikaghadge/AI-Automated-Interview-Platform/blob/main/LICENSE"><img src="https://img.shields.io/github/license/rasikaghadge/AI-Automated-Interview-Platform?color=orange" alt="License Badge"/></a>
 
+
 ## Installation
-Install requirements
+
+## Server
+
+Install Requirements
 ```
 pip install -r requirements.txt
 ```
@@ -17,6 +21,16 @@ Run the development server
 uvicorn app.main:app --reload
 ```
 
+## Client
+Install requirements
+```
+npm i
+```
+
+Run the development server
+```
+npm start
+```
 
 ## Tech Stack
 
@@ -29,11 +43,6 @@ uvicorn app.main:app --reload
 ![Uvicorn](https://img.shields.io/badge/-Uvicorn-2C3E50?logo=uvicorn&logoColor=white)
 
 
-
-
-## License
-
-[MIT](https://github.com/rasikaghadge/AI-Automated-Interview-Platform/blob/main/LICENSE)
 
 
 ## Our Contributors
