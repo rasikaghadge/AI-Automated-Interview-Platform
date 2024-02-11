@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./Interview.module.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { questions, introduction } from "./FirstQuestions";
 
 const Interview = (props) => {
@@ -46,6 +46,9 @@ const Interview = (props) => {
       if (difference <= 0) {
         setRemainingTime(0);
         clearInterval(intervalId);
+
+        alert("Interview has ended!");
+        navigate('/scheduledinterviews');
       } else {
         const hours = Math.floor(difference / (1000 * 60 * 60));
         const minutes = Math.floor(
