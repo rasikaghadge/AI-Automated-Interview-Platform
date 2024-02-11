@@ -9,6 +9,8 @@ import styles from "./Interview.module.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { questions, introduction } from "./FirstQuestions";
 
+import image from './interview_img.jpg';
+
 const Interview = (props) => {
   console.log(props);
 
@@ -207,6 +209,13 @@ const Interview = (props) => {
   return (
     
     <div className={styles["interview-container"]}>
+      <div className={styles["video-container"]}>
+        <video
+          ref={liveVideoFeed}
+          autoPlay
+          className={styles["live-player"]}
+        ></video>
+      </div>
       <div className={styles["header-container"]}>
         <span className={styles["candidate-name"]}>{candidateName}</span>
         {remainingTime !== null && (
@@ -218,16 +227,13 @@ const Interview = (props) => {
           </button>
         </Link>
       </div>
+      <div className={styles["image"]}>
+        <img src={image} alt="Image" />
+      </div>
       <div className={styles["question-container"]}>
         <p id="question">Question will be shown here</p>
       </div>
-      <div className={styles["video-container"]}>
-        <video
-          ref={liveVideoFeed}
-          autoPlay
-          className={styles["live-player"]}
-        ></video>
-      </div>
+      
       <div className={styles["controls-container"]}>
         <button onClick={startRecording}>
           <FontAwesomeIcon icon={faMicrophone} />
