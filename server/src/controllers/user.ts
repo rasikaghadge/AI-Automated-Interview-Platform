@@ -4,10 +4,10 @@ import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import { Request, Response } from "express";
 
-import User from "../models/userModel.js";
+import { createToken } from "../controllers/token.js";
 import isEmailValid from "../helper/authHelper.js";
 import Profile from "../models/ProfileModel.js";
-import { createToken } from "../controllers/token.js";
+import User from "../models/userModel.js";
 
 dotenv.config();
 const SECRET: string | undefined = process.env.SECRET;
@@ -58,8 +58,10 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
       existingUser.password
     );
 
-    if (!isPasswordCorrect)
+    if (!isPasswordCorrect) {
       res.status(400).json({ message: "Invalid credentials" });
+      return;
+    }
 
     const token = createToken(
       existingUser.email,
@@ -81,8 +83,10 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
-    if (Object.keys(req.body).length === 0)
+    if (Object.keys(req.body).length === 0) {
       res.status(400).json({ message: "Request body is empty" });
+      return;
+    }
 
     const { email, password, confirmPassword, firstName, lastName, role } =
       req.body;
@@ -92,8 +96,10 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if (password !== confirmPassword)
+    if (password !== confirmPassword) {
       res.status(400).json({ message: "Password does not match" });
+      return;
+    }
 
     const existingUser = await User.findOne({ email });
 
@@ -102,7 +108,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     const hashedPassword = await bcrypt.hash(password, 12);
     const profilePicture =
       (await getProfilePictureByName(`${firstName}+${lastName}`)) || "";
-    const newUser = await new User({
+    const newUser = new User({
       email: email,
       password: hashedPassword,
       firstName: firstName,

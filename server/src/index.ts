@@ -1,11 +1,10 @@
-import express, { Application, Request, Response } from "express";
-import { createServer, Server as HttpServer } from "http";
-import { Server as SocketIOServer, Socket } from "socket.io"; // Import Server class
-import userRoutes from './routes/userRoutes.js';
-import profileRoutes from './routes/profile.js';
-import interviewRoutes from './routes/interviews.js';
-import mongoose from 'mongoose';
 import cors from 'cors';
+import express, { Application, Request, Response } from "express";
+import { Server as HttpServer, createServer } from "http";
+import mongoose from 'mongoose';
+import interviewRoutes from './routes/interviews.js';
+import profileRoutes from './routes/profile.js';
+import userRoutes from './routes/userRoutes.js';
 // @ts-ignore
 import dotenv from 'dotenv'; // @ts-ignore
 
@@ -14,7 +13,6 @@ dotenv.config();
 
 const app: Application = express();
 const server: HttpServer = createServer(app);
-const io: SocketIOServer = new SocketIOServer(server);
 
 const DB_URL: string | undefined = process.env.DB_URL;
 
@@ -40,14 +38,6 @@ app.use("/interviews", interviewRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Server is ready');
-});
-
-io.on('connection', (socket: Socket) => {
-  console.log('a user connected');
-  socket.on('chat message', (msg) => {
-    console.log('message: ' + msg);
-    io.emit('chat message', msg);
-  });
 });
 
 const PORT: number = 5000;
