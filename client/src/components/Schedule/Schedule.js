@@ -69,6 +69,9 @@ const Schedule = () => {
       // Send a request to the server to schedule the interview
       await dispatch(scheduleMeeting(formData));
 
+      // Store the endTime value in local storage
+      localStorage.setItem("endTime", formData.endTime);
+
       // Interview scheduled successfully
       openSnackbar("Interview scheduled successfully!");
       navigate("/homepage");

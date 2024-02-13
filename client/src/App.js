@@ -31,6 +31,7 @@ function App() {
           <Route path="/reset/:token" element={<Reset/>} />
           <Route path="/select" element={<RoleSelect/>} />
           <Route path="/schedule" element={<Schedule/>} />
+          <Route path="/interview/:id" element={<Interview />} />
         </Routes>
         </SnackbarProvider>
       </BrowserRouter>

@@ -6,13 +6,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import styles from "./Interview.module.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { questions, introduction } from "./FirstQuestions";
 import { processCandidateAnswer } from "../../actions/modelCommunication";
 import { useDispatch } from "react-redux";
+import image from './interview_img.jpg';
 
 const Interview = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { id } = useParams();
   const location = useLocation();
   const candidateName = location?.state?.participantNameFromDB;
   const endTime = location?.state?.endTimeFromDB;
@@ -44,6 +47,9 @@ const Interview = () => {
       if (difference <= 0) {
         setRemainingTime(0);
         clearInterval(intervalId);
+
+        alert("Interview has ended!");
+        navigate('/scheduledinterviews');
       } else {
         const hours = Math.floor(difference / (1000 * 60 * 60));
         const minutes = Math.floor(
@@ -183,7 +189,15 @@ const Interview = () => {
   };
 
   return (
+    
     <div className={styles["interview-container"]}>
+      <div className={styles["video-container"]}>
+        <video
+          ref={liveVideoFeed}
+          autoPlay
+          className={styles["live-player"]}
+        ></video>
+      </div>
       <div className={styles["header-container"]}>
         <span className={styles["candidate-name"]}>{candidateName}</span>
         {remainingTime !== null && (
@@ -195,16 +209,13 @@ const Interview = () => {
           </button>
         </Link>
       </div>
+      <div className={styles["image"]}>
+        <img src={image} alt="Image" />
+      </div>
       <div className={styles["question-container"]}>
         <p id="question">Question will be shown here</p>
       </div>
-      <div className={styles["video-container"]}>
-        <video
-          ref={liveVideoFeed}
-          autoPlay
-          className={styles["live-player"]}
-        ></video>
-      </div>
+      
       <div className={styles["controls-container"]}>
         <button onClick={startRecording}>
           <FontAwesomeIcon icon={faMicrophone} />

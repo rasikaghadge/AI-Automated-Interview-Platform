@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import Interview from "../models/Interview.js";
-import User from "../models/userModel.js";
 import Profile from "../models/ProfileModel.js";
+import User from "../models/userModel.js";
 
 dotenv.config();
 
@@ -37,7 +37,6 @@ export const scheduleMeeting = async (req: any, res: any) => {
   }
   // concat user and userProfile
   let hr = await User.findOne({ email: req.email }).select("-password");
-  console.log(user);
   const interview = new Interview({
     title: title,
     description: description,
@@ -54,6 +53,7 @@ export const scheduleMeeting = async (req: any, res: any) => {
     res.status(201).json(interview);
   } catch (error: any) {
     res.status(409).json({ message: error.message });
+    return;
   }
 };
 

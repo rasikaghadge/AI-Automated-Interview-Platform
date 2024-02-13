@@ -49,6 +49,7 @@ export const auth = async (
       } catch (error) {
         res.status(401)
           .json({ message: "Authentication failed. Invalid Token." });
+          return;
       }
     } else {
       // Else if token is google token, then do this
