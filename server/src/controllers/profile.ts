@@ -35,6 +35,7 @@ export const getProfile = async (req: any, res: any) => {
     const profile = await Profile.findOne({ user: id }).populate("user");
     if (!profile) {
       res.status(404).json({ message: "Profile not found" });
+      return;
     }
     res.json(profile);
   } catch (error: any) {

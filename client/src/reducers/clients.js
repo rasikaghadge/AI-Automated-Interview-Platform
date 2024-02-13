@@ -34,27 +34,3 @@ const clients = (state = { isLoading: true, clients: [] }, action) => {
 
 
 
-
-//   const clients =(clients =[], action) => {
-//     switch (action.type) {
-//         case ALL_CLIENTS:
-//             return action.payload
-
-//         case FETCH_CLIENTS_BY_USER:
-//             return action.payload
-
-//         case ADD_NEW_CLIENT:
-//             return [...clients, action.payload]
-
-//         case UPDATE_CLIENT:
-//             return clients.map((client) => client._id === action.payload ? action.payload : client)
-        
-//         case DELETE_CLIENT: 
-//         return clients.filter((client) => client._id !== action.payload)
-        
-//         default:
-//             return clients;
-//     }
-// }
-
-// export default clients

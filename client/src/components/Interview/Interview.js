@@ -8,15 +8,14 @@ import { Link } from "react-router-dom";
 import styles from "./Interview.module.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { questions, introduction } from "./FirstQuestions";
-
+import { processCandidateAnswer } from "../../actions/modelCommunication";
+import { useDispatch } from "react-redux";
 import image from './interview_img.jpg';
 
-const Interview = (props) => {
-  console.log(props);
-
+const Interview = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  console.log(id);
   const location = useLocation();
   const candidateName = location?.state?.participantNameFromDB;
   const endTime = location?.state?.endTimeFromDB;
@@ -148,26 +147,9 @@ const Interview = (props) => {
     };
   };
 
-  const sendAudioAndGetNextQuestion = (audioBase64) => {
+  const sendAudioAndGetNextQuestion = async (audioBase64) => {
     // TODO: Test with django server
-    const url = process.env.AI_APP_API || "http://127.0.0.1:8000"; // Replace with your server endpoint
-    const apiUrl = url + "/process";
-    const requestBody = { audioBase64 };
-
-    fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        startRecording();
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    let response = await dispatch(processCandidateAnswer(audioBase64));
     // TODO: Change it to the question from response
     let str = generateString(10);
     displayAndReadQuestion(str);
@@ -199,7 +181,7 @@ const Interview = (props) => {
         resolve();
       };
     });
-  }
+  };
 
   const displayAndReadQuestion = async (question) => {
     document.getElementById("question").innerHTML = question;

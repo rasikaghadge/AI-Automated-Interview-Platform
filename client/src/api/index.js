@@ -12,6 +12,7 @@ if (NODE_ENV === 'development') {
 }
 export const baseURL = url;
 const API = axios.create({ baseURL: baseURL})
+const AI_API = axios.create({ baseURL: process.env.AI_API })
 
 
 API.interceptors.request.use((req) => {
@@ -22,12 +23,6 @@ API.interceptors.request.use((req) => {
     return req
 })
 
-// export const fetchInvoices =() => API.get('/invoices')
-export const fetchInvoice =(id) => API.get(`/invoices/${id}`)
-export const addInvoice =( invoice ) => API.post('/invoices', invoice)
-export const updateInvoice = (id, updatedInvoice) => API.patch(`/invoices/${id}`, updatedInvoice)
-export const deleteInvoice =(id) => API.delete(`/invoices/${id}`)
-export const fetchInvoicesByUser = (searchQuery) => API.get(`/invoices?searchQuery=${searchQuery.search}`);
 
 export const fetchClient = (id) => API.get(`/clients/${id}`);
 export const fetchClients = (page) => API.get(`/clients?page=${page}`);
@@ -57,3 +52,5 @@ export const listMeetings = () => API.get('/meetings');
 export const getMeeting = (id) => API.get(`/meetings/${id}`);
 // export const scheduleMeeting = (meetingData) => API.post('/schedule', meetingData);
 export const scheduleMeeting = (formData) => API.post(`/interviews/schedule`, formData);
+
+export const processCandidateAnswer = (audioJson) => AI_API.post('/process/', audioJson);
