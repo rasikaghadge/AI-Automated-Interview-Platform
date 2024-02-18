@@ -10,7 +10,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { questions, introduction } from "./FirstQuestions";
 import { processCandidateAnswer } from "../../actions/modelCommunication";
 import { useDispatch } from "react-redux";
-import image from './interview_img.jpg';
+import image from "./interview_img.jpg";
 
 const Interview = () => {
   const dispatch = useDispatch();
@@ -29,6 +29,7 @@ const Interview = () => {
   const mimeType = "audio/wav";
   const liveVideoFeed = useRef(null);
   const [remainingTime, setRemainingTime] = useState(null);
+  const [intervalId, setIntervalId] = useState(null);
 
   useEffect(() => {
     getMicrophonePermission();
@@ -49,7 +50,7 @@ const Interview = () => {
         clearInterval(intervalId);
 
         alert("Interview has ended!");
-        navigate('/scheduledinterviews');
+        navigate("/scheduledinterviews");
       } else {
         const hours = Math.floor(difference / (1000 * 60 * 60));
         const minutes = Math.floor(
@@ -131,6 +132,8 @@ const Interview = () => {
 
   const stopRecording = () => {
     setRecordingStatus("inactive");
+    clearInterval(intervalId);
+    setIntervalId(null);
     mediaRecorder.current.stop();
     mediaRecorder.current.onstop = () => {
       const audioBlob = new Blob(audioChunks, { type: mimeType });
@@ -170,6 +173,13 @@ const Interview = () => {
 
   const readQuestion = (question) => {
     const speech = new SpeechSynthesisUtterance(question);
+    if (question !== introduction[0]) {
+      speech.onend = function (event) {
+        document.getElementById("startRecordingBtn").click();
+        showTimerToAnswerQuestion();
+      };
+    }
+
     return new Promise((resolve) => {
       if (speechSynthesis.getVoices().length > 0) {
         speech.voice = speechSynthesis.getVoices()[7];
@@ -188,8 +198,36 @@ const Interview = () => {
     readQuestion(question);
   };
 
+  const showTimerToAnswerQuestion = () => {
+    const timerElement = document.getElementById("timer");
+    timerElement.classList.add(styles["answer-time"]);
+    let timeLeft = 60;
+    let tempId;
+    const updateTimer = () => {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      const formattedTime = `${minutes.toString().padStart(2, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+      timerElement.textContent = formattedTime;
+
+      timeLeft--;
+      if (timeLeft < 0) {
+        timerElement.textContent = "Time's up!";
+        setTimeout(() => {
+          timerElement.textContent = "";
+          timerElement.classList.remove(styles["answer-time"]);
+        }, 2000);
+        document.getElementById("stopRecordingBtn").click();
+        clearInterval(tempId);
+      }
+    };
+    updateTimer();
+    tempId = setInterval(updateTimer, 1000);
+    setIntervalId(tempId);
+  };
+
   return (
-    
     <div className={styles["interview-container"]}>
       <div className={styles["video-container"]}>
         <video
@@ -215,14 +253,25 @@ const Interview = () => {
       <div className={styles["question-container"]}>
         <p id="question">Question will be shown here</p>
       </div>
-      
+
       <div className={styles["controls-container"]}>
-        <button onClick={startRecording}>
-          <FontAwesomeIcon icon={faMicrophone} />
-        </button>
-        <button onClick={stopRecording}>
-          <FontAwesomeIcon icon={faMicrophoneSlash} />
-        </button>
+        {recordingStatus === "inactive" ? (
+          <button disabled>
+            <FontAwesomeIcon icon={faMicrophoneSlash} />
+          </button>
+        ) : (
+          <button onClick={stopRecording} id="stopRecordingBtn">
+            <FontAwesomeIcon icon={faMicrophone} />
+          </button>
+        )}
+        <button
+          style={{ display: "none" }}
+          onClick={startRecording}
+          id="startRecordingBtn"
+        ></button>
+        <div>
+          <p id="timer"></p>
+        </div>
         {audio ? (
           <div className="audio-container">
             <a download href={audio}>
