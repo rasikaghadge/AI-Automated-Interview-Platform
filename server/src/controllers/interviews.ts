@@ -137,3 +137,19 @@ export const listInterviewsHR = async (req: any, res: any) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+export const updateMeeting = async (req: any, res: any) => {
+  const meetingId = req.params.id;
+  const { status } = req.body;
+  const updatedMeeting = { status };
+  try {
+    const updatedMeetingResponse = await Interview.findByIdAndUpdate(
+      meetingId,
+      updatedMeeting,
+      { new: true }
+    );
+    res.status(200).json(updatedMeetingResponse);
+  } catch (error: any) {
+    res.status(404).json({ message: error.message });
+  }
+}

@@ -11,6 +11,7 @@ import { questions, introduction } from "./FirstQuestions";
 import { processCandidateAnswer } from "../../actions/modelCommunication";
 import { useDispatch } from "react-redux";
 import image from "./interview_img.jpg";
+import { changeMeetingStatus } from "../../actions/interviews";
 
 const Interview = () => {
   const dispatch = useDispatch();
@@ -50,7 +51,7 @@ const Interview = () => {
         clearInterval(intervalId);
 
         alert("Interview has ended!");
-        navigate("/scheduledinterviews");
+        changeInterviewStatusToCompleted();
       } else {
         const hours = Math.floor(difference / (1000 * 60 * 60));
         const minutes = Math.floor(
@@ -150,6 +151,26 @@ const Interview = () => {
     };
   };
 
+  const endInterview = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to end the interview?"
+    );
+
+    if (confirmed) {
+      changeInterviewStatusToCompleted();
+      navigate("/scheduledinterviews");
+    }
+  };
+
+  const changeInterviewStatusToCompleted = async () => {
+    try {
+      const response = await dispatch(changeMeetingStatus(id, "Completed"));
+      console.log("Interview status changed to completed: ", response);
+    } catch (error) {
+      console.log("An error occurred:", error);
+    }
+  };
+
   const sendAudioAndGetNextQuestion = async (audioBase64) => {
     // TODO: Test with django server
     let response = await dispatch(processCandidateAnswer(audioBase64));
@@ -241,11 +262,12 @@ const Interview = () => {
         {remainingTime !== null && (
           <span className={styles["remaining-time"]}>{remainingTime}</span>
         )}
-        <Link to={"/scheduledinterviews"}>
-          <button className={styles["end-interview-button"]}>
-            End Interview
-          </button>
-        </Link>
+        <button
+          className={styles["end-interview-button"]}
+          onClick={endInterview}
+        >
+          End Interview
+        </button>
       </div>
       <div className={styles["image"]}>
         <img src={image} alt="Image" />

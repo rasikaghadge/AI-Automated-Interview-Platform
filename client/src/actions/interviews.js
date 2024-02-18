@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { GET_INTERVIEWS, START_LOADING, LIST_MEETINGS, GET_MEETING, SCHEDULE_MEETING } from './constants.js';
+import { GET_INTERVIEWS, START_LOADING, LIST_MEETINGS, GET_MEETING, SCHEDULE_MEETING, UPDATE_MEETING } from './constants.js';
 import * as api from '../api/index.js';
 
 export const getInterviewsCandidate = (id) => async (dispatch) => {
@@ -51,3 +51,13 @@ export const scheduleMeeting = (meetingData) => async (dispatch) => {
     console.log(error);
   }
 };
+
+export const changeMeetingStatus = (id, status) => async (dispatch) => {
+  try {
+    const statusJson = { status: status };
+    const {data} = await api.changeMeetingStatus(id, statusJson);
+    dispatch({ type: UPDATE_MEETING, payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+}
