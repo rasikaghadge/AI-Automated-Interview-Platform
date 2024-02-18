@@ -29,6 +29,7 @@ const Interview = () => {
   const mimeType = "audio/wav";
   const liveVideoFeed = useRef(null);
   const [remainingTime, setRemainingTime] = useState(null);
+  const [intervalId, setIntervalId] = useState(null);
 
   useEffect(() => {
     getMicrophonePermission();
@@ -131,6 +132,8 @@ const Interview = () => {
 
   const stopRecording = () => {
     setRecordingStatus("inactive");
+    clearInterval(intervalId);
+    setIntervalId(null);
     mediaRecorder.current.stop();
     mediaRecorder.current.onstop = () => {
       const audioBlob = new Blob(audioChunks, { type: mimeType });
@@ -197,7 +200,9 @@ const Interview = () => {
 
   const showTimerToAnswerQuestion = () => {
     const timerElement = document.getElementById("timer");
+    timerElement.classList.add(styles["answer-time"]);
     let timeLeft = 60;
+    let tempId;
     const updateTimer = () => {
       const minutes = Math.floor(timeLeft / 60);
       const seconds = timeLeft % 60;
@@ -208,17 +213,18 @@ const Interview = () => {
 
       timeLeft--;
       if (timeLeft < 0) {
-        clearInterval(timerInterval);
         timerElement.textContent = "Time's up!";
         setTimeout(() => {
           timerElement.textContent = "";
+          timerElement.classList.remove(styles["answer-time"]);
         }, 2000);
         document.getElementById("stopRecordingBtn").click();
-        clearInterval(timerInterval);
+        clearInterval(tempId);
       }
     };
     updateTimer();
-    const timerInterval = setInterval(updateTimer, 1000);
+    tempId = setInterval(updateTimer, 1000);
+    setIntervalId(tempId);
   };
 
   return (

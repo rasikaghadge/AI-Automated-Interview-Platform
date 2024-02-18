@@ -43,6 +43,13 @@
   margin-right: 10px;
 }
 
+.answer-time{
+  background-color: #ffc905;
+  padding: 9px 15px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
 .image {
   border-radius: 50%;
   /* width: 50px; */
