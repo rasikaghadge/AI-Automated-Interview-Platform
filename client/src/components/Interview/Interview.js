@@ -172,12 +172,8 @@ const Interview = () => {
   };
 
   const sendAudioAndGetNextQuestion = async (audioBase64) => {
-    // TODO: Test with django server
     let response = await dispatch(processCandidateAnswer(audioBase64));
-    // TODO: Change it to the question from response
-    let str = generateString(10);
-    displayAndReadQuestion(str);
-    console.log("Generated string: ", str);
+    displayAndReadQuestion(response["openai-response"]);
   };
 
   const characters =
@@ -294,13 +290,15 @@ const Interview = () => {
         <div>
           <p id="timer"></p>
         </div>
-        {audio ? (
+        {/*
+         Below code is commented out as it may be required in future
+         {audio ? (
           <div className="audio-container">
             <a download href={audio}>
               Download Recording
             </a>
           </div>
-        ) : null}
+        ) : null} */}
       </div>
     </div>
   );
