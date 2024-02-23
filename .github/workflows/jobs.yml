@@ -1,0 +1,17 @@
+name: Patch Interview Endpoint
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at 12 AM UTC
+
+jobs:
+  patch_endpoint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: PATCH Endpoint
+        run: |
+          curl -X PATCH \
+          -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+          -H "Content-Type: application/json" \
+          https://your-api-url.com/api/v1/interview
