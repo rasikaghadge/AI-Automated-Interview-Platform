@@ -4,13 +4,13 @@ import {
   faMicrophone,
   faMicrophoneSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
 import styles from "./Interview.module.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { questions, introduction } from "./FirstQuestions";
 import { processCandidateAnswer } from "../../actions/modelCommunication";
 import { useDispatch } from "react-redux";
 import image from "./interview_img.jpg";
+import { changeMeetingStatus } from "../../actions/interviews";
 
 const Interview = () => {
   const dispatch = useDispatch();
@@ -50,7 +50,7 @@ const Interview = () => {
         clearInterval(intervalId);
 
         alert("Interview has ended!");
-        navigate("/scheduledinterviews");
+        changeInterviewStatusToCompleted();
       } else {
         const hours = Math.floor(difference / (1000 * 60 * 60));
         const minutes = Math.floor(
@@ -150,15 +150,32 @@ const Interview = () => {
     };
   };
 
-  const sendAudioAndGetNextQuestion = async (audioBase64) => {
-    // TODO: Test with django server
-    let response = await dispatch(processCandidateAnswer(audioBase64));
-    // TODO: Change it to the question from response
-    let str = generateString(10);
-    displayAndReadQuestion(str);
-    console.log("Generated string: ", str);
+  const endInterview = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to end the interview?"
+    );
+
+    if (confirmed) {
+      changeInterviewStatusToCompleted();
+      navigate("/scheduledinterviews");
+    }
   };
 
+  const changeInterviewStatusToCompleted = async () => {
+    try {
+      await dispatch(changeMeetingStatus(id, "Completed"));
+    } catch (error) {
+      console.log("An error occurred:", error);
+    }
+  };
+
+  const sendAudioAndGetNextQuestion = async (audioBase64) => {
+    let response = await dispatch(processCandidateAnswer(audioBase64));
+    displayAndReadQuestion(response["openai-response"]);
+  };
+
+  /** 
+   * For testing purpose
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -170,6 +187,7 @@ const Interview = () => {
     }
     return result;
   }
+  */
 
   const readQuestion = (question) => {
     const speech = new SpeechSynthesisUtterance(question);
@@ -241,11 +259,12 @@ const Interview = () => {
         {remainingTime !== null && (
           <span className={styles["remaining-time"]}>{remainingTime}</span>
         )}
-        <Link to={"/scheduledinterviews"}>
-          <button className={styles["end-interview-button"]}>
-            End Interview
-          </button>
-        </Link>
+        <button
+          className={styles["end-interview-button"]}
+          onClick={endInterview}
+        >
+          End Interview
+        </button>
       </div>
       <div className={styles["image"]}>
         <img src={image} alt="Image" />
@@ -272,13 +291,15 @@ const Interview = () => {
         <div>
           <p id="timer"></p>
         </div>
-        {audio ? (
+        {/*
+         Below code is commented out as it may be required in future
+         {audio ? (
           <div className="audio-container">
             <a download href={audio}>
               Download Recording
             </a>
           </div>
-        ) : null}
+        ) : null} */}
       </div>
     </div>
   );

@@ -99,16 +99,16 @@ const SeeScheduledInterviews = () => {
   };
 
   const isJoinEnabled = useMemo(() => {
-    return (startTime, endTime, startDate, userRole) => {
+    return (startTime, endTime, startDate, interviewStatus, userRole) => {
       const now = new Date();
       const start = parseTimeString(startTime, startDate);
       const end = parseTimeString(endTime, startDate);
-      return start <= now && now <= end && userRole === "candidate";
+      return start <= now && now <= end && userRole === "candidate" && interviewStatus === "Scheduled";
     };
   }, []);
 
-  const navigateToVideosdkMeeting = (participantName, startDate, endTime) => {
-    navigate('/interview', {
+  const navigateToVideosdkMeeting = (participantName, startDate, endTime, id) => {
+    navigate(`/interview/${id}`, {
       state: {
         participantNameFromDB: participantName,
         endTimeFromDB: endTime,
@@ -158,12 +158,13 @@ const SeeScheduledInterviews = () => {
                   />}</td>  
                 <td>{interview.status}</td>
                   <button
-                    onClick={() => navigateToVideosdkMeeting(interview.candidateName, interview.startDate, interview.endTime)}
+                    onClick={() => navigateToVideosdkMeeting(interview.candidateName, interview.startDate, interview.endTime, interview._id)}
                     className={`btn btn-success btn-sm ${
                       !isJoinEnabled(
                         interview.startTime,
                         interview.endTime,
                         interview.startDate,
+                        interview.status,
                         userRole
                       )
                         ? "disabled"
