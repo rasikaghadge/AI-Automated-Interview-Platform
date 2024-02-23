@@ -4,7 +4,6 @@ import {
   faMicrophone,
   faMicrophoneSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
 import styles from "./Interview.module.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { questions, introduction } from "./FirstQuestions";
@@ -164,8 +163,7 @@ const Interview = () => {
 
   const changeInterviewStatusToCompleted = async () => {
     try {
-      const response = await dispatch(changeMeetingStatus(id, "Completed"));
-      console.log("Interview status changed to completed: ", response);
+      await dispatch(changeMeetingStatus(id, "Completed"));
     } catch (error) {
       console.log("An error occurred:", error);
     }
@@ -176,6 +174,8 @@ const Interview = () => {
     displayAndReadQuestion(response["openai-response"]);
   };
 
+  /** 
+   * For testing purpose
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -187,6 +187,7 @@ const Interview = () => {
     }
     return result;
   }
+  */
 
   const readQuestion = (question) => {
     const speech = new SpeechSynthesisUtterance(question);
