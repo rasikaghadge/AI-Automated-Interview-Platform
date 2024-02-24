@@ -152,4 +152,32 @@ export const updateMeeting = async (req: any, res: any) => {
   } catch (error: any) {
     res.status(404).json({ message: error.message });
   }
+};
+
+export const getInterviewEndTime = async (req: any, res: any) => {
+  try {
+    const interviewId = req.params.id;
+    const interview = await Interview.findById(interviewId, "endTime");
+
+    if (!interview) {
+      return res.status(404).json({ message: "Interview not found" });
+    }
+
+    const endTime = interview.endTime;
+
+    return res.json({ endTime });
+  } catch (error) {
+    console.error("Error fetching endTime from MongoDB:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+export const updateAllInterviews = async (req: any, res: any) => {
+  // update status of all interviews to completed
+  await Interview.updateMany(
+    { startDate: { $lt: new Date() }, status: "Scheduled" },
+    { status: "Completed" }
+  );
+  res.status(200).json({ message: "All interviews updated" });
 }
