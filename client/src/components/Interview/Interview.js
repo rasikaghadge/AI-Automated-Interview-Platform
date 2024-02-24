@@ -5,21 +5,20 @@ import {
   faMicrophoneSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Interview.module.css";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { questions, introduction } from "./FirstQuestions";
 import { processCandidateAnswer } from "../../actions/modelCommunication";
 import { useDispatch } from "react-redux";
 import image from "./interview_img.jpg";
 import { changeMeetingStatus } from "../../actions/interviews";
+import { decode } from "jsonwebtoken";
+import { getProfile } from "../../actions/profile";
+import { getMeeting } from "../../actions/interviews";
 
 const Interview = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const location = useLocation();
-  const candidateName = location?.state?.participantNameFromDB;
-  const endTime = location?.state?.endTimeFromDB;
-  const interviewDate = location?.state?.startDateFromDB;
   const [permission, setPermission] = useState(false);
   const mediaRecorder = useRef(null);
   const [recordingStatus, setRecordingStatus] = useState("inactive");
@@ -30,44 +29,115 @@ const Interview = () => {
   const liveVideoFeed = useRef(null);
   const [remainingTime, setRemainingTime] = useState(null);
   const [intervalId, setIntervalId] = useState(null);
+  const user = JSON.parse(localStorage.getItem("profile"));
+  const [candidateData, setCandidateData] = useState({});
+  const [interviewData, setInterviewData] = useState({});
+  const [candidateName, setCandidateName] = useState("");
+
+  const getCandidateId = () => {
+    try {
+      const decodedToken = decode(user.token);
+      return decodedToken.id;
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+    }
+  };
+
+  const getCandidateDataFromDB = async (candidateId) => {
+    try {
+      let response = null;
+
+      response = await dispatch(getProfile(candidateId));
+
+      if (response) {
+        setCandidateName(response.user.firstName + " " + response.user.lastName);
+        setCandidateData({
+          technicalSkills: response.technicalSkills,
+          experience: response.experience,
+          strengths: response.strengths,
+          weaknesses: response.weaknesses
+        });
+      }
+    } catch (error) {
+      console.error("Error getting candidate profile: ", error.message);
+    }
+  };
+
+  const getInterviewDataFromDB = async (id) => {
+    try {
+      let response = null;
+      response = await dispatch(getMeeting(id));
+
+      if (response) {
+        setInterviewData({
+          role: response.title,
+          startDate: response.startDate,
+          endTime: response.endTime,
+        });
+      }
+    } catch (error) {
+      console.error("Error getting interview data: ", error.message);
+    }
+  };
+
+  useEffect(async () => {
+    if (!user) {
+      navigate("/login");
+    }
+
+    let candidateId = null;
+
+    if (user) {
+      candidateId = getCandidateId();
+    }
+
+    if (candidateId) {
+      await getCandidateDataFromDB(candidateId);
+      await getInterviewDataFromDB(id);
+      await changeInterviewStatus("Live");
+    }
+  }, []);
 
   useEffect(() => {
     getMicrophonePermission();
     getCameraPermission();
 
-    const interviewEndTime = new Date(interviewDate);
-    interviewEndTime.setHours(
-      interviewEndTime.getHours() + parseInt(endTime.split(":")[0] - 5)
-    );
-    interviewEndTime.setMinutes(parseInt(endTime.split(":")[1]));
+    if (Object.keys(interviewData).length > 0) {
+      const interviewEndTime = new Date(interviewData.startDate);
+      const endTime = interviewData.endTime;
+      interviewEndTime.setHours(
+        interviewEndTime.getHours() + parseInt(endTime.split(":")[0] - 5)
+      );
+      interviewEndTime.setMinutes(parseInt(endTime.split(":")[1]));
 
-    const intervalId = setInterval(() => {
-      const now = new Date();
-      const difference = interviewEndTime - now;
+      const intervalId = setInterval(() => {
+        const now = new Date();
+        const difference = interviewEndTime - now;
 
-      if (difference <= 0) {
-        setRemainingTime(0);
-        clearInterval(intervalId);
+        if (difference <= 0) {
+          setRemainingTime(0);
+          clearInterval(intervalId);
 
-        alert("Interview has ended!");
-        changeInterviewStatusToCompleted();
-      } else {
-        const hours = Math.floor(difference / (1000 * 60 * 60));
-        const minutes = Math.floor(
-          (difference % (1000 * 60 * 60)) / (1000 * 60)
-        );
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+          alert("Interview has ended!");
+          changeInterviewStatus("Completed");
+        } else {
+          const hours = Math.floor(difference / (1000 * 60 * 60));
+          const minutes = Math.floor(
+            (difference % (1000 * 60 * 60)) / (1000 * 60)
+          );
+          const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-        setRemainingTime(
-          `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
-            .toString()
-            .padStart(2, "0")}`
-        );
-      }
-    }, 1000);
+          setRemainingTime(
+            `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
+              .toString()
+              .padStart(2, "0")}`
+          );
+        }
+      }, 1000);
 
-    return () => clearInterval(intervalId);
-  }, [endTime]);
+      return () => clearInterval(intervalId);
+    }
+  }, [interviewData]);
 
   useEffect(() => {
     const startInterview = async () => {
@@ -156,21 +226,31 @@ const Interview = () => {
     );
 
     if (confirmed) {
-      changeInterviewStatusToCompleted();
+      changeInterviewStatus("Completed");
       navigate("/scheduledinterviews");
     }
   };
 
-  const changeInterviewStatusToCompleted = async () => {
+  const changeInterviewStatus = async (status) => {
     try {
-      await dispatch(changeMeetingStatus(id, "Completed"));
+      await dispatch(changeMeetingStatus(id, status));
     } catch (error) {
       console.log("An error occurred:", error);
     }
   };
 
   const sendAudioAndGetNextQuestion = async (audioBase64) => {
-    let response = await dispatch(processCandidateAnswer(audioBase64));
+    let response = await dispatch(
+      processCandidateAnswer(
+        audioBase64,
+        candidateData.technicalSkills,
+        candidateData.experience,
+        remainingTime,
+        interviewData.role,
+        candidateData.strengths,
+        candidateData.weaknesses
+      )
+    );
     displayAndReadQuestion(response["openai-response"]);
   };
 
@@ -255,7 +335,10 @@ const Interview = () => {
         ></video>
       </div>
       <div className={styles["header-container"]}>
-        <span className={styles["candidate-name"]}>{candidateName}</span>
+        {Object.keys(candidateData).length > 0 && 
+        <span className={styles["candidate-name"]}>
+          {candidateName}
+        </span> }
         {remainingTime !== null && (
           <span className={styles["remaining-time"]}>{remainingTime}</span>
         )}

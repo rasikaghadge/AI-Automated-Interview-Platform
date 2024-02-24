@@ -47,8 +47,8 @@ export const deleteProfile = (id) => API.delete(`/profiles/${id}`);
 export const getInterviewsCandidate = (id) => API.get(`/interviews/candidate/${id}`);
 export const getInterviewsHR = (id) => API.get(`/interviews/hr/${id}`);
 
-export const listMeetings = () => API.get('/meetings');
-export const getMeeting = (id) => API.get(`/meetings/${id}`);
+export const listMeetings = () => API.get('/interview');
+export const getMeeting = (id) => API.get(`/interviews/${id}`);
 // export const scheduleMeeting = (meetingData) => API.post('/schedule', meetingData);
 export const scheduleMeeting = (formData) => API.post(`/interviews/schedule`, formData);
 export const changeMeetingStatus = (id, status) => API.patch(`/interviews/update/${id}`, status);
