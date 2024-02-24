@@ -1,5 +1,5 @@
 import express from "express";
-import { scheduleMeeting, getMeeting, listInterviewsCandidate, listInterviewsHR, updateMeeting } from "../controllers/interviews.js";
+import { scheduleMeeting, getMeeting, listInterviewsCandidate, listInterviewsHR, updateMeeting, getInterviewEndTime } from "../controllers/interviews.js";
 import InterviewModel from "../models/Interview.js";
 import { hrAuth, auth } from "../middleware/auth.js";
 
@@ -12,22 +12,6 @@ router.get("/hr/:id", auth, listInterviewsHR);
 router.get("/:id", getMeeting);
 router.patch("/update/:id", auth, updateMeeting);
 
-router.get("/:id/endtime", async (req, res) => {
-  try {
-    const interviewId = req.params.id;
-    const interview = await InterviewModel.findById(interviewId, "endTime");
-
-    if (!interview) {
-      return res.status(404).json({ message: 'Interview not found' });
-    }
-
-    const endTime = interview.endTime;
-
-    return res.json({ endTime });
-  } catch (error) {
-    console.error('Error fetching endTime from MongoDB:', error);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
-});
+router.get("/:id/endtime", auth, getInterviewEndTime);
 
 export default router;
