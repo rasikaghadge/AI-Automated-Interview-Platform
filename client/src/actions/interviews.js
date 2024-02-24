@@ -38,6 +38,7 @@ export const getMeeting = (id) => async (dispatch) => {
   try {
     const { data } = await api.getMeeting(id);
     dispatch({ type: GET_MEETING, payload: data });
+    return data;
   } catch (error) {
     console.log(error.response);
   }
