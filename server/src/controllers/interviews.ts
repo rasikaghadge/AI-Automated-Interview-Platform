@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 import Interview from "../models/Interview.js";
 import Profile from "../models/ProfileModel.js";
 import User from "../models/userModel.js";
+import { convertTextToSpeech } from "../helper/interviewHelper.js";
+import { Readable } from "stream";
 
 dotenv.config();
 
@@ -180,4 +182,13 @@ export const updateAllInterviews = async (req: any, res: any) => {
     { status: "Completed" }
   );
   res.status(200).json({ message: "All interviews updated" });
+}
+
+export const getChatResponse = async (req: any, res: any) => {
+  const speech = await convertTextToSpeech();
+  const readableStream = new Readable();
+  readableStream.push(speech);
+  readableStream.push(null);
+  res.setHeader('Content-Type', 'audio/mpeg');
+  readableStream.pipe(res);
 }
