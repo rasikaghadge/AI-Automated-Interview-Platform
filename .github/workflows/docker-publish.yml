@@ -2,7 +2,7 @@ name: Project Image Push
 
 on:
   push:
-    branches: ["main", "suraj"]
+    branches: ["main", "development"]
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
