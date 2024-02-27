@@ -54,3 +54,4 @@ export const scheduleMeeting = (formData) => API.post(`/interviews/schedule`, fo
 export const changeMeetingStatus = (id, status) => API.patch(`/interviews/update/${id}`, status);
 
 export const processCandidateAnswer = (audioJson) => AI_APP_API.post('/process/', audioJson);
+export const saveUserDetails = (userDetails) => AI_APP_API.post('/user/', userDetails);
