@@ -1,0 +1,38 @@
+/* Add your preferred styling for the form container */
+form {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  /* Style for labels */
+  label {
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  /* Style for input fields */
+  input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+  }
+  
+  /* Style for the submit button */
+  button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* Add hover effect for the button */
+  button:hover {
+    background-color: #45a049;
+  }
+  
