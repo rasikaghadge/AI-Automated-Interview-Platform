@@ -104,28 +104,20 @@ const UserDetails = () => {
     setHasChanges(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let response = null;
 
     try {
       // Send a request to the server to update the profile
-      dispatch(
+      response = await dispatch(
         saveUserDetails(
-          initialData.skills,
-          initialData.experience,
+          formData.skills,
+          formData.experience,
           role,
           interviewId
         )
       );
-
-      if (!response.ok) {
-        // Handle non-successful response, e.g., show an error message
-        console.error("Failed to update profile:", response.statusText);
-        return;
-      }
-
-      // Profile updated successfully
       console.log("Profile updated successfully!");
       navigate(`/interview/${interviewId}`, {
         state: {
