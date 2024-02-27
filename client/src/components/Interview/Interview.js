@@ -94,7 +94,8 @@ const Interview = () => {
     if (candidateId) {
       await getCandidateDataFromDB(candidateId);
       await getInterviewDataFromDB(id);
-      await changeInterviewStatus("Live");
+     // for dev purpose
+      // await changeInterviewStatus("Live");
     }
   }, []);
 
@@ -248,7 +249,8 @@ const Interview = () => {
         remainingTime,
         interviewData.role,
         candidateData.strengths,
-        candidateData.weaknesses
+        candidateData.weaknesses,
+        id
       )
     );
     displayAndReadQuestion(response["openai-response"]);
