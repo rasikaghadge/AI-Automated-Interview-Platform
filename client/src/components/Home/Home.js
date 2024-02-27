@@ -1,21 +1,31 @@
 import React, { useEffect } from "react";
-import styles from "./Home.module.css";
 import { useNavigate } from "react-router-dom";
+import bannerImage from "../../Assets/banner2.png";
 
 const Home = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('profile'))
+  const user = JSON.parse(localStorage.getItem('profile'));
   
   useEffect(() => {
     if(user) {
-      console.log('navigate to homepage')
-        navigate('/homepage')
+      console.log('navigate to homepage');
+      navigate('/homepage');
     }
-  }, [user, navigate])
+  }, [user, navigate]);
 
   return (
     <div>
-      <div className={styles.header2}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "10px 20px",
+          backgroundColor: "#f0f0f0", // Example background color
+          borderTopLeftRadius: "10px",
+          borderTopRightRadius: "10px",
+        }}
+      >
         <img
           style={{ width: "50px", cursor: "pointer" }}
           onClick={() => navigate("/")}
@@ -24,23 +34,40 @@ const Home = () => {
         />
         <button
           onClick={() => navigate("/select")}
-          className={styles.login}
+          style={{
+            backgroundColor: "#007bff", // Example background color
+            color: "#fff", // Example text color
+            border: "none",
+            padding: "10px 20px",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
         >
           Get started
         </button>
       </div>
-      <div className={styles.pageContainer}>
-        <section className={styles.hero}>
+      <div
+        style={{
+          maxWidth: "1200px", // Example max-width
+          margin: "0 auto",
+          padding: "20px",
+          borderBottomLeftRadius: "10px",
+          borderBottomRightRadius: "10px",
+          overflow: "hidden",
+        }}
+      >
+        <section style={{ textAlign: "center" }}>
           <h1>Best tool to interview candidates for your next hiring drive</h1>
-          <div className={styles.paragraph}>
+          <div style={{ marginBottom: "20px" }}>
             <p>
               Free and Open Source AI interview application made with MongoDB,
               Express, React & Nodejs
             </p>
           </div>
-          <div className={styles.imgContainer}>
+          <div style={{ marginTop: "20px", borderRadius: "10px", overflow: "hidden" }}>
             <img
-              src="https://res.cloudinary.com/almpo/image/upload/v1637241441/special/banner_izy4xm.png"
+              style={{ width: "100%", cursor: "pointer", borderRadius: "10px" }}
+              src={bannerImage}
               alt="invoicing-app"
             />
           </div>
