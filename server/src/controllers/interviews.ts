@@ -1,4 +1,5 @@
-import dotenv from "dotenv";
+const dotenv = require("dotenv")
+
 import Interview from "../models/Interview.js";
 import Profile from "../models/ProfileModel.js";
 import User from "../models/userModel.js";

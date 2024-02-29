@@ -1,5 +1,6 @@
 import axios from "axios";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 // @ts-ignore
 import dotenv from "dotenv";
 import { Request, Response } from "express";
@@ -11,7 +12,12 @@ import User from "../models/userModel.js";
 
 dotenv.config();
 const SECRET: string | undefined = process.env.SECRET;
-const VIDEOSDK_API_KEY: string | undefined = process.env.VIDEOSDK_API_KEY;
+const TOKEN_EXPIRE_TIME = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+if (!SECRET) {
+  console.error("Secret key is not specified in the environment variables.");
+  process.exit(1);
+}
 
 async function getProfilePictureByName(name: string): Promise<string | null> {
   try {
@@ -68,11 +74,22 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
       existingUser.id,
       existingUser.role,
       "24h",
-      SECRET,
-      VIDEOSDK_API_KEY
+      SECRET
     );
-    const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    res.status(200).json({ token, expiresIn: expirationTime });
+    const refreshToken = createToken(
+      existingUser.email,
+      existingUser.id,
+      existingUser.role,
+      "24h",
+      SECRET
+    );
+    res
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        sameSite: "strict",
+      })
+      .header("Authorization", token)
+      .send(existingUser);
   } catch (error) {
     console.log(error);
     res
@@ -126,7 +143,6 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       role,
       "24h",
       SECRET,
-      VIDEOSDK_API_KEY
     );
     const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
     res.status(201).json({
@@ -167,5 +183,23 @@ export const forgotPassword = async (
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const refreshToken = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies["refreshToken"];
+  if (!refreshToken) {
+    return res.status(401).send("Access Denied. No refresh token provided.");
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, SECRET);
+    const accessToken = jwt.sign({ user: decoded }, SECRET, {
+      expiresIn: "24h",
+    });
+
+    res.header("Authorization", accessToken).send({ DATA: "user" });
+  } catch (error) {
+    return res.status(400).send("Invalid refresh token.");
   }
 };
