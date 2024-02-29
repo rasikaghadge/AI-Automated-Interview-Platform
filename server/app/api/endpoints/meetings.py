@@ -1,11 +1,14 @@
+from pathlib import Path
 from typing import Any, List
 
 from app.api import deps
+from app.core.config import PROJECT_DIR
 from app.core.session import get_db
 from app.models import Interview, Profile, User
 from app.schemas.requests import InterviewCreateRequest, InterviewUpdateRequest
 from app.schemas.responses import InterviewResponse
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -79,3 +82,30 @@ async def delete_interview(
     db.delete(interview)
     db.commit()
     return {"message": "Interview deleted successfully"}
+
+
+@router.post('/chat')
+def get_chat_response(file: UploadFile):
+    data = {
+        "file_name": file.filename,
+        "content_type": file.content_type,
+        "file": file.file,
+        "PROJECT_DIR": PROJECT_DIR
+    }
+
+    def interfile():
+        with open(file.filename, 'rb') as audio_file:
+            yield from audio_file
+    return StreamingResponse(interfile(), media_type='audio/mpeg')
+
+
+# @router.get('/chat')
+# def get_chat_response():
+#     print(Path.joinpath(PROJECT_DIR, 'my_audio.mp3'))
+#     # context = None
+
+#     def interfile():
+#         with open(Path.joinpath(PROJECT_DIR, 'my_audio.mp3'), 'rb') as audio_file:
+#             yield from audio_file
+#     # return context
+#     return StreamingResponse(interfile(), media_type='audio/mpeg')
