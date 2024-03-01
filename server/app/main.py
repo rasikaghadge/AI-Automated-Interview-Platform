@@ -11,9 +11,9 @@ Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI(
-    title=config.settings.PROJECT_NAME,
-    version=config.settings.VERSION,
-    description=config.settings.DESCRIPTION,
+    title="Ai-interviewer",
+    version="1.0",
+    description="Ai-interviewer",
     openapi_url="/openapi.json",
     docs_url="/",
 )
@@ -23,7 +23,7 @@ app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,                 
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
