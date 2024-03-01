@@ -11,6 +11,7 @@ import RoleSelect from './components/RoleSelect/RoleSelect';
 import Schedule from './components/Schedule/Schedule';
 import SeeScheduledInterviews from './components/SeeScheduledInterviews/SeeScheduledInterviews';
 import Interview from './components/Interview/Interview'
+import UserDetails from './components/UserDetails/UserDetails';
 
 function App() {
 
@@ -31,6 +32,8 @@ function App() {
           <Route path="/reset/:token" element={<Reset/>} />
           <Route path="/select" element={<RoleSelect/>} />
           <Route path="/schedule" element={<Schedule/>} />
+          <Route path="/interview/:id" element={<Interview />} />
+          <Route path="/user" element={<UserDetails/>} />
         </Routes>
         </SnackbarProvider>
       </BrowserRouter>

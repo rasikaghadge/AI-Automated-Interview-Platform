@@ -12,7 +12,7 @@ if (NODE_ENV === 'development') {
 }
 export const baseURL = url;
 const API = axios.create({ baseURL: baseURL})
-
+const AI_APP_API = axios.create({ baseURL: process.env.AI_APP_API })
 
 API.interceptors.request.use((req) => {
     if(localStorage.getItem('profile')) {
@@ -22,12 +22,6 @@ API.interceptors.request.use((req) => {
     return req
 })
 
-// export const fetchInvoices =() => API.get('/invoices')
-export const fetchInvoice =(id) => API.get(`/invoices/${id}`)
-export const addInvoice =( invoice ) => API.post('/invoices', invoice)
-export const updateInvoice = (id, updatedInvoice) => API.patch(`/invoices/${id}`, updatedInvoice)
-export const deleteInvoice =(id) => API.delete(`/invoices/${id}`)
-export const fetchInvoicesByUser = (searchQuery) => API.get(`/invoices?searchQuery=${searchQuery.search}`);
 
 export const fetchClient = (id) => API.get(`/clients/${id}`);
 export const fetchClients = (page) => API.get(`/clients?page=${page}`);
@@ -53,7 +47,11 @@ export const deleteProfile = (id) => API.delete(`/profiles/${id}`);
 export const getInterviewsCandidate = (id) => API.get(`/interviews/candidate/${id}`);
 export const getInterviewsHR = (id) => API.get(`/interviews/hr/${id}`);
 
-export const listMeetings = () => API.get('/meetings');
-export const getMeeting = (id) => API.get(`/meetings/${id}`);
+export const listMeetings = () => API.get('/interview');
+export const getMeeting = (id) => API.get(`/interviews/${id}`);
 // export const scheduleMeeting = (meetingData) => API.post('/schedule', meetingData);
 export const scheduleMeeting = (formData) => API.post(`/interviews/schedule`, formData);
+export const changeMeetingStatus = (id, status) => API.patch(`/interviews/update/${id}`, status);
+
+export const processCandidateAnswer = (audioJson) => AI_APP_API.post('/process/', audioJson);
+export const saveUserDetails = (userDetails) => AI_APP_API.post('/user/', userDetails);
