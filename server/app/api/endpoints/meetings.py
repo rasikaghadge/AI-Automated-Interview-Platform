@@ -7,9 +7,11 @@ from app.core.session import get_db
 from app.models import Interview, Profile, User
 from app.schemas.requests import InterviewCreateRequest, InterviewUpdateRequest
 from app.schemas.responses import InterviewResponse
+from app.utils.meetings import text_to_speech
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+
 
 router = APIRouter()
 
@@ -99,13 +101,11 @@ def get_chat_response(file: UploadFile):
     return StreamingResponse(interfile(), media_type='audio/mpeg')
 
 
-# @router.get('/chat')
-# def get_chat_response():
-#     print(Path.joinpath(PROJECT_DIR, 'my_audio.mp3'))
-#     # context = None
-
-#     def interfile():
-#         with open(Path.joinpath(PROJECT_DIR, 'my_audio.mp3'), 'rb') as audio_file:
-#             yield from audio_file
-#     # return context
-#     return StreamingResponse(interfile(), media_type='audio/mpeg')
+@router.get('/chat')
+async def get_chat_response(chat):
+    # Generate audio
+    audio_bytes = text_to_speech(chat)
+    # Return the audio as a stream
+    def generate_audio():
+        yield audio_bytes
+    return StreamingResponse(generate_audio(), media_type='audio/mpeg')
