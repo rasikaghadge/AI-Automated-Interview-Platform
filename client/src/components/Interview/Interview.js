@@ -14,6 +14,7 @@ import { changeMeetingStatus } from "../../actions/interviews";
 import { decode } from "jsonwebtoken";
 import { getProfile } from "../../actions/profile";
 import { getMeeting } from "../../actions/interviews";
+import FullScreenModal from "./FullScreenModal/FullScreenModal";
 
 const Interview = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,18 @@ const Interview = () => {
   const [candidateData, setCandidateData] = useState({});
   const [interviewData, setInterviewData] = useState({});
   const [candidateName, setCandidateName] = useState("");
+  const [showModal, setShowModal] = useState(true);
+  const [disqualificationTimer, setDisqualificationTimer] = useState(null);
+
+  useEffect(() => {
+    if (!showModal) {
+      enterFullscreen();
+    }
+  }, [showModal]);
+
+  const handleOkClick = () => {
+    setShowModal(false);
+  };
 
   const getCandidateId = () => {
     try {
@@ -94,7 +107,7 @@ const Interview = () => {
     if (candidateId) {
       await getCandidateDataFromDB(candidateId);
       await getInterviewDataFromDB(id);
-     // for dev purpose
+      // for dev purpose
       // await changeInterviewStatus("Live");
     }
   }, []);
@@ -146,7 +159,58 @@ const Interview = () => {
       const randomIndex = Math.floor(Math.random() * questions.length);
       await displayAndReadQuestion(questions[randomIndex]);
     };
-    startInterview();
+    if (showModal === false) {
+      startInterview();
+    }
+  }, [showModal]);
+
+  const enterFullscreen = () => {
+    const element = document.documentElement;
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+      element.msRequestFullscreen();
+    }
+  };
+  
+  const handleReEnterFullscreen = () => {
+    enterFullscreen();
+    clearTimeout(disqualificationTimer); // Clear the disqualification timer
+  };
+
+  useEffect(() => {
+    const startDisqualificationTimer = () => {
+      setTimeout(() => {
+        alert(
+          "You have been disqualified for exiting the fullscreen mode for more than 2 minutes."
+        );
+        navigate("/scheduledinterviews");
+      }, 120000);
+    };
+
+    const exitFullscreenHandler = () => {
+      if (!document.fullscreenElement) {
+        clearTimeout(disqualificationTimer);
+
+        const confirmed = window.confirm("Do you want to exit fullscreen mode?");
+        if (confirmed) {
+          const timer = setTimeout(() => {
+            alert("You have been disqualified for exiting the fullscreen mode for more than 2 minutes.");
+            navigate("/scheduledinterviews");
+          }, 120000);
+          setDisqualificationTimer(timer);
+        } else {
+          enterFullscreen();
+        }
+      }
+    };
+
+    document.addEventListener("fullscreenchange", exitFullscreenHandler);
+    return () => {
+      document.removeEventListener("fullscreenchange", exitFullscreenHandler);
+    };
   }, []);
 
   const getMicrophonePermission = async () => {
@@ -328,55 +392,61 @@ const Interview = () => {
   };
 
   return (
-    <div className={styles["interview-container"]}>
-      <div className={styles["video-container"]}>
-        <video
-          ref={liveVideoFeed}
-          autoPlay
-          className={styles["live-player"]}
-        ></video>
-      </div>
-      <div className={styles["header-container"]}>
-        {Object.keys(candidateData).length > 0 && 
-        <span className={styles["candidate-name"]}>
-          {candidateName}
-        </span> }
-        {remainingTime !== null && (
-          <span className={styles["remaining-time"]}>{remainingTime}</span>
-        )}
-        <button
-          className={styles["end-interview-button"]}
-          onClick={endInterview}
-        >
-          End Interview
-        </button>
-      </div>
-      <div className={styles["image"]}>
-        <img src={image} alt="Image" />
-      </div>
-      <div className={styles["question-container"]}>
-        <p id="question">Question will be shown here</p>
-      </div>
-
-      <div className={styles["controls-container"]}>
-        {recordingStatus === "inactive" ? (
-          <button disabled>
-            <FontAwesomeIcon icon={faMicrophoneSlash} />
-          </button>
-        ) : (
-          <button onClick={stopRecording} id="stopRecordingBtn">
-            <FontAwesomeIcon icon={faMicrophone} />
-          </button>
-        )}
-        <button
-          style={{ display: "none" }}
-          onClick={startRecording}
-          id="startRecordingBtn"
-        ></button>
-        <div>
-          <p id="timer"></p>
+    <idv>
+      {showModal && (
+        <FullScreenModal onOk={handleOkClick}>
+          <p>You are about to enter fullscreen mode.</p>
+          <p>Click "OK" to continue.</p>
+        </FullScreenModal>
+      )}
+      <div className={styles["interview-container"]}>
+        <div className={styles["video-container"]}>
+          <video
+            ref={liveVideoFeed}
+            autoPlay
+            className={styles["live-player"]}
+          ></video>
         </div>
-        {/*
+        <div className={styles["header-container"]}>
+          {Object.keys(candidateData).length > 0 && (
+            <span className={styles["candidate-name"]}>{candidateName}</span>
+          )}
+          {remainingTime !== null && (
+            <span className={styles["remaining-time"]}>{remainingTime}</span>
+          )}
+          <button
+            className={styles["end-interview-button"]}
+            onClick={endInterview}
+          >
+            End Interview
+          </button>
+        </div>
+        <div className={styles["image"]}>
+          <img src={image} alt="Image" />
+        </div>
+        <div className={styles["question-container"]}>
+          <p id="question">Question will be shown here</p>
+        </div>
+
+        <div className={styles["controls-container"]}>
+          {recordingStatus === "inactive" ? (
+            <button disabled>
+              <FontAwesomeIcon icon={faMicrophoneSlash} />
+            </button>
+          ) : (
+            <button onClick={stopRecording} id="stopRecordingBtn">
+              <FontAwesomeIcon icon={faMicrophone} />
+            </button>
+          )}
+          <button
+            style={{ display: "none" }}
+            onClick={startRecording}
+            id="startRecordingBtn"
+          ></button>
+          <div>
+            <p id="timer"></p>
+          </div>
+          {/*
          Below code is commented out as it may be required in future
          {audio ? (
           <div className="audio-container">
@@ -385,8 +455,9 @@ const Interview = () => {
             </a>
           </div>
         ) : null} */}
+        </div>
       </div>
-    </div>
+    </idv>
   );
 };
 
