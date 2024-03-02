@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import {
   getInterviewsCandidate,
   getInterviewsHR,
+  getEvaluation
 } from "../../actions/interviews";
 import NavBar from "../NavBar/NavBar";
 
@@ -127,6 +128,11 @@ const SeeScheduledInterviews = () => {
     });
   };
 
+  const getCandidateEvaluation = (id) => {
+      const response = getEvaluation(id);
+      return response;
+  }
+
   return (
     <div className={styles.navbar_container}>
     
@@ -167,6 +173,8 @@ const SeeScheduledInterviews = () => {
                     style={{ width: '50px', height: '50px', borderRadius: '50%' }}
                   />}</td>  
                 <td>{interview.status}</td>
+
+                { userRole === 'candidate' ? 
                   <button
                     onClick={() => navigateToUserForm(interview.participantName, interview.startDate, interview.endTime, interview._id, interview.title)}
                     className={`btn btn-success btn-sm ${
@@ -184,6 +192,7 @@ const SeeScheduledInterviews = () => {
                   >
                     Join Interview
                   </button>
+                : <button className="btn btn-success" onClick={getCandidateEvaluation(interview._id)}>Get Evaluation</button> }
               </tr>
             ))}
           </tbody>
