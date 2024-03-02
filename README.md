@@ -18,6 +18,14 @@ Run the server in development model
 Run in production
 `npm start`
 
+### Client
+Install packages
+`yarn install`
+
+Run the client in development model
+`npm start`
+
+
 ## Tech Stack
 
 **Client:** ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=white) ![Redux](https://img.shields.io/badge/-Redux-764ABC?logo=redux&logoColor=white) ![CSS](https://img.shields.io/badge/-CSS-1572B6?logo=css3&logoColor=white)
