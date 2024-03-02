@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faExpand,
   faMicrophone,
   faMicrophoneSlash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -174,30 +175,26 @@ const Interview = () => {
       element.msRequestFullscreen();
     }
   };
-  
+
   const handleReEnterFullscreen = () => {
     enterFullscreen();
     clearTimeout(disqualificationTimer); // Clear the disqualification timer
   };
 
   useEffect(() => {
-    const startDisqualificationTimer = () => {
-      setTimeout(() => {
-        alert(
-          "You have been disqualified for exiting the fullscreen mode for more than 2 minutes."
-        );
-        navigate("/scheduledinterviews");
-      }, 120000);
-    };
-
     const exitFullscreenHandler = () => {
       if (!document.fullscreenElement) {
         clearTimeout(disqualificationTimer);
 
-        const confirmed = window.confirm("Do you want to exit fullscreen mode?");
+        const confirmed = window.confirm(
+          "Do you want to exit fullscreen mode?"
+        );
         if (confirmed) {
           const timer = setTimeout(() => {
-            alert("You have been disqualified for exiting the fullscreen mode for more than 2 minutes.");
+            alert(
+              "You have been disqualified for exiting the fullscreen mode for more than 2 minutes. Please contact the respective authority for further assistance."
+            );
+            changeInterviewStatus("Cancelled");
             navigate("/scheduledinterviews");
           }, 120000);
           setDisqualificationTimer(timer);
@@ -437,6 +434,14 @@ const Interview = () => {
             <button onClick={stopRecording} id="stopRecordingBtn">
               <FontAwesomeIcon icon={faMicrophone} />
             </button>
+          )}
+          {!document.fullscreenElement && (
+            <div className={styles["tooltip"]}>
+              <button onClick={handleReEnterFullscreen}>
+                <FontAwesomeIcon icon={faExpand} />
+              </button>
+              <span className={styles["tooltiptext"]}>Enter Fullscreen</span>
+            </div>
           )}
           <button
             style={{ display: "none" }}
