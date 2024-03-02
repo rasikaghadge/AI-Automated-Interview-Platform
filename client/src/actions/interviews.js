@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { GET_INTERVIEWS, START_LOADING, LIST_MEETINGS, GET_MEETING, SCHEDULE_MEETING, UPDATE_MEETING } from './constants.js';
 import * as api from '../api/index.js';
+import { GET_EVALUATION, GET_MEETING, LIST_MEETINGS, SCHEDULE_MEETING, START_LOADING, UPDATE_MEETING } from './constants.js';
 
 export const getInterviewsCandidate = (id) => async (dispatch) => {
   try {
@@ -58,6 +58,15 @@ export const changeMeetingStatus = (id, status) => async (dispatch) => {
     const statusJson = { status: status };
     const {data} = await api.changeMeetingStatus(id, statusJson);
     dispatch({ type: UPDATE_MEETING, payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getEvaluation = (id) => async (dispatch) => {
+  try {
+    const { data } = await api.getEvaluation(id);
+    dispatch({type: GET_EVALUATION, payload: data });
   } catch (error) {
     console.log(error);
   }

@@ -55,3 +55,5 @@ export const changeMeetingStatus = (id, status) => API.patch(`/interviews/update
 
 export const processCandidateAnswer = (audioJson) => AI_APP_API.post('/process/', audioJson);
 export const saveUserDetails = (userDetails) => AI_APP_API.post('/user/', userDetails);
+
+export const getEvaluation = (id) => AI_APP_API.get(`/user/evaluate/${id}`);
