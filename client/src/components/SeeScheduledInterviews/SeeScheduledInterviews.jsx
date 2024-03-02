@@ -3,20 +3,17 @@ import { useNavigate, Link } from "react-router-dom";
 import { decode } from "jsonwebtoken";
 import { useEffect } from "react";
 import styles from "./SeeScheduledInterviews.module.css";
-import { useSnackbar } from "react-simple-snackbar";
 import { useDispatch } from "react-redux";
 import {
   getInterviewsCandidate,
   getInterviewsHR,
   getEvaluation
 } from "../../actions/interviews";
-import NavBar from "../NavBar/NavBar";
 
 const SeeScheduledInterviews = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("profile"));
   const [userRole, setUserRole] = useState("");
-  const [openSnackbar, closeSnackbar] = useSnackbar();
   const dispatch = useDispatch();
   const [interviews, setInterviews] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
@@ -114,16 +111,6 @@ const SeeScheduledInterviews = () => {
         participantNameFromDB: participantName,
         interviewId: id,
         role: role
-      },
-    });
-  };
-
-  const navigateToVideosdkMeeting = (participantName, startDate, endTime, id) => {
-    navigate(`/interview/${id}`, {
-      state: {
-        participantNameFromDB: participantName,
-        endTimeFromDB: endTime,
-        startDateFromDB: startDate
       },
     });
   };

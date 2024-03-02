@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { decode } from "jsonwebtoken";
 import { useEffect } from "react";
 import styles from "./UpdateProfile.module.css";
 import { updateProfile, getProfile } from "../../actions/profile";
 import { useSnackbar } from "react-simple-snackbar";
 import { useDispatch } from "react-redux";
-import NavBar from "../NavBar/NavBar";
 
 const UpdateProfile = () => {
   const navigate = useNavigate();
