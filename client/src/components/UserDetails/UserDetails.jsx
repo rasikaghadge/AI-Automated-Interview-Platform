@@ -1,11 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { decode } from "jsonwebtoken";
 import { useEffect } from "react";
 import styles from "./UserDetails.module.css";
 import { getProfile } from "../../actions/profile";
-import { useSnackbar } from "react-simple-snackbar";
 import { useDispatch } from "react-redux";
 import { saveUserDetails } from "../../actions/modelCommunication";
 import { useLocation } from "react-router-dom";
@@ -13,8 +12,7 @@ import { useLocation } from "react-router-dom";
 const UserDetails = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("profile"));
-  const [userRole, setUserRole] = useState("");
-  const [openSnackbar] = useSnackbar();
+  const [, setUserRole] = useState("");
   const dispatch = useDispatch();
   const location = useLocation();
   const interviewId = location?.state?.interviewId;
@@ -91,7 +89,7 @@ const UserDetails = () => {
   }, [user, dataFetched]);
 
   // check if user has changed some fields
-  const [hasChanges, setHasChanges] = useState(false);
+  const [, setHasChanges] = useState(false);
 
   const [formData, setFormData] = useState({
     technicalSkills: "",
@@ -106,11 +104,10 @@ const UserDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let response = null;
 
     try {
       // Send a request to the server to update the profile
-      response = await dispatch(
+      await dispatch(
         saveUserDetails(
           formData.skills,
           formData.experience,

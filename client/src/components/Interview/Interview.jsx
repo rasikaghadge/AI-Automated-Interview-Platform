@@ -21,12 +21,12 @@ const Interview = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const [permission, setPermission] = useState(false);
+  const [, setPermission] = useState(false);
   const mediaRecorder = useRef(null);
   const [recordingStatus, setRecordingStatus] = useState("inactive");
   const [audioStream, setAudioStream] = useState(null);
   const [audioChunks, setAudioChunks] = useState([]);
-  const [audio, setAudio] = useState(null);
+  const [, setAudio] = useState(null);
   const mimeType = "audio/wav";
   const liveVideoFeed = useRef(null);
   const [remainingTime, setRemainingTime] = useState(null);
@@ -94,24 +94,28 @@ const Interview = () => {
     }
   };
 
-  useEffect(async () => {
-    if (!user) {
-      navigate("/login");
-    }
+    useEffect(() => {
+      async function fetchData() {
+        if (!user) {
+          navigate("/login");
+        }
 
-    let candidateId = null;
+        let candidateId = null;
 
-    if (user) {
-      candidateId = getCandidateId();
-    }
+        if (user) {
+          candidateId = getCandidateId();
+        }
 
-    if (candidateId) {
-      await getCandidateDataFromDB(candidateId);
-      await getInterviewDataFromDB(id);
-      // for dev purpose
-      // await changeInterviewStatus("Live");
-    }
-  }, []);
+        if (candidateId) {
+          await getCandidateDataFromDB(candidateId);
+          await getInterviewDataFromDB(id);
+          // for dev purpose
+          // await changeInterviewStatus("Live");
+        }
+      }
+
+      fetchData();
+    });
 
   useEffect(() => {
     getMicrophonePermission();
@@ -419,7 +423,7 @@ const Interview = () => {
           </button>
         </div>
         <div className={styles["image"]}>
-          <img src={image} alt="Image" />
+          <img src={image} alt="" />
         </div>
         <div className={styles["question-container"]}>
           <p id="question">Question will be shown here</p>
