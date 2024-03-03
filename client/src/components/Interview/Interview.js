@@ -361,9 +361,11 @@ const Interview = () => {
 
   const showTimerToAnswerQuestion = () => {
     const timerElement = document.getElementById("timer");
+    const extendTimerButton = document.getElementById("extendTimerButton");
     timerElement.classList.add(styles["answer-time"]);
     let timeLeft = 60;
     let tempId;
+    let isTimeExtended = false;
     const updateTimer = () => {
       const minutes = Math.floor(timeLeft / 60);
       const seconds = timeLeft % 60;
@@ -373,7 +375,11 @@ const Interview = () => {
       timerElement.textContent = formattedTime;
 
       timeLeft--;
-      if (timeLeft < 0) {
+      if (isTimeExtended) {
+        timeLeft += 60;
+        extendTimerButton.disabled = true;
+        isTimeExtended = false;
+      } else if (timeLeft < 0) {
         timerElement.textContent = "Time's up!";
         setTimeout(() => {
           timerElement.textContent = "";
@@ -386,6 +392,10 @@ const Interview = () => {
     updateTimer();
     tempId = setInterval(updateTimer, 1000);
     setIntervalId(tempId);
+    extendTimerButton.disabled = false;
+    extendTimerButton.addEventListener("click", () => {
+      isTimeExtended = true;
+    });
   };
 
   return (
@@ -435,7 +445,23 @@ const Interview = () => {
               <FontAwesomeIcon icon={faMicrophone} />
             </button>
           )}
-          {!document.fullscreenElement && (
+
+          <div className={styles["tooltip"]}>
+            <button
+              className={styles["extend-timer-button"]}
+              id="extendTimerButton"
+            >
+              +60
+            </button>
+            <span className={styles["tooltiptext"]}>
+              Extend answering time by 60 seconds
+            </span>
+          </div>
+          {document.fullscreenElement ? (
+              <button disabled onClick={handleReEnterFullscreen}>
+                <FontAwesomeIcon icon={faExpand} />
+              </button>
+          ) : (
             <div className={styles["tooltip"]}>
               <button onClick={handleReEnterFullscreen}>
                 <FontAwesomeIcon icon={faExpand} />
