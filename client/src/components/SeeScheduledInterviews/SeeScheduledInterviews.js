@@ -1,16 +1,14 @@
-import React, { useState, useMemo  } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import { decode } from "jsonwebtoken";
-import { useEffect } from "react";
-import styles from "./SeeScheduledInterviews.module.css";
-import { useSnackbar } from "react-simple-snackbar";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { useSnackbar } from "react-simple-snackbar";
 import {
+  getEvaluation,
   getInterviewsCandidate,
-  getInterviewsHR,
-  getEvaluation
+  getInterviewsHR
 } from "../../actions/interviews";
-import NavBar from "../NavBar/NavBar";
+import styles from "./SeeScheduledInterviews.module.css";
 
 const SeeScheduledInterviews = () => {
   const navigate = useNavigate();
@@ -129,88 +127,108 @@ const SeeScheduledInterviews = () => {
   };
 
   const getCandidateEvaluation = (id) => {
-      const response = getEvaluation(id);
-      return response;
+    const response = getEvaluation(id);
+    return response;
   }
 
   return (
     <div className={styles.navbar_container}>
-    
-    <div className={styles.scheduled_interviews_container}>
-       
-      <h2>Scheduled Interviews</h2>
 
-      {interviews.length === 0 ? (
-        <p>No interviews scheduled.</p>
-      ) : (
-        <table className={styles["interview-table"]}>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Description</th>
-              <th>Date</th>
-              <th>Time</th>
-              {userRole === "candidate" ? <th>HR</th> : null}
-              {userRole === "hr" ? <th>Candidate</th> : null}
-              <th>Status</th>
-              <th>Join</th>
-            </tr>
-          </thead>
-          <tbody>
-            {interviews.map((interview) => (
-              <tr key={interview._id}>
-                <td>{interview.title}</td>
-                <td>{interview.description}</td>
-                <td>{new Date(interview.startDate).toLocaleDateString()}</td>
-                <td>{`${interview.startTime} - ${interview.endTime}`}</td>
-                <td>{userRole === "candidate" ? <img
-                    src={`data:image/png;base64, ${interview.profilePicture}`}
-                    alt="HR Profile"
-                    style={{ width: '85px', height: '50px', borderRadius: '50%' }}
-                  />: <img
-                    src={`data:image/png;base64, ${interview.profilePicture}`} 
-                    alt="HR Profile"
-                    style={{ width: '50px', height: '50px', borderRadius: '50%' }}
-                  />}</td>  
-                <td>{interview.status}</td>
+      <div className={styles.scheduled_interviews_container}>
 
-                { userRole === 'candidate' ? 
-                  <button
-                    onClick={() => navigateToUserForm(interview.participantName, interview.startDate, interview.endTime, interview._id, interview.title)}
-                    className={`btn btn-success btn-sm ${
-                      !isJoinEnabled(
+        <h2>Scheduled Interviews</h2>
+
+        {interviews.length === 0 ? (
+          <p>No interviews scheduled.</p>
+        ) : (
+          <table className={styles["interview-table"]}>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Time</th>
+                {userRole === "candidate" ? <th>HR</th> : null}
+                {userRole === "hr" ? <th>Candidate</th> : null}
+                <th>Status</th>
+                <th>Join</th>
+              </tr>
+            </thead>
+            <tbody>
+              {console.log(interviews)}
+              {interviews.map((interview) => (
+                <tr key={interview._id}>
+                  <td>{interview.title}</td>
+                  <td>{interview.description}</td>
+                  <td>{new Date(interview.startDate).toLocaleDateString()}</td>
+                  <td>{`${interview.startTime} - ${interview.endTime}`}</td>
+                  <td>
+                    {userRole === "candidate" ? (
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ width: '75px', height: '65px', borderRadius: '50%', overflow: 'hidden' }}>
+                          <img
+                            src={`data:image/png;base64, ${interview.profilePicture}`}
+                            alt="HR Profile"
+                            style={{ width: '100%', height: '100%' }}
+                          />
+                        </div>
+                        <div style={{ marginLeft: '10px' }}>
+                          <p>{interview.hrName}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <div style={{ width: '75px', height: '65px', borderRadius: '50%', overflow: 'hidden' }}>
+                        <img
+                          src={`data:image/png;base64, ${interview.profilePicture}`}
+                          alt="HR Profile"
+                          style={{ width: '100%', height: '100%' }}
+                        />
+                      </div>
+                      <div style={{ marginLeft: '10px' }}>
+                        <p>{interview.candidateName}</p>
+                      </div>
+                    </div>
+                    )}
+                  </td>
+
+                  <td>{interview.status}</td>
+
+                  {userRole === 'candidate' ?
+                    <button
+                      onClick={() => navigateToUserForm(interview.participantName, interview.startDate, interview.endTime, interview._id, interview.title)}
+                      className={`btn btn-success ${!isJoinEnabled(
                         interview.startTime,
                         interview.endTime,
                         interview.startDate,
                         interview.status,
                         userRole
                       )
-                        ? "disabled"
-                        : ""
-                    }`}
-                    style={{ margin: "5px", marginTop: "10px" }}
-                  >
-                    Join Interview
-                  </button>
-                : <button className="btn btn-success" onClick={getCandidateEvaluation(interview._id)}>Get Evaluation</button> }
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-      <div className=".btn_container">
-      <Link to={"/homepage"}>
-        <button className="btn btn-secondary" style={{ marginRight: "20px", marginTop: "10px" }}>Back</button>
-      </Link>
-      {userRole === "hr" && (
-        <Link to={"/schedule"}>
-          <button className="btn btn-primary" style={{ marginTop: "10px" }}>
-            Schedule Interview
-          </button>
-        </Link>
-      )}
+                          ? "disabled"
+                          : ""
+                        }`}
+                    >
+                      Join Interview
+                    </button>
+                    : <button className="btn btn-success" onClick={getCandidateEvaluation(interview._id)}>Get Evaluation</button>}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        <div className=".btn_container">
+          <Link to={"/homepage"}>
+            <button className="btn btn-secondary" style={{ marginRight: "20px", marginTop: "10px" }}>Back</button>
+          </Link>
+          {userRole === "hr" && (
+            <Link to={"/schedule"}>
+              <button className="btn btn-primary" style={{ marginTop: "10px" }}>
+                Schedule Interview
+              </button>
+            </Link>
+          )}
+        </div>
       </div>
-    </div>
     </div>
   );
 };
