@@ -22,13 +22,14 @@ export const processCandidateAnswer = (audioBase64, technicalSkills, experience,
     }
   };
 
-  export const saveUserDetails = (skills, experience, role, interviewId) => async (dispatch) => {
+  export const saveUserDetails = (skills, experience, role, interviewId, topic) => async (dispatch) => {
     try {
       const requestJson = {
         skills: skills,
         experience: experience,
         role: role,
-        interviewId: interviewId
+        interviewId: interviewId,
+        topic: topic
       };
       const { data } = await api.saveUserDetails(requestJson);
       dispatch({ type: SAVE_USER, payload: data });

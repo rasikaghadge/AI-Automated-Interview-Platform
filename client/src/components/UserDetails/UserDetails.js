@@ -96,6 +96,7 @@ const UserDetails = () => {
   const [formData, setFormData] = useState({
     technicalSkills: "",
     experience: "",
+    topic: ""
   });
 
   const handleChange = async (e) => {
@@ -158,6 +159,19 @@ const UserDetails = () => {
                   name="skills"
                   placeholder="Technical Skills"
                   value={formData.skills}
+                  onChange={handleChange}
+                  className={styles.input_feild}
+                  required
+                />
+                <label htmlFor="topic" className={styles.label}>
+                  Topic
+                </label>
+                <input
+                  type="text"
+                  id="topic"
+                  name="topic"
+                  placeholder="Topic"
+                  value={formData.topic}
                   onChange={handleChange}
                   className={styles.input_feild}
                   required
