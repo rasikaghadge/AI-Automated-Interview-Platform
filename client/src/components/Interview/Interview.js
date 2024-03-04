@@ -64,12 +64,14 @@ const Interview = () => {
       response = await dispatch(getProfile(candidateId));
 
       if (response) {
-        setCandidateName(response.user.firstName + " " + response.user.lastName);
+        setCandidateName(
+          response.user.firstName + " " + response.user.lastName
+        );
         setCandidateData({
           technicalSkills: response.technicalSkills,
           experience: response.experience,
           strengths: response.strengths,
-          weaknesses: response.weaknesses
+          weaknesses: response.weaknesses,
         });
       }
     } catch (error) {
@@ -302,6 +304,8 @@ const Interview = () => {
   };
 
   const sendAudioAndGetNextQuestion = async (audioBase64) => {
+    const timerElement = document.getElementById("timer");
+    timerElement.textContent = "Processing....";
     let response = await dispatch(
       processCandidateAnswer(
         audioBase64,
@@ -314,6 +318,7 @@ const Interview = () => {
         id
       )
     );
+    timerElement.textContent = "00:60";
     displayAndReadQuestion(response["openai-response"]);
   };
 
@@ -382,8 +387,7 @@ const Interview = () => {
       } else if (timeLeft < 0) {
         timerElement.textContent = "Time's up!";
         setTimeout(() => {
-          timerElement.textContent = "";
-          timerElement.classList.remove(styles["answer-time"]);
+          // might be required later
         }, 2000);
         document.getElementById("stopRecordingBtn").click();
         clearInterval(tempId);
@@ -436,48 +440,68 @@ const Interview = () => {
         </div>
 
         <div className={styles["controls-container"]}>
-          {recordingStatus === "inactive" ? (
-            <button disabled>
-              <FontAwesomeIcon icon={faMicrophoneSlash} />
-            </button>
-          ) : (
-            <button onClick={stopRecording} id="stopRecordingBtn">
-              <FontAwesomeIcon icon={faMicrophone} />
-            </button>
-          )}
+          <div className={styles["controls-top"]}>
+            <div>
+              {recordingStatus === "inactive" ? (
+                <button disabled className={styles["submit-answer-btn"]}>
+                  Submit Answer
+                </button>
+              ) : (
+                <button onClick={stopRecording} id="stopRecordingBtn" className={styles["submit-answer-btn"]}>
+                  Submit Answer
+                </button>
+              )}
 
-          <div className={styles["tooltip"]}>
-            <button
-              className={styles["extend-timer-button"]}
-              id="extendTimerButton"
-            >
-              +60
-            </button>
-            <span className={styles["tooltiptext"]}>
-              Extend answering time by 60 seconds
-            </span>
-          </div>
-          {document.fullscreenElement ? (
-              <button disabled onClick={handleReEnterFullscreen}>
-                <FontAwesomeIcon icon={faExpand} />
-              </button>
-          ) : (
-            <div className={styles["tooltip"]}>
-              <button onClick={handleReEnterFullscreen}>
-                <FontAwesomeIcon icon={faExpand} />
-              </button>
-              <span className={styles["tooltiptext"]}>Enter Fullscreen</span>
+              <div className={styles["tooltip"]}>
+                <button
+                  className={styles["extend-timer-button"]}
+                  id="extendTimerButton"
+                >
+                  +60
+                </button>
+                <span className={styles["tooltiptext"]}>
+                  Extend answering time by 60 seconds
+                </span>
+              </div>
+              {document.fullscreenElement ? (
+                <button disabled onClick={handleReEnterFullscreen}>
+                  <FontAwesomeIcon icon={faExpand} />
+                </button>
+              ) : (
+                <div className={styles["tooltip"]}>
+                  <button onClick={handleReEnterFullscreen}>
+                    <FontAwesomeIcon icon={faExpand} />
+                  </button>
+                  <span className={styles["tooltiptext"]}>
+                    Enter Fullscreen
+                  </span>
+                </div>
+              )}
             </div>
-          )}
-          <button
-            style={{ display: "none" }}
-            onClick={startRecording}
-            id="startRecordingBtn"
-          ></button>
-          <div>
-            <p id="timer"></p>
+
+            <button
+              style={{ display: "none" }}
+              onClick={startRecording}
+              id="startRecordingBtn"
+            ></button>
+            <div>
+              <p id="timer"></p>
+            </div>
           </div>
-          {/*
+
+          {recordingStatus === "recording" ? (
+            <div className={styles["bars-container"]}>
+              <div id={styles["bars"]}>
+                <div className={styles["bar"]}></div>
+                <div className={styles["bar"]}></div>
+                <div className={styles["bar"]}></div>
+                <div className={styles["bar"]}></div>
+                <div className={styles["bar"]}></div>
+              </div>
+            </div>
+          ) : null}
+        </div>
+        {/*
          Below code is commented out as it may be required in future
          {audio ? (
           <div className="audio-container">
@@ -486,7 +510,6 @@ const Interview = () => {
             </a>
           </div>
         ) : null} */}
-        </div>
       </div>
     </idv>
   );
