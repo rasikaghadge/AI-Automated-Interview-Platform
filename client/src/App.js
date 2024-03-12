@@ -12,6 +12,7 @@ import Schedule from './components/Schedule/Schedule';
 import SeeScheduledInterviews from './components/SeeScheduledInterviews/SeeScheduledInterviews';
 import Interview from './components/Interview/Interview'
 import UserDetails from './components/UserDetails/UserDetails';
+import Evaluation from './components/Evaluation/Evaluation';
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
           <Route path="/schedule" element={<Schedule/>} />
           <Route path="/interview/:id" element={<Interview />} />
           <Route path="/user" element={<UserDetails/>} />
+          <Route path="/evaluation" element={<Evaluation/>}/>
         </Routes>
         </SnackbarProvider>
       </BrowserRouter>
