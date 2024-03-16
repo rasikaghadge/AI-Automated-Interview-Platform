@@ -106,8 +106,8 @@ const SeeScheduledInterviews = () => {
     };
   }, []);
 
-  const navigateToUserForm = (participantName, startDate, endTime, id, role) => {
-    navigate("/user", {
+  const navigateToInstrucPage = (participantName, startDate, endTime, id, role) => {
+    navigate("/instructions", {
       state: {
         participantNameFromDB: participantName,
         interviewId: id,
@@ -196,7 +196,7 @@ const SeeScheduledInterviews = () => {
 
                   {userRole === 'candidate' ?
                     <button
-                      onClick={() => navigateToUserForm(interview.participantName, interview.startDate, interview.endTime, interview._id, interview.title)}
+                      onClick={() => navigateToInstrucPage(interview.participantName, interview.startDate, interview.endTime, interview._id, interview.title)}
                       className={`btn btn-success ${!isJoinEnabled(
                         interview.startTime,
                         interview.endTime,
