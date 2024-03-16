@@ -63,8 +63,29 @@
 
 .controls-container {
   display: flex;
-  flex-wrap: wrap; /* Allow controls to wrap to the next line on smaller screens */
+  flex-direction: column;
+  align-items: center;
+}
+
+.controls-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bars-container {
+  display: flex;
   justify-content: center;
+  margin-top: 60px;
+}
+
+.submit-answer-btn {
+  padding: 8px 12px;
+  background-color: #228b22; 
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 button {
@@ -102,6 +123,118 @@ button:hover {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+.extend-timer-button {
+  background-color: #ff9a00;
+  color: white;
+}
+
+/* sound bars */
+#bars {
+  height: 30px;
+  margin: -30px 0 0 -20px;
+  position: absolute;
+  width: 40px;
+}
+
+.bar {
+  bottom: 1px;
+  height: 3px;
+  position: absolute;
+  width: 5px;
+  animation: sound 0ms -2000ms linear infinite alternate;
+}
+
+@keyframes sound {
+  0% {
+    opacity: 0.35;
+    height: 3px;
+  }
+  100% {
+    opacity: 1;
+    height: 28px;
+  }
+}
+
+.bar:nth-child(1) {
+  background: #FFA500;
+  left: 1px;
+  animation-duration: 474ms;
+  margin: 3px 3px;
+}
+.bar:nth-child(2) {
+  background: #FF8C00;
+  left: 7px;
+  animation-duration: 433ms;
+  margin: 3px 3px;
+}
+.bar:nth-child(3) {
+  background: #FF7F50;
+  left: 13px;
+  animation-duration: 407ms;
+  margin: 3px 3px;
+}
+.bar:nth-child(4) {
+  background: #FF6347;
+  left: 19px;
+  animation-duration: 458ms;
+  margin: 3px 3px;
+}
+.bar:nth-child(5) {
+  background: #FF4500;
+  left: 25px;
+  animation-duration: 400ms;
+  margin: 3px 3px;
+}
+.bar:nth-child(6) {
+  left: 21px;
+  animation-duration: 427ms;
+  margin: 3px 3px;
+}
+.bar:nth-child(7) {
+  left: 25px;
+  animation-duration: 441ms;
+  margin: 3px 3px;
+}
+.bar:nth-child(8) {
+  left: 29px;
+  animation-duration: 419ms;
+  margin: 3px 3px;
+}
+.bar:nth-child(9) {
+  left: 33px;
+  animation-duration: 487ms;
+  margin: 3px 3px;
+}
+.bar:nth-child(10) {
+  left: 37px;
+  animation-duration: 442ms;
+  margin: 3px 3px;
 }
 
 /* Media Queries for Responsiveness */

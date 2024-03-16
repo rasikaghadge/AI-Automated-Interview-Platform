@@ -1,38 +1,99 @@
-/* Add your preferred styling for the form container */
-form {
-    max-width: 400px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.auth_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    background-color: #EDF1FC;
   }
   
-  /* Style for labels */
-  label {
-    display: block;
-    margin-bottom: 8px;
-  }
-  
-  /* Style for input fields */
-  input {
+  .auth_content {
+    max-width: 900px;
     width: 100%;
-    padding: 8px;
-    margin-bottom: 12px;
-    box-sizing: border-box;
+    margin-top: 50px; /* Increased top margin for more space */
+    margin-bottom: 50px;
   }
   
-  /* Style for the submit button */
-  button {
-    background-color: #4caf50;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
+  .auth_form_container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Add box shadow */
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .heading {
+    text-align: center;
+    color: #333;
+    font-size: 30px;
+    margin-bottom: 20px;
+    font-weight: bolder;
+    margin-bottom: 10px;
+  }
+  
+  .label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .input_feild,
+  .select_box,
+  textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s ease-in-out;
+  }
+  
+  .input_feild:focus,
+  .select_box:focus,
+  textarea:focus {
+    border-color: #3498db;
+  }
+  
+  .select_box {
     cursor: pointer;
   }
   
-  /* Add hover effect for the button */
-  button:hover {
-    background-color: #45a049;
+  .submit_button,
+  .submit_button_disabled,
+  .back_button {
+    display: block;
+    width: 25%;
+    margin: 0 auto; /* Center the buttons horizontally */
+    padding: 12px;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  .submit_button {
+    background-color: #198EFF;
+  }
+  
+  .submit_button:hover {
+    background-color: #0070da;
+  }
+  
+  .submit_button_disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .back_button {
+    background-color: #e74c3c;
+  }
+  
+  .back_button:hover {
+    background-color: #c0392b;
   }
   

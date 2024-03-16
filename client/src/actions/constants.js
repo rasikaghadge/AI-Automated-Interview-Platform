@@ -35,3 +35,6 @@ export const SCHEDULE_MEETING = 'SCHEDULE_MEETING';
 export const UPDATE_MEETING = 'UPDATE_MEETING';
 
 export const PROCESS_AUDIO = 'PROCESS_AUDIO';
+export const SAVE_USER = 'SAVE_USER';
+
+export const GET_EVALUATION = "GET_EVALUATION";
