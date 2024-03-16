@@ -1,6 +1,6 @@
 // src/InstructionPage.js
 import styles from "./InstrucPage.module.css";
-import React, { useState, useMemo  } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { decode } from "jsonwebtoken";
 import { useEffect } from "react";
@@ -9,6 +9,7 @@ import {
   getInterviewsCandidate,
   getInterviewsHR,
 } from "../../actions/interviews";
+import { useLocation } from "react-router-dom";
 
 const InstructionPage = () => {
   const navigate = useNavigate();
@@ -18,6 +19,10 @@ const InstructionPage = () => {
   const dispatch = useDispatch();
   const [interviews, setInterviews] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
+  const location = useLocation();
+  const interviewId = location?.state?.interviewId;
+  const participantName = location?.state?.participantNameFromDB;
+  const role = location?.state?.role;
 
   const checkUserRole = () => {
     try {
@@ -86,30 +91,66 @@ const InstructionPage = () => {
     }
   }, [user, interviews, dataFetched]);
 
-
-
-
   return (
     <div className={styles.instruction_page}>
       <h1 className={styles.instruc_heading}>Instructions</h1>
-      
+
       <p>Welcome to the Instruction Page! Follow the steps below:</p>
-      
+
       <ol className={styles.instruc_lists}>
-        <li className={styles.instruc_listItems}>First you need to fill the details about your skills and experience level</li>
-        <li className={styles.instruc_listItems}>You need to allow Mic and Camera permission to continue Interview</li>
-        <li className={styles.instruc_listItems}>Once the interview is started make sure that there is no other sound disturbance</li>
-        <li className={styles.instruc_listItems}>You can move from camera 1-2 times else the interview will be directly ended with the required number of warning</li>
-        <li className={styles.instruc_listItems}>To answer the question you will be given 1 min if you need extra you can request for extra time but marks will be deducted accordingly</li>
-        <li className={styles.instruc_listItems}>If you finish answering before time you can just wait complete the remaining time else you can click on next question button to start the next question</li>
-        <li className={styles.instruc_listItems}>Once the interview is started full screen mode will be enabled if you exit full screen you will be debarred from the interview process with 2 time warning alert</li>
-        <li className={styles.instruc_listItems}>Once you are finished with the interview you can click on end interview button to end the interview before time and in the scheduled interview page you will see the interview status as completed</li>
-        <li className={styles.instruc_listItems}>If the interview time ends it will show a pop up to exit from the interview page</li>
+        <li className={styles.instruc_listItems}>
+          First you need to fill the details about your skills and experience
+          level
+        </li>
+        <li className={styles.instruc_listItems}>
+          You need to allow Mic and Camera permission to continue Interview
+        </li>
+        <li className={styles.instruc_listItems}>
+          Once the interview is started make sure that there is no other sound
+          disturbance
+        </li>
+        <li className={styles.instruc_listItems}>
+          You can move from camera 1-2 times else the interview will be directly
+          ended with the required number of warning
+        </li>
+        <li className={styles.instruc_listItems}>
+          To answer the question you will be given 1 min if you need extra you
+          can request for extra time but marks will be deducted accordingly
+        </li>
+        <li className={styles.instruc_listItems}>
+          If you finish answering before time you can just wait complete the
+          remaining time else you can click on next question button to start the
+          next question
+        </li>
+        <li className={styles.instruc_listItems}>
+          Once the interview is started full screen mode will be enabled if you
+          exit full screen you will be debarred from the interview process with
+          2 time warning alert
+        </li>
+        <li className={styles.instruc_listItems}>
+          Once you are finished with the interview you can click on end
+          interview button to end the interview before time and in the scheduled
+          interview page you will see the interview status as completed
+        </li>
+        <li className={styles.instruc_listItems}>
+          If the interview time ends it will show a pop up to exit from the
+          interview page
+        </li>
       </ol>
-      
+
       <p>Feel free to contact us if you have any questions.</p>
-      
-      <button onClick={() => navigate("/user")}>
+
+      <button
+        onClick={() =>
+          navigate("/user", {
+            state: {
+              participantNameFromDB: participantName,
+              interviewId: interviewId,
+              role: role,
+            },
+          })
+        }
+      >
         Start
       </button>
     </div>
