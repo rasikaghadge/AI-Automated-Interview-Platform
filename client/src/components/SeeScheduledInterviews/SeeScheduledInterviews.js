@@ -107,6 +107,16 @@ const SeeScheduledInterviews = () => {
     };
   }, []);
 
+  const navigateToInstrucPage = (participantName, startDate, endTime, id, role) => {
+    navigate("/instructions", {
+      state: {
+        participantNameFromDB: participantName,
+        interviewId: id,
+        role: role
+      },
+    });
+  };
+
   const navigateToVideosdkMeeting = (participantName, startDate, endTime, id) => {
     navigate(`/interview/${id}`, {
       state: {
@@ -158,7 +168,7 @@ const SeeScheduledInterviews = () => {
                   />}</td>  
                 <td>{interview.status}</td>
                   <button
-                    onClick={() => navigateToVideosdkMeeting(interview.candidateName, interview.startDate, interview.endTime, interview._id)}
+                    onClick={() => navigateToInstrucPage(interview.participantName, interview.startDate, interview.endTime, interview._id, interview.title)}
                     className={`btn btn-success btn-sm ${
                       !isJoinEnabled(
                         interview.startTime,
