@@ -8,6 +8,8 @@ import styles from "./Schedule.module.css";
 import { scheduleMeeting } from "../../actions/interviews";
 import { useSnackbar } from "react-simple-snackbar";
 import { useDispatch } from "react-redux";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
 let prevUserToken = null;
 
@@ -17,6 +19,7 @@ const Schedule = () => {
   const [userRole, setUserRole] = useState("");
   const [openSnackbar, closeSnackbar] = useSnackbar();
   const dispatch = useDispatch();
+  const animatedComponents = makeAnimated();
 
   useEffect(() => {
     if (!user) {
@@ -56,15 +59,46 @@ const Schedule = () => {
     room: "",
   });
 
+  const roleOptions = [
+    { value: 'DevOps Engineer', label: 'DevOps Engineer' },
+    { value: 'Data Scientist', label: 'Data Scientist' },
+    { value: 'Data Engineer', label: 'Data Engineer' },
+    { value: 'Software Engineer', label: 'Software Engineer' },
+    { value: 'Cloud Engineer', label: 'Cloud Engineer' },
+    { value: 'Machine Learning Engineer', label: 'Machine Learning Engineer' },
+    { value: 'Artificial Intelligence Engineer', label: 'Artificial Intelligence Engineer' },
+    { value: 'Full Stack Developer', label: 'Full Stack Developer' },
+    { value: 'Frontend Developer', label: 'Frontend Developer' },
+    { value: 'Backend Developer', label: 'Backend Developer' },
+    { value: 'Systems Administrator', label: 'Systems Administrator' },
+    { value: 'Network Engineer', label: 'Network Engineer' },
+    { value: 'Security Engineer', label: 'Security Engineer' },
+    { value: 'Database Administrator', label: 'Database Administrator' },
+    { value: 'Quality Assurance Engineer', label: 'Quality Assurance Engineer' },
+    { value: 'UI/UX Designer', label: 'UI/UX Designer' },
+    { value: 'Technical Support Engineer', label: 'Technical Support Engineer' },
+    { value: 'Business Intelligence Analyst', label: 'Business Intelligence Analyst' },
+    { value: 'Product Manager (Technical)', label: 'Product Manager (Technical)' },
+    { value: 'IT Project Manager', label: 'IT Project Manager' }
+  ];  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const newValue = name === "startDate" ? new Date(value) : value;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleRoleChange = (selectedOption) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      title: selectedOption
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    formData.title = formData.title.value;
     try {
       // Send a request to the server to schedule the interview
       await dispatch(scheduleMeeting(formData));
@@ -91,16 +125,16 @@ const Schedule = () => {
             {userRole === "hr" && (
               <>
                 <label htmlFor="title" className={styles.label}>
-                  Title:
+                  Role:
                 </label>
-                <input
-                  type="text"
+                <Select
+                  options={roleOptions}
+                  components={animatedComponents}
+                  closeMenuOnSelect={true}
                   id="title"
                   name="title"
-                  placeholder="Title"
                   value={formData.title}
-                  onChange={handleChange}
-                  className={styles.input_feild}
+                  onChange={handleRoleChange}
                   required
                 />
               </>
