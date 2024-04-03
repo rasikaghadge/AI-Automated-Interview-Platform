@@ -229,13 +229,13 @@ const Schedule = () => {
             {userRole === "hr" && (
               <>
                 <label htmlFor="topic" className={styles.label}>
-                  topic
+                  Topics
                 </label>
                 <input
                   type="text"
                   id="topic"
                   name="topic"
-                  placeholder="topic"
+                  placeholder="Topics (comma separated)"
                   value={formData.topic}
                   onChange={handleChange}
                   className={styles.input_feild}
@@ -251,7 +251,7 @@ const Schedule = () => {
                   type="text"
                   id="requiredSkills"
                   name="requiredSkills"
-                  placeholder="required Skills space seprated"
+                  placeholder="Required Skills (comma separated)"
                   value={formData.requiredSkills}
                   onChange={handleChange}
                   className={styles.input_feild}

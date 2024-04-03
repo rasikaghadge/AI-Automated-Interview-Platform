@@ -20,7 +20,8 @@ const UserDetails = () => {
   const interviewId = location?.state?.interviewId;
   const participantName = location?.state?.participantNameFromDB;
   const role = location?.state?.role;
-
+  const topics = location?.state?.topics;
+  const requiredSkills = location?.state?.requiredSkills;
 
   const [initialData, setInitialData] = useState({
     firstname: "",
@@ -115,7 +116,9 @@ const UserDetails = () => {
           formData.skills,
           formData.experience,
           role,
-          interviewId
+          interviewId,
+          topics,
+          requiredSkills
         )
       );
       console.log("Profile updated successfully!");

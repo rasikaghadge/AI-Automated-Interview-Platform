@@ -23,6 +23,8 @@ const InstructionPage = () => {
   const interviewId = location?.state?.interviewId;
   const participantName = location?.state?.participantNameFromDB;
   const role = location?.state?.role;
+  const topics = location?.state?.topics;
+  const requiredSkills = location?.state?.requiredSkills;
 
   const checkUserRole = () => {
     try {
@@ -147,6 +149,8 @@ const InstructionPage = () => {
               participantNameFromDB: participantName,
               interviewId: interviewId,
               role: role,
+              topics: topics,
+              requiredSkills: requiredSkills
             },
           })
         }
