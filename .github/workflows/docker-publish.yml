@@ -2,7 +2,7 @@ name: Project Image Push
 
 on:
   push:
-    branches: ["main", "suraj"]
+    branches: ["main", "development"]
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker images
-        run: docker-compose -f docker-compose.yml build
+        run: docker compose -f docker-compose.yml build
         working-directory: .
 
       - name: Extract Docker metadata for backend
