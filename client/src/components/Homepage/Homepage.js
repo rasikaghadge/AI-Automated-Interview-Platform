@@ -6,15 +6,12 @@ import About from "../About/About";
 import Footer from "../Footer/Footer";
 import { decode } from "jsonwebtoken";
 import { useState, useEffect } from "react";
+import { refresh } from '../../api/index';
 
 const Homepage = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("profile"));
   const [userRole, setUserRole] = useState("");
-
-  if (!user) {
-    navigate("/login");
-  }
 
   useEffect(() => {
     const checkUserRole = async () => {
@@ -36,9 +33,29 @@ const Homepage = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    const refreshToken = async () => {
+      try {
+        const response = await refresh({ token: user?.refreshToken });
+        if (!response.status === 200) {
+          localStorage.removeItem("profile");
+          navigate("/login");
+        }
+        const newToken = response.data.token;
+        localStorage.setItem("profile", JSON.stringify({ ...user, token: newToken }));
+      } catch (error) {
+        localStorage.removeItem("profile");
+        navigate("/login");
+      }
+    };
+    setTimeout(() => {
+      refreshToken();
+    }, 10000)
+  });
+
   return (
     <div className="homepage">
-      <NavBar userRole={userRole}/>
+      <NavBar userRole={userRole} />
       <Hero userRole={userRole} />
       <Info />
       <About />

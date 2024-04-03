@@ -1,27 +1,22 @@
-import axios from 'axios'
-import dotenv from 'dotenv'
+import axios from "axios";
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
-const NODE_ENV = process.env.NODE_ENV
-let url;
-if (NODE_ENV === 'development') {
-    url = 'http://localhost:5000'
-} else {
-    url = process.env.REACT_APP_API
-}
-export const baseURL = url;
-const API = axios.create({ baseURL: baseURL})
-const AI_APP_API = axios.create({ baseURL: process.env.AI_APP_API })
+const NODE_ENV = process.env.NODE_ENV;
+
+export const baseURL = NODE_ENV === 'development' ? "http://localhost:5000": process.env.REACT_APP_API;
+export const ai_api_url = NODE_ENV === 'development' ? "http://localhost:8000": process.env.AI_APP_API;
+
+const API = axios.create({ baseURL: baseURL });
+const AI_APP_API = axios.create({ baseURL: ai_api_url });
 
 API.interceptors.request.use((req) => {
-    if(localStorage.getItem('profile')) {
-        req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
-    }
-    // console.log(req);
-    return req
-})
-
+  if(localStorage.getItem('profile')) {
+    req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
+  }
+  return req;
+});
 
 export const fetchClient = (id) => API.get(`/clients/${id}`);
 export const fetchClients = (page) => API.get(`/clients?page=${page}`);
@@ -35,6 +30,7 @@ export const signIn =(formData)=> API.post('/users/signin', formData)
 export const signUp =(formData)=> API.post('/users/signup', formData)
 export const forgot = (formData) => API.post('/users/forgot', formData);
 export const reset = (formData) => API.post('/users/reset', formData);
+export const refresh = (formData) => API.post('/users/refresh', formData);
 
 export const fetchProfilesBySearch = (searchQuery) => API.get(`/profiles/search?searchQuery=${searchQuery.search || searchQuery.year || 'none'}`);
 export const fetchProfile = (id) => API.get(`/profiles/${id}`)

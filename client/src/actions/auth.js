@@ -62,3 +62,13 @@ export const reset =(formData, history) => async(dispatch) => {
         alert(error)
     }
 }
+
+
+export const refresh = (formData) => async(dispatch) => {
+    try {
+        const {data} = await api.refresh(formData);
+        console.log(data)
+    } catch(error) {
+        console.log(error)
+    }
+}
