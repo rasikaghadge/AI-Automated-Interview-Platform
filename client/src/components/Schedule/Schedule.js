@@ -54,6 +54,8 @@ const Schedule = () => {
     email: "",
     status: "",
     room: "",
+    topic: "",
+    requiredSkills: ""
   });
 
   const handleChange = (e) => {
@@ -187,6 +189,38 @@ const Schedule = () => {
                   className={styles.input_feild}
                   // required
                   // disabled
+                />
+              </>
+            )}
+            {userRole === "hr" && (
+              <>
+                <label htmlFor="topic" className={styles.label}>
+                  topic
+                </label>
+                <input
+                  type="text"
+                  id="topic"
+                  name="topic"
+                  placeholder="topic"
+                  value={formData.topic}
+                  onChange={handleChange}
+                  className={styles.input_feild}
+                />
+              </>
+            )}
+            {userRole === "hr" && (
+              <>
+                <label htmlFor="requiredSkills" className={styles.label}>
+                  Required Skills
+                </label>
+                <input
+                  type="text"
+                  id="requiredSkills"
+                  name="requiredSkills"
+                  placeholder="required Skills space seprated"
+                  value={formData.requiredSkills}
+                  onChange={handleChange}
+                  className={styles.input_feild}
                 />
               </>
             )}
