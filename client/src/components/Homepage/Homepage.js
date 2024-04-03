@@ -34,6 +34,8 @@ const Homepage = () => {
   }, [user]);
 
   useEffect(() => {
+    let timeoutId;
+
     const refreshToken = async () => {
       try {
         const response = await refresh({ token: user?.refreshToken });
@@ -46,12 +48,18 @@ const Homepage = () => {
       } catch (error) {
         localStorage.removeItem("profile");
         navigate("/login");
+      } finally {
+        // Set the next refresh after 20 seconds
+        timeoutId = setTimeout(refreshToken, 20000);
       }
     };
-    setTimeout(() => {
-      refreshToken();
-    }, 10000)
-  });
+
+    // Start the initial refresh timer
+    timeoutId = setTimeout(refreshToken, 20000);
+
+    // Clean up the timer on component unmount or when user changes
+    return () => clearTimeout(timeoutId);
+  }, [user, navigate]);
 
   return (
     <div className="homepage">
