@@ -1,5 +1,6 @@
 import axios from "axios";
 import bcrypt from "bcryptjs";
+import jwt from 'jsonwebtoken'
 // @ts-ignore
 import dotenv from "dotenv";
 import { Request, Response } from "express";
@@ -10,8 +11,9 @@ import Profile from "../models/ProfileModel.js";
 import User from "../models/userModel.js";
 
 dotenv.config();
-const SECRET: string | undefined = process.env.SECRET;
+const SECRET: string | any = process.env.SECRET;
 const VIDEOSDK_API_KEY: string | undefined = process.env.VIDEOSDK_API_KEY;
+const refreshTokens: Array<string> = [];
 
 async function getProfilePictureByName(name: string): Promise<string | null> {
   try {
@@ -69,10 +71,17 @@ export const signin = async (req: Request, res: Response): Promise<void> => {
       existingUser.role,
       "24h",
       SECRET,
-      VIDEOSDK_API_KEY
     );
+
+    const refreshToken = createToken(
+      existingUser.email,
+      existingUser.id,
+      existingUser.role,
+      "48h",
+      SECRET,
+    )
     const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    res.status(200).json({ token, expiresIn: expirationTime });
+    res.status(200).json({ token, expiresIn: expirationTime, refreshToken: refreshToken });
   } catch (error) {
     console.log(error);
     res
@@ -126,7 +135,6 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       role,
       "24h",
       SECRET,
-      VIDEOSDK_API_KEY
     );
     const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000);
     res.status(201).json({
@@ -169,3 +177,17 @@ export const forgotPassword = async (
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const refresh = async(req: any, res: any): Promise<void> => {
+    const refreshToken = req.body.token;
+    if(!refreshToken) return res.status(401).json("You are not authenticated");
+      jwt.verify(refreshToken, SECRET, (err: any, decoded: any) => {
+        if (err) {
+          return res.status(403).json({ message: 'Session is expired please login to continue' });
+        }
+        const token = createToken(decoded.email, decoded.id, decoded.role, "24h", SECRET)
+        const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000)
+        res.json({token, expireIn:expirationTime});
+      })
+    }
