@@ -63,3 +63,19 @@ export const reset =(formData, history) => async(dispatch) => {
     }
 }
 
+
+export const refreshToken = async (user, navigate) => {
+    try {
+        const response = await api.refresh({ token: user?.refreshToken });
+        if (response.statusText !== 'OK') {
+            localStorage.removeItem("profile");
+            navigate("/login");
+        }
+        const newToken = response.data.token;
+        localStorage.setItem("profile", JSON.stringify({ ...user, token: newToken }));
+    } catch (error) {
+        console.log(error)
+        localStorage.removeItem("profile");
+        navigate("/login");
+    }
+}
