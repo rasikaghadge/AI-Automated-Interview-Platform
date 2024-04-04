@@ -11,7 +11,7 @@ export const signin =(formData, openSnackbar, setLoading) => async(dispatch) => 
 
         dispatch({ type: AUTH, data})
         // setLoading(false)
-        openSnackbar("Signin successfull")
+        openSnackbar("Signin successfully")
         // history.push('/dashboard')
         window.location.href="/homepage"
 
@@ -32,7 +32,7 @@ export const signup =(formData, openSnackbar, setLoading) => async(dispatch) => 
         dispatch({ type: CREATE_PROFILE, payload: info });
         window.location.href="/homepage"
         // history.push('/dashboard')
-        openSnackbar("Sign up successfull")
+        openSnackbar("Sign up successfully")
 
     } catch (error) {
         console.log(error)
@@ -63,12 +63,3 @@ export const reset =(formData, history) => async(dispatch) => {
     }
 }
 
-
-export const refresh = (formData) => async(dispatch) => {
-    try {
-        const {data} = await api.refresh(formData);
-        console.log(data)
-    } catch(error) {
-        console.log(error)
-    }
-}
