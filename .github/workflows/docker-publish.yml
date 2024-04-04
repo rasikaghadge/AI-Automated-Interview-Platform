@@ -2,7 +2,8 @@ name: Project Image Push
 
 on:
   push:
-    branches: ["main", "suraj"]
+  pull_request:
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -59,4 +60,3 @@ jobs:
         run: |
           echo "${{ steps.backend-meta.outputs.tags }}" | xargs -I {} cosign sign --yes ghcr.io/${{ github.repository }}/backend:{}@${{ steps.backend-meta.outputs.digest }}
           echo "${{ steps.frontend-meta.outputs.tags }}" | xargs -I {} cosign sign --yes ghcr.io/${{ github.repository }}/frontend:{}@${{ steps.frontend-meta.outputs.digest }}
-        if: ${{ github.event_name != 'pull_request' }}
