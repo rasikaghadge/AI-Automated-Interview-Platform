@@ -20,7 +20,7 @@ ENV CI=true
 ENV REACT_APP_VIDEOSDK_TOKEN=$REACT_APP_VIDEOSDK_TOKEN
 
 # Install project dependencies using Yarn
-RUN yarn install
+RUN apk add --no-cache yarn && yarn install --ignore-engines
 
 # Copy the remaining application files to the working directory
 COPY . .
