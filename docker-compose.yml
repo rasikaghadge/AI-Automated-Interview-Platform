@@ -1,14 +1,14 @@
 version: '3.8'
 
 services:
-  client:
-    container_name: ai-client-container
-    image: ai-client-image:latest
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
+  # client:
+  #   container_name: ai-client-container
+  #   image: ai-client-image:latest
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
   server:
     container_name: ai-server-container
     image: ai-server-image:latest

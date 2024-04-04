@@ -2,8 +2,7 @@ name: Project Image Push
 
 on:
   push:
-  pull_request:
-
+    
 jobs:
   build-and-push:
     runs-on: ubuntu-latest

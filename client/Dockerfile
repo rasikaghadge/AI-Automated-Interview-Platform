@@ -1,35 +1,24 @@
-# Use an official Node.js runtime (version 18) as a base image
-FROM node:18-alpine
+# Use Node.js 18 base image
+FROM node:19.5.0-alpine
 
 # Set the working directory inside the container
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy package.json and yarn.lock to the working directory
-COPY package*.json yarn.lock ./
+# Copy package.json and yarn.lock files to the working directory
+COPY package.json yarn.lock ./
 
-# Set NODE_OPTIONS to include --openssl-legacy-provider
-ENV NODE_OPTIONS=--openssl-legacy-provider
-ENV REACT_APP_API=https://ai-interviewer-backend.onrender.com
-ENV API_BASE_URL=https://api.videosdk.live
-ENV SKIP_PREFLIGHT_CHECK=true
-ENV NODE_ENV=production
-ENV VIDEOSDK_API_KEY=$VIDEOSDK_API_KEY
-ENV VIDEOSDK_SECRET_KEY=$VIDEOSDK_SECRET_KEY
-ENV VIDEOSDK_API_ENDPOINT=https://api.videosdk.live
-ENV CI=true
-ENV REACT_APP_VIDEOSDK_TOKEN=$REACT_APP_VIDEOSDK_TOKEN
+# Install project dependencies
+RUN npm cache clean --force && \
+    npm install --legacy-peer-deps
 
-# Install project dependencies using Yarn
-RUN apk add --no-cache yarn && yarn install --ignore-engines
-
-# Copy the remaining application files to the working directory
+# Copy the rest of the application code to the working directory
 COPY . .
 
-# Build the React app
-RUN yarn build
+# Build the React application
+RUN npm run build
 
-# Expose the port on which the app will run (adjust as needed)
+# Expose the port where the application will run (if needed)
 EXPOSE 3000
 
-# Define the command to run your application
-CMD ["yarn", "start"]
+# Command to start the application (change this according to your setup)
+CMD ["npm", "start"]
