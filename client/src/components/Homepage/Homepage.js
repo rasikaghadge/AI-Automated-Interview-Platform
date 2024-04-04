@@ -14,48 +14,30 @@ const Homepage = () => {
   const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
-    const checkUserRole = async () => {
-      try {
-        const decodedToken = decode(user.token);
-        if (decodedToken) {
-          const userRole = decodedToken.role;
-          setUserRole(userRole);
-        } else {
-          setUserRole("");
-        }
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-        setUserRole("");
-      }
-    };
-    if (user) {
-      checkUserRole();
-    }
-  }, [user]);
-
-  useEffect(() => {
     let timeoutId;
 
     const refreshToken = async () => {
       try {
         const response = await refresh({ token: user?.refreshToken });
-        if (!response.status === 200) {
+        if (response.statusText !== 'OK') {
           localStorage.removeItem("profile");
           navigate("/login");
         }
         const newToken = response.data.token;
+        setUserRole(decode(newToken)?.role)
         localStorage.setItem("profile", JSON.stringify({ ...user, token: newToken }));
       } catch (error) {
+        console.log(error)
         localStorage.removeItem("profile");
+        setUserRole("")
         navigate("/login");
       } finally {
-        // Set the next refresh after 20 seconds
-        timeoutId = setTimeout(refreshToken, 20000);
+        timeoutId = setTimeout(refreshToken, 8000);
       }
     };
 
     // Start the initial refresh timer
-    timeoutId = setTimeout(refreshToken, 20000);
+    timeoutId = setTimeout(refreshToken, 8000);
 
     // Clean up the timer on component unmount or when user changes
     return () => clearTimeout(timeoutId);
