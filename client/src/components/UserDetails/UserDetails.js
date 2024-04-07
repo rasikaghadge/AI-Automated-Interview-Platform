@@ -7,7 +7,7 @@ import styles from "./UserDetails.module.css";
 import { getProfile } from "../../actions/profile";
 import { useSnackbar } from "react-simple-snackbar";
 import { useDispatch } from "react-redux";
-import { saveUserDetails } from "../../actions/modelCommunication";
+import { updateProfile } from "../../actions/profile";
 import { useLocation } from "react-router-dom";
 
 const UserDetails = () => {
@@ -109,16 +109,16 @@ const UserDetails = () => {
     e.preventDefault();
     let response = null;
 
+    const reqFormData = new FormData();
+    reqFormData.append("techincalSkills", formData.skills);
+    reqFormData.append("experience", formData.experience);
     try {
       // Send a request to the server to update the profile
       response = await dispatch(
-        saveUserDetails(
-          formData.skills,
-          formData.experience,
-          role,
-          interviewId,
-          topics,
-          requiredSkills
+        updateProfile(
+          user.id,
+          reqFormData,
+          openSnackbar
         )
       );
       console.log("Profile updated successfully!");
@@ -126,6 +126,9 @@ const UserDetails = () => {
         state: {
           participantNameFromDB: participantName,
           interviewId: interviewId,
+          topics: topics,
+          requiredSkills: requiredSkills,
+          role: role,
         },
       });
     } catch (error) {
