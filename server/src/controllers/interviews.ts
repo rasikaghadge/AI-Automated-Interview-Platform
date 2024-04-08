@@ -21,7 +21,7 @@ export const getMeeting = async (req: any, res: any) => {
 
 export const scheduleMeeting = async (req: any, res: any) => {
   // Get meeting details from request body
-  const { title, description, startDate, startTime, endTime, email } = req.body;
+  const { title, description, startDate, startTime, endTime, email, topic, requiredSkills } = req.body;
   const options = {
     method: "GET",
     headers: {
@@ -46,6 +46,8 @@ export const scheduleMeeting = async (req: any, res: any) => {
     candidate: user,
     hr: hr,
     status: "Scheduled",
+    topic: topic,
+    requiredSkills: requiredSkills
   });
 
   try {
