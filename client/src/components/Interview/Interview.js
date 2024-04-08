@@ -141,7 +141,7 @@ const Interview = () => {
           clearInterval(intervalId);
 
           alert("Interview has ended!");
-          changeInterviewStatus("Completed");
+          endInterviewHelper();
         } else {
           const hours = Math.floor(difference / (1000 * 60 * 60));
           const minutes = Math.floor(
@@ -306,14 +306,30 @@ const Interview = () => {
     };
   };
 
+  const endInterviewHelper = () => {
+    changeInterviewStatus("Completed");
+    endInterviewSession();
+    navigate("/scheduledinterviews");
+}
+
   const endInterview = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to end the interview?"
     );
 
     if (confirmed) {
-      changeInterviewStatus("Completed");
-      navigate("/scheduledinterviews");
+      endInterviewHelper();
+    }
+  };
+
+  const endInterviewSession = async () => {
+    const startInterviewUrl = AI_URL + "/end/" + `?interviewId=${id}`;
+    const response = await fetch(startInterviewUrl, {
+      method: 'GET'
+    });
+
+    if (!response.ok) {
+      throw new Error('Error in ending interview session');
     }
   };
 
