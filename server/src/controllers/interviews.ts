@@ -1,13 +1,21 @@
 import dotenv from "dotenv";
+import OpenAI from "openai";
+import ChatHistory from "../models/ChatHistory.js";
 import Interview from "../models/Interview.js";
 import Profile from "../models/ProfileModel.js";
 import User from "../models/userModel.js";
-
 dotenv.config();
 
 const API_BASE_URL = process.env.API_BASE_URL;
 const VIDEOSDK_TOKEN = process.env.VIDEOSDK_TOKEN;
 const API_AUTH_URL = null;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const openai = new OpenAI(
+  {
+    apiKey: OPENAI_API_KEY
+  }
+);
 
 export const getMeeting = async (req: any, res: any) => {
   // Sample data
@@ -21,7 +29,7 @@ export const getMeeting = async (req: any, res: any) => {
 
 export const scheduleMeeting = async (req: any, res: any) => {
   // Get meeting details from request body
-  const { title, description, startDate, startTime, endTime, email } = req.body;
+  const { title, description, startDate, startTime, endTime, email, topic, requiredSkills } = req.body;
   const options = {
     method: "GET",
     headers: {
@@ -46,6 +54,8 @@ export const scheduleMeeting = async (req: any, res: any) => {
     candidate: user,
     hr: hr,
     status: "Scheduled",
+    topic: topic,
+    requiredSkills: requiredSkills
   });
 
   try {
@@ -180,4 +190,44 @@ export const updateAllInterviews = async (req: any, res: any) => {
     { status: "Completed" }
   );
   res.status(200).json({ message: "All interviews updated" });
+}
+
+
+export const getCandidateInterviewScore = async (req: any, res: any) => {
+  const interviewId = req.params.id;
+  try {
+    const interviews = await ChatHistory.find({ SessionId: interviewId });
+    const humanMessages: any[] = [];
+    const aiMessages: any[] = [];
+
+    interviews.forEach(interview => {
+        interview.History.forEach((history: any) => {
+            const message = JSON.parse(history);
+            console.log(message)
+            if (message.type === 'human') {
+                humanMessages.push(message.data.content);
+            } else if (message.type === 'ai') {
+                aiMessages.push(message.data.content);
+            }
+        });
+    });
+    let prompt = "";
+    for (let i = 0; i < humanMessages.length && i < aiMessages.length; i++) {
+        prompt += `question: ${aiMessages[i]}\n`;
+        prompt += `answer: ${humanMessages[i]}\n\n`;
+    }
+    // create a prompt for the AI to generate a score
+    const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+            { role: "system", content: "Generate a Score for each questions. Give out of 10 for each queustions answer and sum up all and give final score. and also give detailed evaluation." },
+            { role: "user", content: prompt },
+        ],
+    });
+    var score: any = response?.choices[0]?.message?.content;
+    score.replace(/\n/g, "");
+    res.status(200).json({ score });
+  } catch (error: any) {
+    return res.status(404).json({ message: error.message });
+  }
 }
