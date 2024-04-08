@@ -12,8 +12,8 @@ if (NODE_ENV === 'development') {
 }
 export const baseURL = url;
 const API = axios.create({ baseURL: baseURL})
-const AI_APP_API = axios.create({ baseURL: process.env.AI_APP_API })
-
+export const AI_URL = process.env.AI_APP_API;
+const AI_APP_API = axios.create({ baseURL: AI_URL})
 API.interceptors.request.use((req) => {
     if(localStorage.getItem('profile')) {
         req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
@@ -53,7 +53,7 @@ export const getMeeting = (id) => API.get(`/interviews/${id}`);
 export const scheduleMeeting = (formData) => API.post(`/interviews/schedule`, formData);
 export const changeMeetingStatus = (id, status) => API.patch(`/interviews/update/${id}`, status);
 
-export const processCandidateAnswer = (audioJson) => AI_APP_API.post('/process/', audioJson);
+export const processCandidateAnswer = (formData) => AI_APP_API.post('/post_audio/', formData);
 export const saveUserDetails = (userDetails) => AI_APP_API.post('/user/', userDetails);
 
 export const getEvaluation = (id) => AI_APP_API.get(`/user/evaluate/${id}`);

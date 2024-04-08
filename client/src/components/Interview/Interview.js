@@ -6,7 +6,7 @@ import {
   faMicrophoneSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Interview.module.css";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { questions, introduction } from "./FirstQuestions";
 import { processCandidateAnswer } from "../../actions/modelCommunication";
 import { useDispatch } from "react-redux";
@@ -16,10 +16,12 @@ import { decode } from "jsonwebtoken";
 import { getProfile } from "../../actions/profile";
 import { getMeeting } from "../../actions/interviews";
 import FullScreenModal from "./FullScreenModal/FullScreenModal";
+import { AI_URL } from "../../api/index";
 
 const Interview = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
   const [permission, setPermission] = useState(false);
   const mediaRecorder = useRef(null);
@@ -37,6 +39,9 @@ const Interview = () => {
   const [candidateName, setCandidateName] = useState("");
   const [showModal, setShowModal] = useState(true);
   const [disqualificationTimer, setDisqualificationTimer] = useState(null);
+  const topics = location?.state?.requiredSkills;
+  const requiredSkills = location?.state?.requiredSkills;
+  const role = location?.state?.role;
 
   useEffect(() => {
     if (!showModal) {
@@ -136,7 +141,7 @@ const Interview = () => {
           clearInterval(intervalId);
 
           alert("Interview has ended!");
-          changeInterviewStatus("Completed");
+          endInterviewHelper();
         } else {
           const hours = Math.floor(difference / (1000 * 60 * 60));
           const minutes = Math.floor(
@@ -156,11 +161,32 @@ const Interview = () => {
     }
   }, [interviewData]);
 
+
   useEffect(() => {
     const startInterview = async () => {
-      await readQuestion(introduction[0]);
-      const randomIndex = Math.floor(Math.random() * questions.length);
-      await displayAndReadQuestion(questions[randomIndex]);
+      const jsonData = {
+        role: interviewData.role,
+        experience: candidateData.experience,
+        skills: candidateData.technicalSkills,
+        topic: topics,
+        requiredSkills: requiredSkills,
+        strengths: candidateData.strengths,
+        weaknesses: candidateData.weaknesses,
+      }
+      const startInterviewUrl = AI_URL + "/initialize_session/";
+      const response = await fetch(startInterviewUrl, {
+        method: 'POST',
+        body: JSON.stringify(jsonData)
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to start interview');
+      }
+
+      const audioBlob = await response.blob();
+
+      readQuestion(audioBlob);
+
     };
     if (showModal === false) {
       startInterview();
@@ -269,20 +295,22 @@ const Interview = () => {
     clearInterval(intervalId);
     setIntervalId(null);
     mediaRecorder.current.stop();
-    mediaRecorder.current.onstop = () => {
+    mediaRecorder.current.onstop = async () => {
       const audioBlob = new Blob(audioChunks, { type: mimeType });
-      const reader = new FileReader();
-      reader.readAsDataURL(audioBlob);
-      reader.onloadend = () => {
-        const audioBase64 = reader.result.split(",")[1];
-
-        sendAudioAndGetNextQuestion(audioBase64);
-      };
+      const audioFile = new File([audioBlob], 'audio.mp3', { type: 'audio/mp3' });
+      sendAudioAndGetNextQuestion(audioFile);
+  
       const audioUrl = URL.createObjectURL(audioBlob);
       setAudio(audioUrl);
-      setAudioChunks([]);
+      setAudioChunks([]); 
     };
   };
+
+  const endInterviewHelper = () => {
+    changeInterviewStatus("Completed");
+    endInterviewSession();
+    navigate("/scheduledinterviews");
+}
 
   const endInterview = async () => {
     const confirmed = window.confirm(
@@ -290,8 +318,18 @@ const Interview = () => {
     );
 
     if (confirmed) {
-      changeInterviewStatus("Completed");
-      navigate("/scheduledinterviews");
+      endInterviewHelper();
+    }
+  };
+
+  const endInterviewSession = async () => {
+    const startInterviewUrl = AI_URL + "/end/" + `?interviewId=${id}`;
+    const response = await fetch(startInterviewUrl, {
+      method: 'GET'
+    });
+
+    if (!response.ok) {
+      throw new Error('Error in ending interview session');
     }
   };
 
@@ -303,24 +341,46 @@ const Interview = () => {
     }
   };
 
-  const sendAudioAndGetNextQuestion = async (audioBase64) => {
+  const sendAudioAndGetNextQuestion = async (audioFile) => {
     const timerElement = document.getElementById("timer");
     timerElement.textContent = "Processing....";
-    let response = await dispatch(
-      processCandidateAnswer(
-        audioBase64,
-        candidateData.technicalSkills,
-        candidateData.experience,
-        remainingTime,
-        interviewData.role,
-        candidateData.strengths,
-        candidateData.weaknesses,
-        id
-      )
-    );
-    timerElement.textContent = "00:60";
-    displayAndReadQuestion(response["openai-response"]);
+  
+    try {
+      const formData = new FormData();
+      formData.append('audio_file', audioFile);
+      formData.append('technicalSkills', candidateData.technicalSkills);
+      formData.append('experience', candidateData.experience);
+      formData.append('role', interviewData.role);
+      formData.append('strengths', candidateData.strengths);
+      formData.append('weaknesses', candidateData.weaknesses);
+      formData.append('sessionId', id);
+      formData.append('topics', candidateData.technicalSkills);
+  
+      const nextQueUrl = AI_URL + "/post_audio/";
+      const response = await fetch(nextQueUrl, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to send audio data.');
+      }
+
+      const audioBlob = await response.blob();
+
+      const responseData = await response.json();
+  
+      timerElement.textContent = "00:60";
+  
+      displayAndReadQuestion(audioBlob);
+    } catch (error) {
+      console.error('Error sending audio and getting next question:', error);
+    }
   };
+  
 
   /** 
    * For testing purpose
@@ -337,31 +397,20 @@ const Interview = () => {
   }
   */
 
-  const readQuestion = (question) => {
-    const speech = new SpeechSynthesisUtterance(question);
-    if (question !== introduction[0]) {
-      speech.onend = function (event) {
-        document.getElementById("startRecordingBtn").click();
-        showTimerToAnswerQuestion();
-      };
-    }
-
-    return new Promise((resolve) => {
-      if (speechSynthesis.getVoices().length > 0) {
-        speech.voice = speechSynthesis.getVoices()[7];
-        speechSynthesis.speak(speech);
-      }
-      window.speechSynthesis.onvoiceschanged = function () {
-        speech.voice = speechSynthesis.getVoices()[7];
-        speechSynthesis.speak(speech);
-        resolve();
-      };
+  const readQuestion = (questionBlob) => {
+    const audioUrl = URL.createObjectURL(questionBlob);
+    const audioElement = new Audio(audioUrl);
+    
+    audioElement.play();
+    audioElement.addEventListener("ended", () => {
+      document.getElementById("startRecordingBtn").click();
+      showTimerToAnswerQuestion();
     });
   };
 
-  const displayAndReadQuestion = async (question) => {
-    document.getElementById("question").innerHTML = question;
-    readQuestion(question);
+  const displayAndReadQuestion = async (questionBlob) => {
+    // document.getElementById("question").innerHTML = question;
+    readQuestion(questionBlob);
   };
 
   const showTimerToAnswerQuestion = () => {
