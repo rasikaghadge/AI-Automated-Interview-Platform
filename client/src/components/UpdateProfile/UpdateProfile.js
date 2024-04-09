@@ -1,13 +1,12 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { decode } from "jsonwebtoken";
-import { useEffect } from "react";
-import styles from "./UpdateProfile.module.css";
 import { updateProfile, getProfile } from "../../actions/profile";
 import { useSnackbar } from "react-simple-snackbar";
 import { useDispatch } from "react-redux";
-import NavBar from "../NavBar/NavBar";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
+import styles from "./UpdateProfile.module.css";
 
 const UpdateProfile = () => {
   const navigate = useNavigate();
@@ -15,20 +14,94 @@ const UpdateProfile = () => {
   const [userRole, setUserRole] = useState("");
   const [openSnackbar] = useSnackbar();
   const dispatch = useDispatch();
+  const animatedComponents = makeAnimated();
 
   const [initialData, setInitialData] = useState({
     firstname: "",
     lastname: "",
     dob: "",
-    technicalSkills: "",
+    technicalSkills: [],
     experience: "",
-    softSkills: "",
+    softSkills: [],
     education: "",
     strengths: "",
     weaknesses: "",
     previousRolesDescription: "",
   });
   const [dataFetched, setDataFetched] = useState(false);
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    dob: "",
+    technicalSkills: [],
+    experience: "",
+    softSkills: [],
+    education: "",
+    strengths: "",
+    weaknesses: "",
+    previousRolesDescription: "",
+  });
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const technicalSkillsOptions = [
+    { value: 'AWS', label: 'AWS' },
+    { value: 'Azure', label: 'Azure' },
+    { value: 'GCP', label: 'GCP' },
+    { value: 'Python', label: 'Python' },
+    { value: 'Java', label: 'Java' },
+    { value: 'C++', label: 'C++' },
+    { value: 'JavaScript', label: 'JavaScript' },
+    { value: 'SQL', label: 'SQL' },
+    { value: 'NoSQL', label: 'NoSQL' },
+    { value: 'Docker', label: 'Docker' },
+    { value: 'Kubernetes', label: 'Kubernetes' },
+    { value: 'Git', label: 'Git' },
+    { value: 'HTML', label: 'HTML' },
+    { value: 'CSS', label: 'CSS' },
+    { value: 'React', label: 'React' },
+    { value: 'Angular', label: 'Angular' },
+    { value: 'Node.js', label: 'Node.js' },
+    { value: 'Flask', label: 'Flask' },
+    { value: 'Django', label: 'Django' },
+    { value: 'TensorFlow', label: 'TensorFlow' },
+    { value: 'PyTorch', label: 'PyTorch' },
+    { value: 'Spark', label: 'Spark' },
+    { value: 'Hadoop', label: 'Hadoop' },
+    { value: 'Machine Learning', label: 'Machine Learning' },
+    { value: 'Deep Learning', label: 'Deep Learning' },
+    { value: 'Data Analysis', label: 'Data Analysis' },
+    { value: 'Data Visualization', label: 'Data Visualization' },
+    { value: 'Linux', label: 'Linux' },
+    { value: 'Windows Server', label: 'Windows Server' },
+    { value: 'Network Security', label: 'Network Security' },
+    { value: 'Cybersecurity', label: 'Cybersecurity' },
+    { value: 'Agile Methodologies', label: 'Agile Methodologies' },
+    { value: 'Scrum', label: 'Scrum' },
+    { value: 'Project Management', label: 'Project Management' }
+  ];
+  
+  const softSkillsOptions = [
+    { value: 'Communication', label: 'Communication' },
+    { value: 'Teamwork', label: 'Teamwork' },
+    { value: 'Problem-solving', label: 'Problem Solving' },
+    { value: 'Leadership', label: 'Leadership' },
+    { value: 'Time management', label: 'Time Management' },
+    { value: 'Adaptability', label: 'Adaptability' },
+    { value: 'Creativity', label: 'Creativity' },
+    { value: 'Emotional intelligence', label: 'Emotional Intelligence' },
+    { value: 'Critical thinking', label: 'Critical Thinking' },
+    { value: 'Interpersonal skills', label: 'Interpersonal Skills' },
+    { value: 'Conflict resolution', label: 'Conflict Resolution' },
+    { value: 'Stress management', label: 'Stress Management' },
+    { value: 'Decision making', label: 'Decision Making' },
+    { value: 'Flexibility', label: 'Flexibility' },
+    { value: 'Negotiation', label: 'Negotiation' },
+    { value: 'Resilience', label: 'Resilience' },
+    { value: 'Assertiveness', label: 'Assertiveness' },
+    { value: 'Patience', label: 'Patience' },
+    { value: 'Active listening', label: 'Active Listening' },
+  ];
+  
 
   const checkUserRole = async () => {
     try {
@@ -48,25 +121,25 @@ const UpdateProfile = () => {
 
   const fetchData = async (id) => {
     try {
-      let response = null;
-      response = await dispatch(getProfile(id));
-
+      let response = await dispatch(getProfile(id));
+  
       if (response) {
+        let technicalSkills = response.technicalSkills[0].split(",").map(skill => skill.trim());
+        let softSkills = response.softSkills[0].split(",").map(skill => skill.trim());
         setInitialData({
           company: response.company,
           firstName: response.firstName,
           lastName: response.lastName,
           dob: response.dob,
-          technicalSkills: response.technicalSkills,
+          technicalSkills: technicalSkills,
           experience: response.experience,
-          softSkills: response.softSkills,
+          softSkills: softSkills,
           education: response.education,
           strengths: response.strengths,
           weaknesses: response.weaknesses,
           previousRolesDescription: response.previousRolesDescription,
         });
         setDataFetched(true);
-        setFormData(initialData);
       }
     } catch (error) {
       console.error("Error getting profile data:", error.message);
@@ -96,49 +169,48 @@ const UpdateProfile = () => {
     fetchDataAsync();
   }, [user, dataFetched]);
 
-  // check if user has changed some fields
-  const [hasChanges, setHasChanges] = useState(false);
+  useEffect(() => {
+    if (dataFetched) {
+      setFormData(initialData);
+    }
+  }, [dataFetched, initialData]);
 
-  const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
-    dob: "",
-    technicalSkills: "",
-    experience: "",
-    softSkills: "",
-    education: "",
-    strengths: "",
-    weaknesses: "",
-    previousRolesDescription: "",
-  });
-
-  const handleChange = async (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
     setHasChanges(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleTechnicalSkillsChange = (selectedOptions) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      technicalSkills: selectedOptions.map(option => option.value)
+    }));
+    setHasChanges(true);
+  };
+
+  const handleSoftSkillsChange = (selectedOptions) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      softSkills: selectedOptions.map(option => option.value)
+    }));
+    setHasChanges(true);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let response = null;
-
     try {
-      // Send a request to the server to update the profile
-      dispatch(updateProfile(user.id, formData, openSnackbar));
-
-      if (!response.ok) {
-        // Handle non-successful response, e.g., show an error message
-        console.error("Failed to update profile:", response.statusText);
-        return;
-      }
-
-      // Profile updated successfully
-      console.log("Profile updated successfully!");
+      const formDataToSend = {
+        ...formData,
+        technicalSkills: [formData.technicalSkills.join(",")],
+        softSkills: [formData.softSkills.join(",")],
+      };
+  
+      await dispatch(updateProfile(user.id, formDataToSend, openSnackbar));
+      setHasChanges(false);
     } catch (error) {
       console.error("Error updating profile:", error.message);
     }
-
-    setHasChanges(false);
   };
 
   return (
@@ -169,16 +241,17 @@ const UpdateProfile = () => {
             {userRole === "candidate" && (
               <>
                 <label htmlFor="technicalSkills" className={styles.label}>
-                  Technical Skills (comma separated):
+                  Technical Skills:
                 </label>
-                <input
-                  type="text"
+                <Select
+                  options={technicalSkillsOptions}
+                  isMulti
+                  components={animatedComponents}
+                  closeMenuOnSelect={false}
                   id="technicalSkills"
                   name="technicalSkills"
-                  placeholder="Technical Skills"
-                  value={formData.technicalSkills}
-                  onChange={handleChange}
-                  className={styles.input_feild}
+                  value={formData.technicalSkills.map(skill => ({ value: skill, label: skill }))}
+                  onChange={handleTechnicalSkillsChange}
                   required
                 />
               </>
@@ -187,16 +260,17 @@ const UpdateProfile = () => {
             {userRole === "candidate" && (
               <>
                 <label htmlFor="softSkills" className={styles.label}>
-                  Soft Skills (comma separated):
+                  Soft Skills:
                 </label>
-                <input
-                  type="text"
+                <Select
+                  options={softSkillsOptions}
+                  isMulti
+                  components={animatedComponents}
+                  closeMenuOnSelect={false}
                   id="softSkills"
                   name="softSkills"
-                  placeholder="Soft Skills"
-                  value={formData.softSkills}
-                  onChange={handleChange}
-                  className={styles.input_feild}
+                  value={formData.softSkills.map(skill => ({ value: skill, label: skill }))}
+                  onChange={handleSoftSkillsChange}
                   required
                 />
               </>
@@ -212,7 +286,7 @@ const UpdateProfile = () => {
                   name="education"
                   value={formData.education}
                   onChange={handleChange}
-                  className={styles.select_box} /* Include both classes */
+                  className={styles.select_box}
                   required
                 >
                   <option value="">Select Education</option>
@@ -220,6 +294,24 @@ const UpdateProfile = () => {
                   <option value="Graduate">Graduate</option>
                   <option value="Post Graduate">Post Graduate</option>
                 </select>
+              </>
+            )}
+
+            {userRole === "candidate" && (
+              <>
+                <label htmlFor="experience" className={styles.label}>
+                  Years of experience:
+                </label>
+                <input
+                  type="number"
+                  id="experience"
+                  name="experience"
+                  placeholder="Years of experience"
+                  value={formData.experience}
+                  onChange={handleChange}
+                  className={styles.input_feild}
+                  required
+                />
               </>
             )}
 
