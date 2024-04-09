@@ -44,11 +44,14 @@ const interviewSchema = new Schema<Interview>({
     required: false
   },
   requiredSkills: {
-      type: Array,
-      default: [],
-      required: false
+    type: Array,
+    default: [],
+    required: false
   }
+}, {
+  timestamps: true // createdAt and updatedAt
 });
+
 
 const Interview = mongoose.model<Interview>('Interview', interviewSchema);
 
