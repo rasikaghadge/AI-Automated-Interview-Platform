@@ -371,7 +371,7 @@ const Interview = () => {
       }
 
       const audioBlob = await response.blob();
-  
+
       timerElement.textContent = "00:60";
   
       displayAndReadQuestion(audioBlob);
