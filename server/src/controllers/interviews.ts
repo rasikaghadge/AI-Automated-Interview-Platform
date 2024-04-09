@@ -150,8 +150,8 @@ export const listInterviewsHR = async (req: any, res: any) => {
 
 export const updateMeeting = async (req: any, res: any) => {
   const meetingId = req.params.id;
-  const { status } = req.body;
-  const updatedMeeting = { status };
+  const { status, penalty } = req.body;
+  const updatedMeeting = { status, penalty };
   try {
     const updatedMeetingResponse = await Interview.findByIdAndUpdate(
       meetingId,

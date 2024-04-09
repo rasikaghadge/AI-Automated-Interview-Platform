@@ -47,7 +47,11 @@ const interviewSchema = new Schema<Interview>({
       type: Array,
       default: [],
       required: false
-  }
+  },
+  penalty: {
+    type: Number,
+    required: false,
+  },
 });
 
 const Interview = mongoose.model<Interview>('Interview', interviewSchema);
