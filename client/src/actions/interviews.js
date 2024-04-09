@@ -53,9 +53,9 @@ export const scheduleMeeting = (meetingData) => async (dispatch) => {
   }
 };
 
-export const changeMeetingStatus = (id, status) => async (dispatch) => {
+export const changeMeetingStatus = (id, status, penalty) => async (dispatch) => {
   try {
-    const statusJson = { status: status };
+    const statusJson = { status: status, penalty: penalty };
     const {data} = await api.changeMeetingStatus(id, statusJson);
     dispatch({ type: UPDATE_MEETING, payload: data });
   } catch (error) {

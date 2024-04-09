@@ -37,6 +37,7 @@ const Interview = () => {
   const [candidateData, setCandidateData] = useState({});
   const [interviewData, setInterviewData] = useState({});
   const [candidateName, setCandidateName] = useState("");
+  const [penalty, setPenalty] = useState(0);
   const [showModal, setShowModal] = useState(true);
   const [disqualificationTimer, setDisqualificationTimer] = useState(null);
   const topics = location?.state?.requiredSkills;
@@ -335,7 +336,7 @@ const Interview = () => {
 
   const changeInterviewStatus = async (status) => {
     try {
-      await dispatch(changeMeetingStatus(id, status));
+      await dispatch(changeMeetingStatus(id, status, penalty));
     } catch (error) {
       console.log("An error occurred:", error);
     }
@@ -370,8 +371,6 @@ const Interview = () => {
       }
 
       const audioBlob = await response.blob();
-
-      const responseData = await response.json();
   
       timerElement.textContent = "00:60";
   
@@ -430,6 +429,7 @@ const Interview = () => {
 
       timeLeft--;
       if (isTimeExtended) {
+        setPenalty(penalty + 1);
         timeLeft += 60;
         extendTimerButton.disabled = true;
         isTimeExtended = false;
