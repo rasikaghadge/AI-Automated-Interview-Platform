@@ -369,10 +369,7 @@ const Interview = () => {
         throw new Error('Failed to send audio data.');
       }
 
-      const audioBlob = await response.blob();
-
-      const responseData = await response.json();
-  
+      const audioBlob = await response.blob();  
       timerElement.textContent = "00:60";
   
       displayAndReadQuestion(audioBlob);
