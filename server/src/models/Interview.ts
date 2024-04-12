@@ -44,12 +44,14 @@ const interviewSchema = new Schema<Interview>({
     required: false
   },
   requiredSkills: {
-    type: Array,
-    default: [],
-    required: false
+      type: Array,
+      default: [],
+      required: false
+  },
+  penalty: {
+    type: Number,
+    required: false,
   }
-}, {
-  timestamps: true // createdAt and updatedAt
 });
 
 

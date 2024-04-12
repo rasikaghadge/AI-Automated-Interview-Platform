@@ -13,6 +13,7 @@ interface Interview extends Document {
   status: 'Scheduled' | 'Cancelled' | 'Completed' | 'Live' | 'Postponed' | 'Rescheduled';
   topic: Array<string>;
   requiredSkills: Array<string>;
+  penalty: number;
 }
 
 export default Interview;

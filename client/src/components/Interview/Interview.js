@@ -37,6 +37,7 @@ const Interview = () => {
   const [candidateData, setCandidateData] = useState({});
   const [interviewData, setInterviewData] = useState({});
   const [candidateName, setCandidateName] = useState("");
+  const [penalty, setPenalty] = useState(0);
   const [showModal, setShowModal] = useState(true);
   const [disqualificationTimer, setDisqualificationTimer] = useState(null);
   const topics = location?.state?.requiredSkills;
@@ -179,11 +180,8 @@ const Interview = () => {
       if (!response.ok) {
         throw new Error('Failed to start interview');
       }
-
-      const audioBlob = await response.blob();
-
-      readQuestion(audioBlob);
-
+      const responseJson = await response.json()
+      displayAndReadQuestion(responseJson.content);
     };
     if (showModal === false) {
       startInterview();
@@ -332,7 +330,7 @@ const Interview = () => {
 
   const changeInterviewStatus = async (status) => {
     try {
-      await dispatch(changeMeetingStatus(id, status));
+      await dispatch(changeMeetingStatus(id, status, penalty));
     } catch (error) {
       console.log("An error occurred:", error);
     }
@@ -365,11 +363,11 @@ const Interview = () => {
       if (!response.ok) {
         throw new Error('Failed to send audio data.');
       }
-
-      const audioBlob = await response.blob();  
-      timerElement.textContent = "00:60";
   
-      displayAndReadQuestion(audioBlob);
+      timerElement.textContent = "00:60";
+
+      const responseJson = await response.json()
+      displayAndReadQuestion(responseJson.content);
     } catch (error) {
       console.error('Error sending audio and getting next question:', error);
     }
@@ -391,20 +389,31 @@ const Interview = () => {
   }
   */
 
-  const readQuestion = (questionBlob) => {
-    const audioUrl = URL.createObjectURL(questionBlob);
-    const audioElement = new Audio(audioUrl);
-    
-    audioElement.play();
-    audioElement.addEventListener("ended", () => {
-      document.getElementById("startRecordingBtn").click();
-      showTimerToAnswerQuestion();
+  const readQuestion = (question) => {
+    const speech = new SpeechSynthesisUtterance(question);
+    // if (question !== introduction[0]) {
+      speech.onend = function (event) {
+        document.getElementById("startRecordingBtn").click();
+        showTimerToAnswerQuestion();
+      };
+    // }
+
+    return new Promise((resolve) => {
+      if (speechSynthesis.getVoices().length > 0) {
+        speech.voice = speechSynthesis.getVoices()[7];
+        speechSynthesis.speak(speech);
+      }
+      window.speechSynthesis.onvoiceschanged = function () {
+        speech.voice = speechSynthesis.getVoices()[7];
+        speechSynthesis.speak(speech);
+        resolve();
+      };
     });
   };
 
-  const displayAndReadQuestion = async (questionBlob) => {
-    // document.getElementById("question").innerHTML = question;
-    readQuestion(questionBlob);
+  const displayAndReadQuestion = async (question) => {
+    document.getElementById("question").innerHTML = question;
+    readQuestion(question);
   };
 
   const showTimerToAnswerQuestion = () => {
@@ -424,6 +433,7 @@ const Interview = () => {
 
       timeLeft--;
       if (isTimeExtended) {
+        setPenalty(penalty + 1);
         timeLeft += 60;
         extendTimerButton.disabled = true;
         isTimeExtended = false;
