@@ -102,23 +102,20 @@ const Interview = () => {
     }
   };
 
-  useEffect(async () => {
-    if (!user) {
-      navigate("/login");
-    }
-
-    let candidateId = null;
-
-    if (user) {
-      candidateId = getCandidateId();
-    }
-
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user) {
+        navigate("/login");
+      }
+    let candidateId = getCandidateId();
     if (candidateId) {
       await getCandidateDataFromDB(candidateId);
       await getInterviewDataFromDB(id);
       // for dev purpose
       // await changeInterviewStatus("Live");
     }
+  }
+    fetchData();
   }, []);
 
   useEffect(() => {
