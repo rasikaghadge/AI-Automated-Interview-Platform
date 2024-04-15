@@ -154,6 +154,11 @@ button:hover {
   color: white;
 }
 
+.extend-timer-button:disabled {
+  background-color: #d8d8d8;
+  color: white;
+}
+
 /* sound bars */
 #bars {
   height: 30px;
