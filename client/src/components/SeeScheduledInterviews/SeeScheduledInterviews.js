@@ -4,11 +4,12 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useSnackbar } from "react-simple-snackbar";
 import {
-  getEvaluation,
   getInterviewsCandidate,
   getInterviewsHR
 } from "../../actions/interviews";
 import styles from "./SeeScheduledInterviews.module.css";
+import { getEvaluationUsingInterviewId } from "../../api/index";
+import EvaluationPopup from "./EvaluationPopup";
 
 const SeeScheduledInterviews = () => {
   const navigate = useNavigate();
@@ -18,6 +19,9 @@ const SeeScheduledInterviews = () => {
   const dispatch = useDispatch();
   const [interviews, setInterviews] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
+  const [evaluationData, setEvaluationData] = useState(null);
+  const [showEvaluationPopup, setShowEvaluationPopup] = useState(false);
+
 
   const checkUserRole = () => {
     try {
@@ -128,10 +132,17 @@ const SeeScheduledInterviews = () => {
     });
   };
 
-  const getCandidateEvaluation = (id) => {
-    const response = getEvaluation(id);
-    return response;
-  }
+  const showCandidateEvaluation = async (id) => {
+    const { data } = await getEvaluationUsingInterviewId(id);
+    if (data) {
+      setEvaluationData(JSON.stringify(data.score));
+      setShowEvaluationPopup(true);
+    } else {
+      setEvaluationData(JSON.stringify({data: "Cannot get evaluation at this time"}));
+      setShowEvaluationPopup(true);
+    }
+  };
+  
 
   return (
     <div className={styles.navbar_container}>
@@ -212,7 +223,7 @@ const SeeScheduledInterviews = () => {
                     >
                       Join Interview
                     </button>
-                    : <button className="btn btn-success" onClick={getCandidateEvaluation(interview._id)}>Get Evaluation</button>}
+                    : <button className="btn btn-success" onClick={() => showCandidateEvaluation(interview._id)}>Get Evaluation</button>}
                 </tr>
               ))}
             </tbody>
@@ -231,6 +242,12 @@ const SeeScheduledInterviews = () => {
           )}
         </div>
       </div>
+      {showEvaluationPopup && (
+          <EvaluationPopup
+            evaluationData={evaluationData}
+            onClose={() => setShowEvaluationPopup(false)}
+          />
+        )}
     </div>
   );
 };

@@ -56,4 +56,6 @@ export const changeMeetingStatus = (id, status) => API.patch(`/interviews/update
 export const processCandidateAnswer = (formData) => AI_APP_API.post('/post_audio/', formData);
 export const saveUserDetails = (userDetails) => AI_APP_API.post('/user/', userDetails);
 
-export const getEvaluation = (id) => AI_APP_API.get(`/user/evaluate/${id}`);
+// there will be two different ways to get evaluation
+export const getEvaluation = (id) => AI_APP_API.get(`/evaluate/${id}`); // todo modify this to another way
+export const getEvaluationUsingInterviewId = (id) => AI_APP_API.get(`/evaluate/${id}`);
