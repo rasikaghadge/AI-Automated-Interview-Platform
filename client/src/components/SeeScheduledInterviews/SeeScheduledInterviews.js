@@ -157,14 +157,14 @@ const SeeScheduledInterviews = () => {
           <table className={styles["interview-table"]}>
             <thead>
               <tr>
-                <th>Title</th>
-                <th>Description</th>
+                <th>Job Title</th>
+                <th>Job Description</th>
                 <th>Date</th>
                 <th>Time</th>
                 {userRole === "candidate" ? <th>HR</th> : null}
                 {userRole === "hr" ? <th>Candidate</th> : null}
                 <th>Status</th>
-                <th>Join</th>
+                {userRole === "candidate"? <th>Join</th> : <th>Get Evaluation</th>}
               </tr>
             </thead>
             <tbody>
