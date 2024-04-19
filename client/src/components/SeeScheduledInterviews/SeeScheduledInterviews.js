@@ -10,6 +10,7 @@ import {
 import styles from "./SeeScheduledInterviews.module.css";
 import { getEvaluationUsingInterviewId } from "../../api/index";
 import EvaluationPopup from "./EvaluationPopup";
+import { checkUserRole } from '../../actions/auth'
 
 const SeeScheduledInterviews = () => {
   const navigate = useNavigate();
@@ -21,23 +22,6 @@ const SeeScheduledInterviews = () => {
   const [dataFetched, setDataFetched] = useState(false);
   const [evaluationData, setEvaluationData] = useState(null);
   const [showEvaluationPopup, setShowEvaluationPopup] = useState(false);
-
-
-  const checkUserRole = () => {
-    try {
-      const decodedToken = decode(user.token);
-      if (decodedToken) {
-        const userRole = decodedToken.role;
-        setUserRole(userRole);
-      } else {
-        setUserRole("");
-      }
-      return decodedToken.id;
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      setUserRole("");
-    }
-  };
 
   const fetchData = async (id) => {
     try {
@@ -80,15 +64,17 @@ const SeeScheduledInterviews = () => {
     }
 
     let id = null;
+    let role = null;
 
     if (user) {
-      id = checkUserRole();
+      ({ id, role } = checkUserRole(user));
+      setUserRole(role)
     }
 
     if (id && interviews.length === 0 && !dataFetched) {
       fetchData(id);
     }
-  }, [user, interviews, dataFetched]);
+  }, [user, interviews, dataFetched, navigate, userRole]);
 
   // Function to parse time string (HH:MM) and create a Date object
   const parseTimeString = (timeString, startDate) => {
@@ -118,16 +104,6 @@ const SeeScheduledInterviews = () => {
         role: role,
         topics: topics,
         requiredSkills: requiredSkills,
-      },
-    });
-  };
-
-  const navigateToVideosdkMeeting = (participantName, startDate, endTime, id) => {
-    navigate(`/interview/${id}`, {
-      state: {
-        participantNameFromDB: participantName,
-        endTimeFromDB: endTime,
-        startDateFromDB: startDate
       },
     });
   };

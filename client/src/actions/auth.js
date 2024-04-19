@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import * as api from "../api/index";
 import { AUTH, CREATE_PROFILE } from "./constants";
+import { decode } from "jsonwebtoken";
 
 export const signin =
   (formData, openSnackbar, setLoading) => async (dispatch) => {
@@ -83,5 +84,18 @@ export const refreshToken = async (user) => {
     console.log(error);
     localStorage.removeItem("profile");
     return false;
+  }
+};
+
+export const checkUserRole = (user) => {
+  try {
+    let userRole = "";
+    const decodedToken = decode(user.token);
+    if (decodedToken) {
+      userRole = decodedToken.role;
+    }
+    return { id: decodedToken.id, role: userRole };
+  } catch (error) {
+    return { id: null, role: "" };
   }
 };
