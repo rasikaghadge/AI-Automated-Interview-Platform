@@ -81,6 +81,9 @@ const SeeScheduledInterviews = () => {
     interviews,
     dataFetched,
     userRole,
+    navigate,
+    dispatch,
+    openSnackbar
   ]);
 
   // Function to parse time string (HH:MM) and create a Date object
@@ -328,6 +331,7 @@ const SeeScheduledInterviews = () => {
         <ProfileModel
           profile={selectedInterviewProfile}
           onClose={() => setShowProfileModel(false)}
+          role={userRole === "hr" ? "candidate": "hr"}
         />
       )}
     </div>
