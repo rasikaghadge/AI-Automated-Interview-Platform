@@ -10,6 +10,8 @@ import styles from "./SeeScheduledInterviews.module.css";
 import { getEvaluationUsingInterviewId } from "../../api/index";
 import EvaluationPopup from "./EvaluationPopup";
 import { checkUserRole } from "../../actions/auth";
+import ProfileModel from "./UserProfileDetails";
+import { getProfile } from "../../actions/profile";
 
 const SeeScheduledInterviews = () => {
   const navigate = useNavigate();
@@ -21,6 +23,8 @@ const SeeScheduledInterviews = () => {
   const [dataFetched, setDataFetched] = useState(false);
   const [evaluationData, setEvaluationData] = useState(null);
   const [showEvaluationPopup, setShowEvaluationPopup] = useState(false);
+  const [showProfileModel, setShowProfileModel] = useState(false);
+  const [selectedInterviewProfile, setselectedInterviewProfile] = useState({});
 
   useEffect(() => {
     if (!user) {
@@ -60,14 +64,11 @@ const SeeScheduledInterviews = () => {
           setInterviews(sortedInterviews);
           setDataFetched(true);
         } else if (!response[0]) {
-          console.error("No interviews found");
           openSnackbar("Loading interviews");
         } else {
-          console.error("Failed to get interviews:", response.statusText);
           openSnackbar("Failed to get interviews");
         }
       } catch (error) {
-        console.log(error);
         openSnackbar("Loading Interviews");
       }
     };
@@ -79,10 +80,7 @@ const SeeScheduledInterviews = () => {
     user,
     interviews,
     dataFetched,
-    navigate,
     userRole,
-    dispatch,
-    openSnackbar,
   ]);
 
   // Function to parse time string (HH:MM) and create a Date object
@@ -157,6 +155,18 @@ const SeeScheduledInterviews = () => {
     }
   };
 
+  const showUserProfileDetails = (id) => {
+    const userProfile = dispatch(getProfile(id));
+    userProfile
+      .then((res) => {
+        setselectedInterviewProfile(res);
+        setShowProfileModel(true);
+      })
+      .catch((err) => {
+        openSnackbar("Error in fetching profile data");
+      });
+  };
+
   return (
     <div className={styles.navbar_container}>
       <div className={styles.scheduled_interviews_container}>
@@ -183,7 +193,6 @@ const SeeScheduledInterviews = () => {
               </tr>
             </thead>
             <tbody>
-              {console.log(interviews)}
               {interviews.map((interview) => (
                 <tr key={interview._id}>
                   <td>{interview.title}</td>
@@ -205,6 +214,7 @@ const SeeScheduledInterviews = () => {
                             src={`data:image/png;base64, ${interview.profilePicture}`}
                             alt="HR Profile"
                             style={{ width: "100%", height: "100%" }}
+                            onClick={() => showUserProfileDetails(interview.hr)}
                           />
                         </div>
                         <div style={{ marginLeft: "10px" }}>
@@ -225,6 +235,9 @@ const SeeScheduledInterviews = () => {
                             src={`data:image/png;base64, ${interview.profilePicture}`}
                             alt="HR Profile"
                             style={{ width: "100%", height: "100%" }}
+                            onClick={() =>
+                              showUserProfileDetails(interview.candidate)
+                            }
                           />
                         </div>
                         <div style={{ marginLeft: "10px" }}>
@@ -308,6 +321,13 @@ const SeeScheduledInterviews = () => {
         <EvaluationPopup
           evaluationData={evaluationData}
           onClose={() => setShowEvaluationPopup(false)}
+        />
+      )}
+
+      {showProfileModel && (
+        <ProfileModel
+          profile={selectedInterviewProfile}
+          onClose={() => setShowProfileModel(false)}
         />
       )}
     </div>
