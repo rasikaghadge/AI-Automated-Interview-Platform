@@ -27,6 +27,7 @@
     align-items: center;
     gap: 32px;
     font-family: 'Rubik', sans-serif;
+    margin-top: 16px;
 }
 .navbar-items > li {
     list-style-type: none;
@@ -38,6 +39,13 @@
     letter-spacing: .8px;
 }
 .navbar-links:hover {
+    color: #0cc2ea;
+}
+.navbar-button{
+    padding-left: 0;
+}
+.navbar-button:hover {
+    background-color: white;
     color: #0cc2ea;
 }
 .navbar-btn {

@@ -157,14 +157,15 @@ const SeeScheduledInterviews = () => {
           <table className={styles["interview-table"]}>
             <thead>
               <tr>
-                <th>Title</th>
+                <th>Job Role</th>
                 <th>Description</th>
-                <th>Date</th>
-                <th>Time</th>
+                <th>Date and Time</th>
+                {/* <th>Time</th> */}
                 {userRole === "candidate" ? <th>HR</th> : null}
                 {userRole === "hr" ? <th>Candidate</th> : null}
                 <th>Status</th>
                 <th>Join</th>
+                <th>Remark</th>
               </tr>
             </thead>
             <tbody>
@@ -173,8 +174,8 @@ const SeeScheduledInterviews = () => {
                 <tr key={interview._id}>
                   <td>{interview.title}</td>
                   <td>{interview.description}</td>
-                  <td>{new Date(interview.startDate).toLocaleDateString()}</td>
-                  <td>{`${interview.startTime} - ${interview.endTime}`}</td>
+                  <td>{new Date(interview.startDate).toLocaleDateString()} {`${interview.startTime} - ${interview.endTime}`}</td>
+                  {/* <td>{`${interview.startTime} - ${interview.endTime}`}</td> */}
                   <td>
                     {userRole === "candidate" ? (
                         <div style={{ display: 'flex', alignItems: 'center' }}>

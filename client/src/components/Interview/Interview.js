@@ -10,7 +10,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { questions, introduction } from "./FirstQuestions";
 import { processCandidateAnswer } from "../../actions/modelCommunication";
 import { useDispatch } from "react-redux";
-import image from "./interview_img.jpg";
+import image from "./image.jpg";
 import { changeMeetingStatus } from "../../actions/interviews";
 import { decode } from "jsonwebtoken";
 import { getProfile } from "../../actions/profile";
@@ -463,7 +463,7 @@ const Interview = () => {
           <p>Click "OK" to continue.</p>
         </FullScreenModal>
       )}
-      <div className={styles["interview-container"]}>
+      <div className={styles["interview-container"]} style={{backgroundColor:"white"}}>
         <div className={styles["video-container"]}>
           <video
             ref={liveVideoFeed}
@@ -486,10 +486,10 @@ const Interview = () => {
           </button>
         </div>
         <div className={styles["image"]}>
-          <img src={image} alt="Image" />
+          <img src={image} alt="Image" style={{height:"300px", width:"300px", marginLeft:"-140px", marginTop:"-50px"}}/>
         </div>
         <div className={styles["question-container"]}>
-          <p id="question">Question will be shown here</p>
+          <p id="question" style={{marginTop:"250px"}}>Question will be shown here</p>
         </div>
 
         <div className={styles["controls-container"]}>
