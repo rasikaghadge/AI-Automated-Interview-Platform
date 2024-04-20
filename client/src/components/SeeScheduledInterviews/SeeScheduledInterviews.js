@@ -1,16 +1,15 @@
-import { decode } from "jsonwebtoken";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useSnackbar } from "react-simple-snackbar";
 import {
   getInterviewsCandidate,
-  getInterviewsHR
+  getInterviewsHR,
 } from "../../actions/interviews";
 import styles from "./SeeScheduledInterviews.module.css";
 import { getEvaluationUsingInterviewId } from "../../api/index";
 import EvaluationPopup from "./EvaluationPopup";
-import { checkUserRole } from '../../actions/auth'
+import { checkUserRole } from "../../actions/auth";
 
 const SeeScheduledInterviews = () => {
   const navigate = useNavigate();
@@ -23,41 +22,6 @@ const SeeScheduledInterviews = () => {
   const [evaluationData, setEvaluationData] = useState(null);
   const [showEvaluationPopup, setShowEvaluationPopup] = useState(false);
 
-  const fetchData = async (id) => {
-    try {
-      let response = null;
-
-      if (userRole === "candidate") {
-        response = await dispatch(getInterviewsCandidate(id));
-      } else if (userRole === "hr") {
-        response = await dispatch(getInterviewsHR(id));
-      }
-
-      if (response && response[0]) {
-        // Sort interviews by date and time before setting the state
-        const sortedInterviews = response.sort((a, b) => {
-          // Compare start dates
-          const dateComparison = new Date(a.startDate) - new Date(b.startDate);
-          if (dateComparison !== 0) {
-            return dateComparison;
-          }
-
-          // If start dates are equal, compare start times
-          return a.startTime.localeCompare(b.startTime);
-        });
-
-        setInterviews(sortedInterviews);
-        setDataFetched(true);
-      } else if (!response[0]) {
-        console.error("No interviews found");
-      } else {
-        console.error("Failed to get interviews:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error getting interviews:", error.message);
-    }
-  };
-
   useEffect(() => {
     if (!user) {
       navigate("/login");
@@ -68,13 +32,58 @@ const SeeScheduledInterviews = () => {
 
     if (user) {
       ({ id, role } = checkUserRole(user));
-      setUserRole(role)
+      setUserRole(role);
     }
+
+    const fetchData = async (id) => {
+      try {
+        let response = null;
+        if (userRole === "candidate") {
+          response = await dispatch(getInterviewsCandidate(id));
+        } else if (userRole === "hr") {
+          response = await dispatch(getInterviewsHR(id));
+        }
+        if (response && response[0]) {
+          // Sort interviews by date and time before setting the state
+          const sortedInterviews = response.sort((a, b) => {
+            // Compare start dates
+            const dateComparison =
+              new Date(a.startDate) - new Date(b.startDate);
+            if (dateComparison !== 0) {
+              return dateComparison;
+            }
+
+            // If start dates are equal, compare start times
+            return a.startTime.localeCompare(b.startTime);
+          });
+
+          setInterviews(sortedInterviews);
+          setDataFetched(true);
+        } else if (!response[0]) {
+          console.error("No interviews found");
+          openSnackbar("Loading interviews");
+        } else {
+          console.error("Failed to get interviews:", response.statusText);
+          openSnackbar("Failed to get interviews");
+        }
+      } catch (error) {
+        console.log(error);
+        openSnackbar("Loading Interviews");
+      }
+    };
 
     if (id && interviews.length === 0 && !dataFetched) {
       fetchData(id);
     }
-  }, [user, interviews, dataFetched, navigate, userRole]);
+  }, [
+    user,
+    interviews,
+    dataFetched,
+    navigate,
+    userRole,
+    dispatch,
+    openSnackbar,
+  ]);
 
   // Function to parse time string (HH:MM) and create a Date object
   const parseTimeString = (timeString, startDate) => {
@@ -92,11 +101,24 @@ const SeeScheduledInterviews = () => {
       const now = new Date();
       const start = parseTimeString(startTime, startDate);
       const end = parseTimeString(endTime, startDate);
-      return start <= now && now <= end && userRole === "candidate" && interviewStatus === "Scheduled";
+      return (
+        start <= now &&
+        now <= end &&
+        userRole === "candidate" &&
+        interviewStatus === "Scheduled"
+      );
     };
   }, []);
 
-  const navigateToInstrucPage = (participantName, startDate, endTime, id, role, topics, requiredSkills) => {
+  const navigateToInstrucPage = (
+    participantName,
+    startDate,
+    endTime,
+    id,
+    role,
+    topics,
+    requiredSkills
+  ) => {
     navigate("/instructions", {
       state: {
         participantNameFromDB: participantName,
@@ -114,17 +136,16 @@ const SeeScheduledInterviews = () => {
       setEvaluationData(JSON.stringify(data.score));
       setShowEvaluationPopup(true);
     } else {
-      setEvaluationData(JSON.stringify({data: "Cannot get evaluation at this time"}));
+      setEvaluationData(
+        JSON.stringify({ data: "Cannot get evaluation at this time" })
+      );
       setShowEvaluationPopup(true);
     }
   };
-  
 
   return (
     <div className={styles.navbar_container}>
-
       <div className={styles.scheduled_interviews_container}>
-
         <h2>Scheduled Interviews</h2>
 
         {interviews.length === 0 ? (
@@ -140,7 +161,11 @@ const SeeScheduledInterviews = () => {
                 {userRole === "candidate" ? <th>HR</th> : null}
                 {userRole === "hr" ? <th>Candidate</th> : null}
                 <th>Status</th>
-                {userRole === "candidate"? <th>Join</th> : <th>Get Evaluation</th>}
+                {userRole === "candidate" ? (
+                  <th>Join</th>
+                ) : (
+                  <th>Get Evaluation</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -153,53 +178,85 @@ const SeeScheduledInterviews = () => {
                   <td>{`${interview.startTime} - ${interview.endTime}`}</td>
                   <td>
                     {userRole === "candidate" ? (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ width: '75px', height: '65px', borderRadius: '50%', overflow: 'hidden' }}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div
+                          style={{
+                            width: "75px",
+                            height: "65px",
+                            borderRadius: "50%",
+                            overflow: "hidden",
+                          }}
+                        >
                           <img
                             src={`data:image/png;base64, ${interview.profilePicture}`}
                             alt="HR Profile"
-                            style={{ width: '100%', height: '100%' }}
+                            style={{ width: "100%", height: "100%" }}
                           />
                         </div>
-                        <div style={{ marginLeft: '10px' }}>
+                        <div style={{ marginLeft: "10px" }}>
                           <p>{interview.hrName}</p>
                         </div>
                       </div>
                     ) : (
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <div style={{ width: '75px', height: '65px', borderRadius: '50%', overflow: 'hidden' }}>
-                        <img
-                          src={`data:image/png;base64, ${interview.profilePicture}`}
-                          alt="HR Profile"
-                          style={{ width: '100%', height: '100%' }}
-                        />
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div
+                          style={{
+                            width: "75px",
+                            height: "65px",
+                            borderRadius: "50%",
+                            overflow: "hidden",
+                          }}
+                        >
+                          <img
+                            src={`data:image/png;base64, ${interview.profilePicture}`}
+                            alt="HR Profile"
+                            style={{ width: "100%", height: "100%" }}
+                          />
+                        </div>
+                        <div style={{ marginLeft: "10px" }}>
+                          <p>{interview.candidateName}</p>
+                        </div>
                       </div>
-                      <div style={{ marginLeft: '10px' }}>
-                        <p>{interview.candidateName}</p>
-                      </div>
-                    </div>
                     )}
                   </td>
 
                   <td>{interview.status}</td>
 
-                  {userRole === 'candidate' ?
+                  {userRole === "candidate" ? (
                     <button
-                      onClick={() => navigateToInstrucPage(interview.participantName, interview.startDate, interview.endTime, interview._id, interview.title, interview.topic, interview.requiredSkills)}
-                      className={`btn btn-success ${!isJoinEnabled(
-                        interview.startTime,
-                        interview.endTime,
-                        interview.startDate,
-                        interview.status,
-                        userRole
-                      )
+                      onClick={() =>
+                        navigateToInstrucPage(
+                          interview.participantName,
+                          interview.startDate,
+                          interview.endTime,
+                          interview._id,
+                          interview.title,
+                          interview.topic,
+                          interview.requiredSkills
+                        )
+                      }
+                      className={`btn btn-success ${
+                        !isJoinEnabled(
+                          interview.startTime,
+                          interview.endTime,
+                          interview.startDate,
+                          interview.status,
+                          userRole
+                        )
                           ? "disabled"
                           : ""
-                        }`}
+                      }`}
                     >
                       Join Interview
                     </button>
-                    : <button className="btn btn-success" onClick={() => showCandidateEvaluation(interview._id)}>Get Evaluation</button>}
+                  ) : (
+                    <button
+                      className="btn btn-success"
+                      onClick={() => showCandidateEvaluation(interview._id)}
+                    >
+                      Get Evaluation
+                    </button>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -207,7 +264,12 @@ const SeeScheduledInterviews = () => {
         )}
         <div className=".btn_container">
           <Link to={"/homepage"}>
-            <button className="btn btn-secondary" style={{ marginRight: "20px", marginTop: "10px" }}>Back</button>
+            <button
+              className="btn btn-secondary"
+              style={{ marginRight: "20px", marginTop: "10px" }}
+            >
+              Back
+            </button>
           </Link>
           {userRole === "hr" && (
             <Link to={"/schedule"}>
@@ -219,11 +281,11 @@ const SeeScheduledInterviews = () => {
         </div>
       </div>
       {showEvaluationPopup && (
-          <EvaluationPopup
-            evaluationData={evaluationData}
-            onClose={() => setShowEvaluationPopup(false)}
-          />
-        )}
+        <EvaluationPopup
+          evaluationData={evaluationData}
+          onClose={() => setShowEvaluationPopup(false)}
+        />
+      )}
     </div>
   );
 };
