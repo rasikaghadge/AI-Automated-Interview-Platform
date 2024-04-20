@@ -110,6 +110,20 @@ const SeeScheduledInterviews = () => {
     };
   }, []);
 
+  const canGetEvaluation = useMemo(() => {
+    return (startTime, endTime, startDate, interviewStatus, userRole) => {
+      const now = new Date();
+      const start = parseTimeString(startTime, startDate);
+      const end = parseTimeString(endTime, startDate);
+      return (
+        start < now &&
+        end < now &&
+        userRole === "hr" &&
+        interviewStatus === "Completed"
+      );
+    };
+  }, []);
+
   const navigateToInstrucPage = (
     participantName,
     startDate,
@@ -251,7 +265,17 @@ const SeeScheduledInterviews = () => {
                     </button>
                   ) : (
                     <button
-                      className="btn btn-success"
+                      className={`btn btn-success ${
+                        !canGetEvaluation(
+                          interview.startTime,
+                          interview.endTime,
+                          interview.startDate,
+                          interview.status,
+                          userRole
+                        )
+                          ? "disabled"
+                          : ""
+                      }`}
                       onClick={() => showCandidateEvaluation(interview._id)}
                     >
                       Get Evaluation
