@@ -6,15 +6,23 @@ import About from "../About/About";
 import Footer from "../Footer/Footer";
 import { decode } from "jsonwebtoken";
 import { useState, useEffect } from "react";
+import { refreshToken } from "../../actions/auth";
 
 const Homepage = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("profile"));
   const [userRole, setUserRole] = useState("");
 
-  if (!user) {
-    navigate("/login");
-  }
+  useEffect(() => {
+      refreshToken(user).then((res) => {
+        if(!res) {
+          navigate('/login')
+        }
+      }).catch((err) => {
+        console.log(err)
+        navigate('/login')
+      });
+  }, [navigate, user])
 
   useEffect(() => {
     const checkUserRole = async () => {

@@ -4,6 +4,7 @@ import ChatHistory from "../models/ChatHistory.js";
 import Interview from "../models/Interview.js";
 import Profile from "../models/ProfileModel.js";
 import User from "../models/userModel.js";
+import { parseTimeString } from "../helper/helper.js";
 dotenv.config();
 
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -30,6 +31,11 @@ export const getMeeting = async (req: any, res: any) => {
 export const scheduleMeeting = async (req: any, res: any) => {
   // Get meeting details from request body
   const { title, description, startDate, startTime, endTime, email, topic, requiredSkills } = req.body;
+  const start: any = parseTimeString(startTime, startDate);
+  const end: any = parseTimeString(endTime, startDate);
+  if((end - start) / 3600000 > 2) {
+    return res.status(400).json({detail: "Cannot schedule interview for more than 1 hour"});
+  }
   const options = {
     method: "GET",
     headers: {
