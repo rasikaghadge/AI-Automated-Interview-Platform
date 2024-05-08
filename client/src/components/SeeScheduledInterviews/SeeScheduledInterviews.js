@@ -188,7 +188,6 @@ const SeeScheduledInterviews = () => {
                 {userRole === "candidate" ? <th>HR</th> : null}
                 {userRole === "hr" ? <th>Candidate</th> : null}
                 <th>Status</th>
-                <th>Join</th>
                 {userRole === "candidate" ? (
                   <th>Join</th>
                 ) : (
