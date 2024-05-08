@@ -35,6 +35,7 @@ export const signIn =(formData)=> API.post('/users/signin', formData)
 export const signUp =(formData)=> API.post('/users/signup', formData)
 export const forgot = (formData) => API.post('/users/forgot', formData);
 export const reset = (formData) => API.post('/users/reset', formData);
+export const refresh = (formData) => API.post('/users/refresh', formData);
 
 export const fetchProfilesBySearch = (searchQuery) => API.get(`/profiles/search?searchQuery=${searchQuery.search || searchQuery.year || 'none'}`);
 export const fetchProfile = (id) => API.get(`/profiles/${id}`)

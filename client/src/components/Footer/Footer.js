@@ -10,7 +10,7 @@ function Footer() {
         <div className="ft-info">
           <div className="ft-info-p1">
             <p className="ft-title">
-              AI<span className="ft-sign"> Interviewer</span>
+              Hire. <span className="ft-sign"> AI</span>
             </p>
             <p className="ft-description">
             Catalyzing seamless interviews and talent assessment with cutting-edge AI technology for candidates and administrators

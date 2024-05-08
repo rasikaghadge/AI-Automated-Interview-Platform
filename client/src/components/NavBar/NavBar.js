@@ -43,7 +43,7 @@ function NavBar({ userRole }) {
     <div className="navbar-section">
       <h1 className="navbar-title">
         <Link to="/homepage">
-          AI <span className="navbar-sign">Interviewer</span>
+          Hire. <span className="navbar-sign">AI</span>
         </Link>
       </h1>
       {/* Desktop */}
@@ -68,15 +68,16 @@ function NavBar({ userRole }) {
             About
           </a>
         </li>
-        <li>
+        {/* <li>
           <a href="#reviews" className="navbar-links">
             Reviews
           </a>
-        </li>
+        </li> */}
         
         {userRole === "hr" && (
             <button
             onClick={() => navigate("/schedule")}
+            className="navbar-button"
           >
             Schedule Interviews
           </button>

@@ -51,9 +51,12 @@
 }
 
 .image {
-  border-radius: 50%;
+  /* border-radius: 50%; */
   /* width: 50px; */
   margin: 0 auto; /* Center the image horizontally */
+  padding: 0;
+  width: 10px;
+  height: 10px;
 }
 
 .live-player {

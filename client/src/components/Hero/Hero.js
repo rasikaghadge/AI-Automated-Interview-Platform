@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HeroImage from "../../Assets/—Pngtree—work from home with computer_5426686.png";
+import HeroImage from "../../Assets/banner2.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import "./Hero.css";
@@ -42,7 +42,7 @@ function Hero({ userRole }) {
             </h2>
           )}
           {userRole === "candidate" && (
-            <h2 className="text-title">Get interviewed by AI</h2>
+            <h2 className="text-title">Elevate your tech interviews</h2>
           )}
           <p className="text-descritpion">
             Our cutting-edge video recruiting software harnesses the power of
@@ -62,22 +62,6 @@ function Hero({ userRole }) {
               </button>
             )
           }
-          <div className="text-stats">
-            <div className="text-stats-container">
-              <p>145+</p>
-              <p>Active users</p>
-            </div>
-
-            <div className="text-stats-container">
-              <p>50+</p>
-              <p>Companies</p>
-            </div>
-
-            <div className="text-stats-container">
-              <p>4+</p>
-              <p>Avg. Rating</p>
-            </div>
-          </div>
         </div>
 
         <div className="hero-image-section">
