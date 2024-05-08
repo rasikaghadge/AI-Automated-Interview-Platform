@@ -1,5 +1,5 @@
 .hero-section {
-    padding: 32px;
+    padding: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8,8 +8,8 @@
 }
 /* Text section */
 .text-section {
-    width: 60%;
-    padding: 0 32px;
+    width: 70%;
+    padding: 0 12px;
 }
 .text-headline {
     margin-bottom: 12px;
@@ -23,7 +23,7 @@
     width: 500px;
     color: black;
     font-family: 'Poppins', sans-serif;
-    font-size: 40px;
+    font-size: 46px;
     font-weight: bold;
 }
 .text-descritpion {
@@ -31,7 +31,7 @@
     margin: 32px 0;
     color: rgb(77, 75, 75);
     font-family: 'Rubik', sans-serif;
-    font-size: 18px;
+    font-size: 20px;
     letter-spacing: .7px;
     line-height: 1.6rem;
 }
@@ -78,13 +78,16 @@
 }
 /* Image section */
 .hero-image-section {
-    width: 40%;
+    width: 80%;
     max-width: 100%;
     text-align: center;
+
 }
 .hero-image1 {
     width: 100%;
     height: auto;
+    padding-right: 70px;
+    margin-left: 70px;
 }
 /* Scroll Btn */
 .scroll-up {
