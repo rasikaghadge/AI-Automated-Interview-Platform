@@ -7,7 +7,7 @@ import {
   getInterviewsHR,
 } from "../../actions/interviews";
 import styles from "./SeeScheduledInterviews.module.css";
-import { getEvaluationUsingInterviewId } from "../../api/index";
+import { getEvaluationUsingInterviewId, getInterviewDetailsById } from "../../api/index";
 import EvaluationPopup from "./EvaluationPopup";
 import { checkUserRole } from "../../actions/auth";
 import ProfileModel from "./UserProfileDetails";
@@ -25,6 +25,7 @@ const SeeScheduledInterviews = () => {
   const [showEvaluationPopup, setShowEvaluationPopup] = useState(false);
   const [showProfileModel, setShowProfileModel] = useState(false);
   const [selectedInterviewProfile, setselectedInterviewProfile] = useState({});
+  const [selectedInterviewDetails, setSelectedInterviewDetails] = useState({});
 
   useEffect(() => {
     if (!user) {
@@ -155,6 +156,10 @@ const SeeScheduledInterviews = () => {
         JSON.stringify({ data: "Cannot get evaluation at this time" })
       );
       setShowEvaluationPopup(true);
+    }
+    const response = await getInterviewDetailsById(id);
+    if (response.statusText === "OK") {
+      setSelectedInterviewDetails(response.data);
     }
   };
 
@@ -298,6 +303,9 @@ const SeeScheduledInterviews = () => {
                       Get Evaluation
                     </button>
                   )}
+                  <td>
+                    {interview.hiringStatus ? "Decision Pending" : interview.hiringStatus}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -325,6 +333,7 @@ const SeeScheduledInterviews = () => {
         <EvaluationPopup
           evaluationData={evaluationData}
           onClose={() => setShowEvaluationPopup(false)}
+          interviewDetails={selectedInterviewDetails}
         />
       )}
 
