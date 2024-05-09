@@ -88,7 +88,11 @@ export const listInterviewsCandidate = async (req: any, res: any) => {
             return res.status(404).json({ message: "Hr not found" });
           }
           const hrProfile = await Profile.findById(hrUser.profile);
+          if (!hrProfile) {
+            return res.status(404).json({ message: "Hr Profile not found" });
+          }
           const hrName = hrUser ? `${hrUser.firstName} ${hrUser.lastName}` : "";
+          const hrCompany = hrUser ? hrProfile.company : "";
 
           const candidateUser = await User.findById(interview.candidate);
           const candidateName = candidateUser
@@ -98,6 +102,7 @@ export const listInterviewsCandidate = async (req: any, res: any) => {
           return {
             ...interview._doc,
             hrName,
+            hrCompany,
             candidateName,
             profilePicture,
           };
