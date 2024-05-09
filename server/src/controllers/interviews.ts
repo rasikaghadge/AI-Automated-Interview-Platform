@@ -99,6 +99,25 @@ export const listInterviewsCandidate = async (req: any, res: any) => {
             ? `${candidateUser.firstName} ${candidateUser.lastName}`
             : "";
           const profilePicture = hrProfile?.profilePicture;
+
+          // disqualify candidates who did not attend interview
+          if (interview.status === "Scheduled") {
+            const currentTime = new Date();
+            const interviewEndTime = interview.endTime;
+            const interviewDate = new Date(interview.startDate); // should consider data and time
+            // convert time string to time object
+            var parts = interviewEndTime.split(':');
+            var interviewEndDateTime = new Date();
+            interviewEndDateTime.setHours(parseInt(parts[0], 10)); // Set hours
+            interviewEndDateTime.setMinutes(parseInt(parts[1], 10)); // Set minutes
+            interviewEndDateTime.setSeconds(0);
+            if (currentTime > interviewDate && currentTime > interviewEndDateTime) {
+              await Interview.findByIdAndUpdate(interview._id, {
+                status: "Candidate Absent",
+              });
+            }
+          }
+
           return {
             ...interview._doc,
             hrName,
