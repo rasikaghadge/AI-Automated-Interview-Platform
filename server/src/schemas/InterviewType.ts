@@ -10,7 +10,7 @@ interface Interview extends Document {
   endTime?: string;
   hr: mongoose.Schema.Types.ObjectId;
   candidate: mongoose.Schema.Types.ObjectId;
-  status: 'Scheduled' | 'Cancelled' | 'Completed' | 'Live' | 'Postponed' | 'Rescheduled';
+  status: 'Scheduled' | 'Cancelled' | 'Completed' | 'Live' | 'Postponed' | 'Rescheduled' | 'Candidate Absent';
   topic: Array<string>;
   requiredSkills: Array<string>;
   penalty: number;

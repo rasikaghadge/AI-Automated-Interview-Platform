@@ -35,7 +35,7 @@ const interviewSchema = new Schema<Interview>({
   },
   status: {
     type: String,
-    enum: ["Scheduled", "Cancelled", "Completed", "Live", "Postponed", "Rescheduled"],
+    enum: ["Scheduled", "Cancelled", "Completed", "Live", "Postponed", "Rescheduled", "Candidate Absent"],
     default: "Scheduled",
   },
   topic: {
