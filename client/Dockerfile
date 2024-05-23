@@ -1,8 +1,11 @@
 # Use Node.js 18 base image
-FROM node:19.5.0-alpine
+FROM node:18-slim
 
 # Set the working directory inside the container
 WORKDIR /app
+
+# Set environment variable to use legacy OpenSSL provider
+ENV NODE_OPTIONS=--openssl-legacy-provider
 
 # Copy package.json and yarn.lock files to the working directory
 COPY package.json yarn.lock ./
