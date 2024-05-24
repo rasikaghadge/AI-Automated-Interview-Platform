@@ -187,6 +187,7 @@ const SeeScheduledInterviews = () => {
             <thead>
               <tr>
                 <th>Job Role</th>
+                {userRole === "candidate" ? <th>Company</th> : null}
                 <th>Description</th>
                 <th>Date and Time</th>
                 {/* <th>Time</th> */}
@@ -205,6 +206,7 @@ const SeeScheduledInterviews = () => {
               {interviews.map((interview) => (
                 <tr key={interview._id}>
                   <td>{interview.title}</td>
+                  {userRole === "candidate" ? <td>{interview.hrCompany}</td> : null}
                   <td>{interview.description}</td>
                   <td>{new Date(interview.startDate).toLocaleDateString()} {`${interview.startTime} - ${interview.endTime}`}</td>
                   {/* <td>{`${interview.startTime} - ${interview.endTime}`}</td> */}
