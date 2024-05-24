@@ -1,5 +1,7 @@
-import React from "react";
-import "./EvaluationPopup.css"; // Import the CSS file for styling
+import React, { useState } from "react";
+import "./EvaluationPopup.css";
+import { useDispatch } from "react-redux";
+import { changeInterviewHiringStatus } from "../../actions/interviews";
 
 // Function to parse the evaluation text
 const parseEvaluationText = (text) => {
@@ -15,7 +17,11 @@ const parseEvaluationText = (text) => {
 };
 
 const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
+  console.log("interviewDetails", interviewDetails)
   let parsedEvaluationData = {};
+  const dispatch = useDispatch();
+  const [currentHiringStatus, setCurrentHiringStatus] =
+    useState("Decision Pending");
 
   const sendHiringStatusEmail = (hiringDecision) => {
     const mail_type =
@@ -36,12 +42,31 @@ const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
       .catch((err) => {
         console.log(err);
       });
+      updateHiringStatusForInterview(hiringDecision);
+  };
+
+  const updateHiringStatusForInterview = (hiringDecision) => {
+    console.log(hiringDecision)
+    if (hiringDecision === "Select") {
+      hiringDecision = "Selected";
+    } else {
+      hiringDecision = "Rejected";
+    }
+    interviewDetails.hiring_status = hiringDecision;
+    const response = dispatch(changeInterviewHiringStatus(interviewDetails._id, hiringDecision));
+
+    if (response.status == 200) {
+      currentHiringStatus = hiringDecision;
+    }
   };
 
   if (evaluationData) {
     // Replace double backslashes with single backslashes and split by new lines
     evaluationData = evaluationData.replace(/\\n/g, "\n");
     parsedEvaluationData = parseEvaluationText(evaluationData);
+    if (interviewDetails.hiringStatus !== currentHiringStatus) {
+      setCurrentHiringStatus(interviewDetails.hiringStatus);
+    }
   }
 
   // Extract the final evaluation score and details to display at the top
@@ -111,19 +136,40 @@ const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
         ) : (
           <p>No evaluation data available.</p>
         )}
-        <button
-          onClick={() => sendHiringStatusEmail("Select")}
-          className="btn btn-success"
-        >
-          Select Candidate
-        </button>{" "}
-        &nbsp;{" "}
-        <button
-          onClick={() => sendHiringStatusEmail("Reject")}
-          className="btn btn-danger"
-        >
-          Reject Candidate
-        </button>
+        {currentHiringStatus === "Decision Pending" ? (
+          <>
+            <button
+              onClick={() => sendHiringStatusEmail("Select")}
+              className="btn btn-success"
+            >
+              Select Candidate
+            </button>
+            <button
+              onClick={() => sendHiringStatusEmail("Reject")}
+              className="btn btn-danger"
+            >
+              Reject Candidate
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              disabled
+              onClick={() => sendHiringStatusEmail("Select")}
+              className="btn btn-success"
+            >
+              Select Candidate
+            </button>
+            <button
+              disabled
+              onClick={() => sendHiringStatusEmail("Reject")}
+              className="btn btn-danger"
+            >
+              Reject Candidate
+            </button>
+          </>
+        )}
+
         <button
           onClick={onClose}
           style={{

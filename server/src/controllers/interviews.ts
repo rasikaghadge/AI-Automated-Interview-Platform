@@ -200,6 +200,22 @@ export const updateMeeting = async (req: any, res: any) => {
   }
 };
 
+export const updateHiringStatus = async (req: any, res: any) => {
+  const meetingId = req.params.id;
+  const { hiringStatus } = req.body;
+  const updatedMeeting = { hiringStatus };
+  try {
+    const updatedMeetingResponse = await Interview.findByIdAndUpdate(
+      meetingId,
+      updatedMeeting,
+      { new: true }
+    )
+    res.status(200).json(updatedMeetingResponse);
+  } catch (error: any) {
+    res.status(404).json({ message: error.message });
+  }
+}
+
 export const getInterviewEndTime = async (req: any, res: any) => {
   try {
     const interviewId = req.params.id;

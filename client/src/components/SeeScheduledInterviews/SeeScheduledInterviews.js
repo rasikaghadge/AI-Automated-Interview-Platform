@@ -306,7 +306,7 @@ const SeeScheduledInterviews = () => {
                     </button>
                   )}
                   <td>
-                    {interview.hiringStatus ? "Decision Pending" : interview.hiringStatus}
+                    {interview.hiringStatus ? interview.hiringStatus : "Decision Pending"}
                   </td>
                 </tr>
               ))}
