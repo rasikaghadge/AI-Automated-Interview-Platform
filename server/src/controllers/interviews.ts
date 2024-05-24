@@ -1,10 +1,12 @@
 import dotenv from "dotenv";
+import mongoose from 'mongoose';
 import OpenAI from "openai";
+import { parseTimeString } from "../helper/helper.js";
 import ChatHistory from "../models/ChatHistory.js";
 import Interview from "../models/Interview.js";
 import Profile from "../models/ProfileModel.js";
 import User from "../models/userModel.js";
-import { parseTimeString } from "../helper/helper.js";
+
 dotenv.config();
 
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -21,7 +23,11 @@ const openai = new OpenAI(
 export const getMeeting = async (req: any, res: any) => {
   // Sample data
   const meetingId = req.params.id;
-  const interview = await Interview.findById(meetingId);
+  const interview = await Interview
+  .findById(mongoose.Types.ObjectId(meetingId))
+  .populate({ path: "candidate", select: "-password" }) // exclude password
+  .populate({ path: "hr", select: "-password" }); 
+
   if (!interview) {
     return res.status(500).json({ message: "Interview not found" });
   }

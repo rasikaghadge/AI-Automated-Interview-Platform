@@ -13,7 +13,7 @@ if (NODE_ENV === 'development') {
 export const baseURL = url;
 const API = axios.create({ baseURL: baseURL})
 export const AI_URL = process.env.AI_APP_API;
-const AI_APP_API = axios.create({ baseURL: AI_URL})
+const AI_APP_API = axios.create({ baseURL: 'http://localhost:8000'})
 API.interceptors.request.use((req) => {
     if(localStorage.getItem('profile')) {
         req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
@@ -47,6 +47,7 @@ export const deleteProfile = (id) => API.delete(`/profiles/${id}`);
 
 export const getInterviewsCandidate = (id) => API.get(`/interviews/candidate/${id}`);
 export const getInterviewsHR = (id) => API.get(`/interviews/hr/${id}`);
+export const getInterviewDetailsById = (id) => API.get(`/interviews/${id}`);
 
 export const listMeetings = () => API.get('/interview');
 export const getMeeting = (id) => API.get(`/interviews/${id}`);
@@ -60,3 +61,4 @@ export const saveUserDetails = (userDetails) => AI_APP_API.post('/user/', userDe
 // there will be two different ways to get evaluation
 export const getEvaluation = (id) => AI_APP_API.get(`/evaluate/${id}`); // todo modify this to another way
 export const getEvaluationUsingInterviewId = (id) => AI_APP_API.get(`/evaluate/${id}`);
+export const sendInterviewStatusEmail = (data) => AI_APP_API.post('/mail', data);

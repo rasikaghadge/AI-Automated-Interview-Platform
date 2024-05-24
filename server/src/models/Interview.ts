@@ -51,6 +51,12 @@ const interviewSchema = new Schema<Interview>({
   penalty: {
     type: Number,
     required: false,
+  },
+  hiringStatus: {
+    type: String,
+    enum: ["Selected", "Rejected", "Decision Pending"],
+    default: "Decision Pending",
+    required: false
   }
 });
 
