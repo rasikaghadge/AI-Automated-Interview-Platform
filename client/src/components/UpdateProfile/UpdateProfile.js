@@ -315,24 +315,6 @@ const UpdateProfile = () => {
               </>
             )}
 
-            {userRole === "candidate" && (
-              <>
-                <label htmlFor="experience" className={styles.label}>
-                  Years of experience:
-                </label>
-                <input
-                  type="number"
-                  id="experience"
-                  name="experience"
-                  placeholder="Years of experience"
-                  value={formData.experience}
-                  onChange={handleChange}
-                  className={styles.input_feild}
-                  required
-                />
-              </>
-            )}
-
             {userRole === "candidate" && initialData.experience > 0 && (
               <>
                 <label

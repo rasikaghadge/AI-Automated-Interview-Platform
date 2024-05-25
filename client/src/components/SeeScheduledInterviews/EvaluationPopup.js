@@ -17,21 +17,24 @@ const parseEvaluationText = (text) => {
 };
 
 const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
-  console.log("interviewDetails", interviewDetails)
   let parsedEvaluationData = {};
   const dispatch = useDispatch();
   const [currentHiringStatus, setCurrentHiringStatus] =
     useState("Decision Pending");
+  const [buttonsDisabled, setButtonsDisabled] = useState(false);
 
   const sendHiringStatusEmail = (hiringDecision) => {
     const mail_type =
       hiringDecision === "Select" ? "select_candidate" : "reject_candidate";
     interviewDetails.mail_type = mail_type;
+    // Disable the buttons immediately
+    setButtonsDisabled(true);
+
     // send email to the candidate
     console.log("mail status");
     fetch("http://localhost:8000/mail/", {
       method: "POST",
-      header: {
+      headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(interviewDetails),
@@ -42,21 +45,23 @@ const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
       .catch((err) => {
         console.log(err);
       });
-      updateHiringStatusForInterview(hiringDecision);
+
+    updateHiringStatusForInterview(hiringDecision);
   };
 
   const updateHiringStatusForInterview = (hiringDecision) => {
-    console.log(hiringDecision)
     if (hiringDecision === "Select") {
       hiringDecision = "Selected";
     } else {
       hiringDecision = "Rejected";
     }
     interviewDetails.hiring_status = hiringDecision;
-    const response = dispatch(changeInterviewHiringStatus(interviewDetails._id, hiringDecision));
+    const response = dispatch(
+      changeInterviewHiringStatus(interviewDetails._id, hiringDecision)
+    );
 
-    if (response.status == 200) {
-      currentHiringStatus = hiringDecision;
+    if (response.status === 200) {
+      setCurrentHiringStatus(hiringDecision);
     }
   };
 
@@ -140,13 +145,17 @@ const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
           <>
             <button
               onClick={() => sendHiringStatusEmail("Select")}
+              id="select-candidate-button"
               className="btn btn-success"
+              disabled={buttonsDisabled}
             >
               Select Candidate
             </button>
             <button
               onClick={() => sendHiringStatusEmail("Reject")}
+              id="reject-candidate-button"
               className="btn btn-danger"
+              disabled={buttonsDisabled}
             >
               Reject Candidate
             </button>
@@ -156,6 +165,7 @@ const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
             <button
               disabled
               onClick={() => sendHiringStatusEmail("Select")}
+              id="select-candidate-button"
               className="btn btn-success"
             >
               Select Candidate
@@ -163,6 +173,7 @@ const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
             <button
               disabled
               onClick={() => sendHiringStatusEmail("Reject")}
+              id="reject-candidate-button"
               className="btn btn-danger"
             >
               Reject Candidate

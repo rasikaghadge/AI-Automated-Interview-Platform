@@ -14,7 +14,7 @@ router.patch("/update/:id", auth, updateMeeting);
 
 // TODO: add super admin middleware
 router.patch("/update", updateAllInterviews);
-router.patch("/hiring/:id", updateHiringStatus);
+router.patch("/hiring/:id", hrAuth, updateHiringStatus);
 router.get("/:id/endtime", auth, getInterviewEndTime);
 router.get("/score/:id", hrAuth, getCandidateInterviewScore);
 
