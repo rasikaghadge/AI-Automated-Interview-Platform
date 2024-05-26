@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./EvaluationPopup.css";
 import { useDispatch } from "react-redux";
 import { changeInterviewHiringStatus } from "../../actions/interviews";
+import { AI_URL } from "../../api/index";
 
 // Function to parse the evaluation text
 const parseEvaluationText = (text) => {
@@ -31,8 +32,7 @@ const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
     setButtonsDisabled(true);
 
     // send email to the candidate
-    console.log("mail status");
-    fetch("http://localhost:8000/mail/", {
+    fetch(AI_URL + "/mail/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
