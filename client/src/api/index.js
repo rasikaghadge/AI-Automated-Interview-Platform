@@ -54,6 +54,7 @@ export const getMeeting = (id) => API.get(`/interviews/${id}`);
 // export const scheduleMeeting = (meetingData) => API.post('/schedule', meetingData);
 export const scheduleMeeting = (formData) => API.post(`/interviews/schedule`, formData);
 export const changeMeetingStatus = (id, status) => API.patch(`/interviews/update/${id}`, status);
+export const changeInterviewHiringStatus = (id, status) => API.patch(`/interviews/hiring/${id}`, status);
 
 export const processCandidateAnswer = (formData) => AI_APP_API.post('/post_audio/', formData);
 export const saveUserDetails = (userDetails) => AI_APP_API.post('/user/', userDetails);

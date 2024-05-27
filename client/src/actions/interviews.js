@@ -63,6 +63,16 @@ export const changeMeetingStatus = (id, status, penalty) => async (dispatch) => 
   }
 }
 
+export const changeInterviewHiringStatus = (id, status) => async (dispatch) => {
+  try {
+    const statusJson = { hiringStatus: status};
+    const {data} = await api.changeInterviewHiringStatus(id, statusJson);
+    dispatch({ type: UPDATE_MEETING, payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export const getEvaluation = (id) => async (dispatch) => {
   try {
     const { data } = await api.getEvaluation(id);

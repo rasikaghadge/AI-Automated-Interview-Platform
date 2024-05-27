@@ -1,5 +1,8 @@
-import React from "react";
-import "./EvaluationPopup.css"; // Import the CSS file for styling
+import React, { useState } from "react";
+import "./EvaluationPopup.css";
+import { useDispatch } from "react-redux";
+import { changeInterviewHiringStatus } from "../../actions/interviews";
+import { AI_URL } from "../../api/index";
 
 // Function to parse the evaluation text
 const parseEvaluationText = (text) => {
@@ -16,16 +19,22 @@ const parseEvaluationText = (text) => {
 
 const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
   let parsedEvaluationData = {};
+  const dispatch = useDispatch();
+  const [currentHiringStatus, setCurrentHiringStatus] =
+    useState("Decision Pending");
+  const [buttonsDisabled, setButtonsDisabled] = useState(false);
 
   const sendHiringStatusEmail = (hiringDecision) => {
     const mail_type =
       hiringDecision === "Select" ? "select_candidate" : "reject_candidate";
     interviewDetails.mail_type = mail_type;
+    // Disable the buttons immediately
+    setButtonsDisabled(true);
+
     // send email to the candidate
-    console.log("mail status");
-    fetch("http://localhost:8000/mail/", {
+    fetch(AI_URL + "/mail/", {
       method: "POST",
-      header: {
+      headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(interviewDetails),
@@ -36,12 +45,33 @@ const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
       .catch((err) => {
         console.log(err);
       });
+
+    updateHiringStatusForInterview(hiringDecision);
+  };
+
+  const updateHiringStatusForInterview = (hiringDecision) => {
+    if (hiringDecision === "Select") {
+      hiringDecision = "Selected";
+    } else {
+      hiringDecision = "Rejected";
+    }
+    interviewDetails.hiring_status = hiringDecision;
+    const response = dispatch(
+      changeInterviewHiringStatus(interviewDetails._id, hiringDecision)
+    );
+
+    if (response.status === 200) {
+      setCurrentHiringStatus(hiringDecision);
+    }
   };
 
   if (evaluationData) {
     // Replace double backslashes with single backslashes and split by new lines
     evaluationData = evaluationData.replace(/\\n/g, "\n");
     parsedEvaluationData = parseEvaluationText(evaluationData);
+    if (interviewDetails.hiringStatus !== currentHiringStatus) {
+      setCurrentHiringStatus(interviewDetails.hiringStatus);
+    }
   }
 
   // Extract the final evaluation score and details to display at the top
@@ -111,19 +141,46 @@ const EvaluationPopup = ({ evaluationData, onClose, interviewDetails }) => {
         ) : (
           <p>No evaluation data available.</p>
         )}
-        <button
-          onClick={() => sendHiringStatusEmail("Select")}
-          className="btn btn-success"
-        >
-          Select Candidate
-        </button>{" "}
-        &nbsp;{" "}
-        <button
-          onClick={() => sendHiringStatusEmail("Reject")}
-          className="btn btn-danger"
-        >
-          Reject Candidate
-        </button>
+        {currentHiringStatus === "Decision Pending" ? (
+          <>
+            <button
+              onClick={() => sendHiringStatusEmail("Select")}
+              id="select-candidate-button"
+              className="btn btn-success"
+              disabled={buttonsDisabled}
+            >
+              Select Candidate
+            </button>
+            <button
+              onClick={() => sendHiringStatusEmail("Reject")}
+              id="reject-candidate-button"
+              className="btn btn-danger"
+              disabled={buttonsDisabled}
+            >
+              Reject Candidate
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              disabled
+              onClick={() => sendHiringStatusEmail("Select")}
+              id="select-candidate-button"
+              className="btn btn-success"
+            >
+              Select Candidate
+            </button>
+            <button
+              disabled
+              onClick={() => sendHiringStatusEmail("Reject")}
+              id="reject-candidate-button"
+              className="btn btn-danger"
+            >
+              Reject Candidate
+            </button>
+          </>
+        )}
+
         <button
           onClick={onClose}
           style={{

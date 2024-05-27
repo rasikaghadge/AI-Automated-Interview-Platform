@@ -1,5 +1,5 @@
 import express from "express";
-import { getCandidateInterviewScore, getInterviewEndTime, getMeeting, listInterviewsCandidate, listInterviewsHR, scheduleMeeting, updateAllInterviews, updateMeeting } from "../controllers/interviews.js";
+import { getCandidateInterviewScore, getInterviewEndTime, getMeeting, listInterviewsCandidate, listInterviewsHR, scheduleMeeting, updateAllInterviews, updateMeeting, updateHiringStatus } from "../controllers/interviews.js";
 import { auth, hrAuth } from "../middleware/auth.js";
 
 
@@ -14,6 +14,7 @@ router.patch("/update/:id", auth, updateMeeting);
 
 // TODO: add super admin middleware
 router.patch("/update", updateAllInterviews);
+router.patch("/hiring/:id", hrAuth, updateHiringStatus);
 router.get("/:id/endtime", auth, getInterviewEndTime);
 router.get("/score/:id", hrAuth, getCandidateInterviewScore);
 
