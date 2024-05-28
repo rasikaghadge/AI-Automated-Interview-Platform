@@ -6,7 +6,7 @@ import ChatHistory from "../models/ChatHistory.js";
 import Interview from "../models/Interview.js";
 import Profile from "../models/ProfileModel.js";
 import User from "../models/userModel.js";
-
+import { sendInterviewStatusEmail } from "../helper/emailHelper.js";
 dotenv.config();
 
 const API_BASE_URL = process.env.API_BASE_URL;
@@ -72,9 +72,11 @@ export const scheduleMeeting = async (req: any, res: any) => {
 
   try {
     await interview.save();
+    // send interview schedule email
+    await sendInterviewStatusEmail(interview);
     res.status(201).json(interview);
   } catch (error: any) {
-    res.status(409).json({ message: error.message });
+    res.status(400).json({ message: error.message });
     return;
   }
 };
