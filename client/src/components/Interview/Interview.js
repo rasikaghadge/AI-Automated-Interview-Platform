@@ -301,8 +301,8 @@ const Interview = () => {
     };
   };
 
-  const endInterviewHelper = () => {
-    changeInterviewStatus("Completed");
+  const endInterviewHelper = async () => {
+    await changeInterviewStatus("Completed");
     endInterviewSession();
     navigate("/scheduledinterviews");
 }
