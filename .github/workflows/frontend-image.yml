@@ -1,4 +1,4 @@
-name: backend image
+name: frontend image
 
 on:
   push:
@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build ./server --file ./server/Dockerfile --tag ai-backend:$(date +%s)
+      run: docker build ./client --file ./client/Dockerfile --tag ai-frontend:$(date +%s)
