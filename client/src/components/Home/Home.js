@@ -21,7 +21,7 @@ const Home = () => {
           justifyContent: "space-between",
           alignItems: "center",
           padding: "10px 20px",
-          backgroundColor: "#f0f0f0", // Example background color
+          backgroundColor: "#f0f0f0",
           borderTopLeftRadius: "10px",
           borderTopRightRadius: "10px",
         }}
@@ -32,19 +32,34 @@ const Home = () => {
           src="https://i.postimg.cc/hGZKzdkS/logo.png"
           alt="arc-invoice"
         />
-        <button
-          onClick={() => navigate("/select")}
-          style={{
-            backgroundColor: "#007bff", // Example background color
-            color: "#fff", // Example text color
-            border: "none",
-            padding: "10px 20px",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Get started
-        </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            onClick={() => navigate("/demo")}
+            style={{
+              backgroundColor: "#6c757d",
+              color: "#fff",
+              border: "none",
+              padding: "10px 20px",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Try Demo
+          </button>
+          <button
+            onClick={() => navigate("/select")}
+            style={{
+              backgroundColor: "#007bff",
+              color: "#fff",
+              border: "none",
+              padding: "10px 20px",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Get started
+          </button>
+        </div>
       </div>
       <div
         style={{

@@ -13,6 +13,7 @@ import SeeScheduledInterviews from './components/SeeScheduledInterviews/SeeSched
 import Interview from './components/Interview/Interview';
 import InstrucPage from './components/InstrucPage/InstrucPage';
 import UserDetails from './components/UserDetails/UserDetails';
+import DemoInterview from './components/Interview/DemoInterview';
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
           <Route path="/interview/:id" element={<Interview />} />
           <Route path="/instructions" element={<InstrucPage/>} />
           <Route path="/user" element={<UserDetails/>} />
+          <Route path="/demo" element={<DemoInterview/>} />
         </Routes>
         </SnackbarProvider>
       </BrowserRouter>
