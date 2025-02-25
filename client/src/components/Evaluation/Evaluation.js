@@ -1,7 +1,6 @@
 import React from "react";
 
 const Evaluation = ({ evaluationData, onClose }) => {
-    console.log(evaluationData)
   const sections = evaluationData ? evaluationData.split("\n") : [];
 
   return (

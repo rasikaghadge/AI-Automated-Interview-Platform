@@ -2,13 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faExpand,
-  faMicrophone,
-  faMicrophoneSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Interview.module.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { questions, introduction } from "./FirstQuestions";
-import { processCandidateAnswer } from "../../actions/modelCommunication";
 import { useDispatch } from "react-redux";
 import image from "./image.jpg";
 import { changeMeetingStatus } from "../../actions/interviews";

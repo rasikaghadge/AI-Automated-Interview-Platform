@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { decode } from "jsonwebtoken";
 import { useEffect } from "react";
 import styles from "./UserDetails.module.css";
@@ -50,6 +50,8 @@ const UserDetails = () => {
     weaknesses: "",
     previousRolesDescription: "",
   });
+  
+  // eslint-disable-next-line no-unused-vars
   const [hasChanges, setHasChanges] = useState(false);
 
   const technicalSkillsOptions = [
@@ -89,6 +91,7 @@ const UserDetails = () => {
     { value: 'Project Management', label: 'Project Management' }
   ];
   
+  // eslint-disable-next-line no-unused-vars
   const softSkillsOptions = [
     { value: 'Communication', label: 'Communication' },
     { value: 'Teamwork', label: 'Teamwork' },

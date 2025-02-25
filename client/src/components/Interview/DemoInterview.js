@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Evaluation from '../Evaluation/Evaluation';
+import { useNavigate } from 'react-router-dom';
 
 const INTERVIEWERS = [
   {
@@ -23,11 +25,15 @@ const INTERVIEWERS = [
   },
 ];
 const DemoInterview = () => {
+
+  const navigate = useNavigate();
+
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [timeLeft, setTimeLeft] = useState(32); // 32 seconds
-  const [isTimerRunning, setIsTimerRunning] = useState(true);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [isModelOpen, setIsModelOpen] = useState(false)
 
   const videoRef = useRef(null);
   const audioStreamRef = useRef(null);
@@ -38,6 +44,27 @@ const DemoInterview = () => {
 
   // Select a random interviewer when the component loads
   const [interviewer, setInterviewer] = useState(null);
+
+  const isInterviewInProgress = interviewStarted && !interviewCompleted;
+
+  const showEvaluation = interviewCompleted && !isInterviewInProgress;
+
+  const handleOnEvaluationClose = () => {
+    setIsModelOpen(false)
+    navigate("/")
+  }
+
+  const handleInterviewStartButtonClick = (event) => {
+    if (event.target.innerText === 'Start Interview') {
+      setInterviewStarted(true);
+      setIsTimerRunning(true);
+    } else {
+      if (window.confirm('Are you sure you want to exit?')) {
+        setInterviewCompleted(true);
+        setIsModelOpen(true)
+      }
+    }
+  };
 
   useEffect(() => {
     const randomInterviewer =
@@ -150,7 +177,7 @@ const DemoInterview = () => {
   const handleNextQuestion = () => {
     if (currentQuestion < demoQuestions.length - 1) {
       setCurrentQuestion((curr) => curr + 1);
-      setTimeLeft(120); // Reset timer for new question
+      setTimeLeft(32); // Reset timer for new question
       setIsTimerRunning(true);
     }
   };
@@ -363,21 +390,23 @@ const DemoInterview = () => {
           <div style={{ marginBottom: '20px' }}>
             <div style={{ textAlign: 'right' }}>
               <button
-                onClick={() => setInterviewStarted(true)}
+                onClick={handleInterviewStartButtonClick}
                 style={{
                   padding: '10px 20px',
                   borderRadius: '5px',
                   cursor: 'pointer',
                   border: 'none',
-                  backgroundColor: '#007bff',
+                  backgroundColor: isInterviewInProgress
+                    ? '#f11414'
+                    : '#007bff',
                   color: 'white',
                   fontWeight: '500',
                   transition: 'background-color 0.3s',
                 }}
               >
-                Start Interview
+                {isInterviewInProgress ? 'Exit Interview' : 'Start Interview'}
               </button>
-              {interviewer && !interviewStarted && (
+              {interviewer && (!interviewStarted || !isInterviewInProgress) && (
                 <div style={{ marginTop: '50px', textAlign: 'center' }}>
                   <h3>Interviewer: {interviewer.name}</h3>
                   <p>Provider: {interviewer.provider}</p>
@@ -385,7 +414,7 @@ const DemoInterview = () => {
                 </div>
               )}
             </div>
-            {interviewStarted && (
+            {isInterviewInProgress && (
               <div
                 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
               >
@@ -398,13 +427,15 @@ const DemoInterview = () => {
                     animation: 'pulse 2s infinite',
                   }}
                 ></div>
-                <span style={{ color: '#666' }}>{interviewer.name} is listening...</span>
+                <span style={{ color: '#666' }}>
+                  {interviewer.name} is listening...
+                </span>
               </div>
             )}
           </div>
 
-          {interviewStarted && <TimerDisplay />}
-          {interviewStarted && (
+          {isInterviewInProgress && <TimerDisplay />}
+          {isInterviewInProgress && (
             <>
               <div
                 style={{
@@ -455,7 +486,7 @@ const DemoInterview = () => {
           margin: '20px auto',
         }}
       >
-        {!interviewStarted ? (
+        {!isInterviewInProgress && (
           <div>
             <h3
               style={{
@@ -481,24 +512,11 @@ const DemoInterview = () => {
               </li>
             </ul>
           </div>
-        ) : (
-          <button
-            onClick={() => setInterviewCompleted(true)}
-            style={{
-              padding: '10px 20px',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              border: 'none',
-              backgroundColor: '#007bff',
-              color: 'white',
-              fontWeight: '500',
-              transition: 'background-color 0.3s',
-            }}
-          >
-            Exit Interview
-          </button>
         )}
       </div>
+
+      {/* evaluation model */}
+      {isModelOpen && <Evaluation evaluationData={"some data to be displayed\nhow I can modify this"} onClose={handleOnEvaluationClose}/>}
     </div>
   );
 };
