@@ -33,9 +33,17 @@ const DemoInterview = () => {
   const audioStreamRef = useRef(null);
   const videoStreamRef = useRef(null);
 
-  const [showQuestions, setShowQuestions] = useState(false);
-
   const [interviewStarted, setInterviewStarted] = useState(false);
+  const [interviewCompleted, setInterviewCompleted] = useState(false);
+
+  // Select a random interviewer when the component loads
+  const [interviewer, setInterviewer] = useState(null);
+
+  useEffect(() => {
+    const randomInterviewer =
+      INTERVIEWERS[Math.floor(Math.random() * INTERVIEWERS.length)];
+    setInterviewer(randomInterviewer);
+  }, []);
 
   const demoQuestions = [
     'Tell me about your experience with React development.',
@@ -58,6 +66,7 @@ const DemoInterview = () => {
   const startAudioStream = async () => {
     const micPermission = await checkPermissions('microphone');
     if (micPermission === 'denied') {
+      setIsMuted(true);
       alert('Microphone access denied. Please enable it in browser settings.');
       return;
     }
@@ -73,6 +82,7 @@ const DemoInterview = () => {
   const startVideoStream = async () => {
     const cameraPermission = await checkPermissions('camera');
     if (cameraPermission === 'denied') {
+      setIsVideoOff(true);
       alert('Camera access denied. Please enable it in browser settings.');
       return;
     }
@@ -367,6 +377,13 @@ const DemoInterview = () => {
               >
                 Start Interview
               </button>
+              {interviewer && !interviewStarted && (
+                <div style={{ marginTop: '50px', textAlign: 'center' }}>
+                  <h3>Interviewer: {interviewer.name}</h3>
+                  <p>Provider: {interviewer.provider}</p>
+                  <p>Email: {interviewer.email}</p>
+                </div>
+              )}
             </div>
             {interviewStarted && (
               <div
@@ -381,7 +398,7 @@ const DemoInterview = () => {
                     animation: 'pulse 2s infinite',
                   }}
                 ></div>
-                <span style={{ color: '#666' }}>AI is listening...</span>
+                <span style={{ color: '#666' }}>{interviewer.name} is listening...</span>
               </div>
             )}
           </div>
@@ -431,39 +448,57 @@ const DemoInterview = () => {
         </div>
       </div>
 
-      {!interviewStarted && (
-        <div
-          style={{
-            ...cardStyle,
-            maxWidth: '1200px',
-            margin: '20px auto',
-          }}
-        >
-          <h3
+      <div
+        style={{
+          ...cardStyle,
+          maxWidth: '1200px',
+          margin: '20px auto',
+        }}
+      >
+        {!interviewStarted ? (
+          <div>
+            <h3
+              style={{
+                fontSize: '20px',
+                fontWeight: '600',
+                marginBottom: '15px',
+              }}
+            >
+              Interview Tips
+            </h3>
+            <ul style={{ color: '#444' }}>
+              <li style={{ marginBottom: '8px' }}>
+                • Speak clearly and maintain good eye contact with the camera
+              </li>
+              <li style={{ marginBottom: '8px' }}>
+                • Take a moment to gather your thoughts before answering
+              </li>
+              <li style={{ marginBottom: '8px' }}>
+                • Provide specific examples to support your answers
+              </li>
+              <li style={{ marginBottom: '8px' }}>
+                • Keep your responses focused and concise
+              </li>
+            </ul>
+          </div>
+        ) : (
+          <button
+            onClick={() => setInterviewCompleted(true)}
             style={{
-              fontSize: '20px',
-              fontWeight: '600',
-              marginBottom: '15px',
+              padding: '10px 20px',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              border: 'none',
+              backgroundColor: '#007bff',
+              color: 'white',
+              fontWeight: '500',
+              transition: 'background-color 0.3s',
             }}
           >
-            Interview Tips
-          </h3>
-          <ul style={{ color: '#444' }}>
-            <li style={{ marginBottom: '8px' }}>
-              • Speak clearly and maintain good eye contact with the camera
-            </li>
-            <li style={{ marginBottom: '8px' }}>
-              • Take a moment to gather your thoughts before answering
-            </li>
-            <li style={{ marginBottom: '8px' }}>
-              • Provide specific examples to support your answers
-            </li>
-            <li style={{ marginBottom: '8px' }}>
-              • Keep your responses focused and concise
-            </li>
-          </ul>
-        </div>
-      )}
+            Exit Interview
+          </button>
+        )}
+      </div>
     </div>
   );
 };
