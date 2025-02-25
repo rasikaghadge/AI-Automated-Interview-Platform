@@ -122,18 +122,17 @@ const UpdateProfile = () => {
   const fetchData = async (id) => {
     try {
       let response = await dispatch(getProfile(id));
-  
+      
       if (response) {
-        let technicalSkills = response.technicalSkills[0].split(",").map(skill => skill.trim());
-        let softSkills = response.softSkills[0].split(",").map(skill => skill.trim());
+        console.log(response)
         setInitialData({
           company: response.company,
           firstName: response.firstName,
           lastName: response.lastName,
           dob: response.dob,
-          technicalSkills: technicalSkills,
+          technicalSkills: response.technicalSkills,
           experience: response.experience,
-          softSkills: softSkills,
+          softSkills: response.softSkills,
           education: response.education,
           strengths: response.strengths,
           weaknesses: response.weaknesses,

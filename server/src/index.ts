@@ -40,7 +40,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Server is ready');
 });
 
-const PORT: number = 5000;
+const PORT: number = 8000;
 
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

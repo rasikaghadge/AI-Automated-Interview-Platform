@@ -1,16 +1,10 @@
-import axios from 'axios'
-import dotenv from 'dotenv'
+import axios from 'axios';
+import dotenv from 'dotenv';
 
 dotenv.config()
 
-const NODE_ENV = process.env.NODE_ENV
-let url;
-if (NODE_ENV === 'development') {
-    url = 'http://localhost:5000'
-} else {
-    url = process.env.REACT_APP_API
-}
-export const baseURL = url;
+const baseURL = process.env.REACT_APP_API;
+console.log('baseURl is ', baseURL)
 const API = axios.create({ baseURL: baseURL})
 export const AI_URL = process.env.AI_APP_API;
 const AI_APP_API = axios.create({ baseURL: 'http://localhost:8000'})

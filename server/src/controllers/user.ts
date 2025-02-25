@@ -1,6 +1,6 @@
 import axios from "axios";
 import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 // @ts-ignore
 import dotenv from "dotenv";
 import { Request, Response } from "express";
@@ -108,6 +108,10 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     if (password !== confirmPassword) {
       res.status(400).json({ message: "Password does not match" });
       return;
+    }
+
+    if (role == null) {
+        res.status(400).json({message: 'Invalid details. user role is required.'})
     }
 
     const existingUser = await User.findOne({ email });

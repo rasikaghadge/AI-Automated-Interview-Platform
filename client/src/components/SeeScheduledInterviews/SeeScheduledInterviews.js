@@ -39,7 +39,7 @@ const SeeScheduledInterviews = () => {
       ({ id, role } = checkUserRole(user));
       setUserRole(role);
     }
-
+    console.log("id", id);
     const fetchData = async (id) => {
       try {
         let response = null;
@@ -48,6 +48,7 @@ const SeeScheduledInterviews = () => {
         } else if (userRole === "hr") {
           response = await dispatch(getInterviewsHR(id));
         }
+        console.log(response);
         if (response && response[0]) {
           // Sort interviews by date and time before setting the state
           const sortedInterviews = response.sort((a, b) => {
@@ -66,8 +67,10 @@ const SeeScheduledInterviews = () => {
           setDataFetched(true);
         } else if (!response[0]) {
           openSnackbar("Loading interviews");
+          setDataFetched(true);
         } else {
           openSnackbar("Failed to get interviews");
+          setDataFetched(true);
         }
       } catch (error) {
         openSnackbar("Loading Interviews");
