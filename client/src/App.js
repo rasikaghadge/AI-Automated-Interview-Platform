@@ -14,6 +14,7 @@ import Interview from './components/Interview/Interview';
 import InstrucPage from './components/InstrucPage/InstrucPage';
 import UserDetails from './components/UserDetails/UserDetails';
 import DemoInterview from './components/Interview/DemoInterview';
+import PageNotFound from './components/PageNotFound';
 
 function App() {
 
@@ -38,6 +39,7 @@ function App() {
           <Route path="/instructions" element={<InstrucPage/>} />
           <Route path="/user" element={<UserDetails/>} />
           <Route path="/demo" element={<DemoInterview/>} />
+          <Route path="*" element={<PageNotFound/>} />
         </Routes>
         </SnackbarProvider>
       </BrowserRouter>
