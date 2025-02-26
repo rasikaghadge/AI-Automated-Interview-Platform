@@ -54,5 +54,8 @@
     "react-toastify": "^11.0.5",
     "redux": "^5.0.1",
     "redux-thunk": "^3.1.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.6.1"
   }
 }
