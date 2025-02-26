@@ -8,7 +8,6 @@ const Home = () => {
   
   useEffect(() => {
     if(user) {
-      console.log('navigate to homepage');
       navigate('/homepage');
     }
   }, [user, navigate]);
