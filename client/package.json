@@ -44,6 +44,7 @@
     "@mui/material": "^6.4.5",
     "@mui/styles": "^6.4.5",
     "@react-oauth/google": "^0.12.1",
+    "@rollup/rollup-linux-x64-gnu": "^4.34.8",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "jwt-decode": "^4.0.0",
