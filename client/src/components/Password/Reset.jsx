@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Button, Paper, Typography, Container, Grid } from '@material-ui/core';
+import { Button, Paper, Typography, Container, Grid } from '@mui/material';
+
 import useStyles from './styles';
 import Field from '../Login/Field';
 import { useParams, useNavigate } from 'react-router-dom'

@@ -8,7 +8,9 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import image from "./image.jpg";
 import { changeMeetingStatus } from "../../actions/interviews";
-import { decode } from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
+
+
 import { getProfile } from "../../actions/profile";
 import { getMeeting } from "../../actions/interviews";
 import FullScreenModal from "./FullScreenModal/FullScreenModal";
@@ -52,7 +54,7 @@ const Interview = () => {
 
   const getCandidateId = () => {
     try {
-      const decodedToken = decode(user.token);
+      const decodedToken = jwtDecode(user.token);
       return decodedToken.id;
     } catch (error) {
       console.error("Error fetching user profile:", error);

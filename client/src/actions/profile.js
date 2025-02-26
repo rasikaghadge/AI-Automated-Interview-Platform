@@ -70,14 +70,13 @@ export const createProfile = (profile, history) => async (dispatch) => {
   }
 };
 
-export const updateProfile = (id, form, openSnackbar) => async (dispatch) => {
+export const updateProfile = (id, form) => async (dispatch) => {
   try {
     const { data } = await api.updateProfile(id, form);
 
     dispatch({ type: UPDATE_PROFILE, payload: data });
   } catch (error) {
     console.log(error);
-    openSnackbar("Could not update profile")
   }
 };
 

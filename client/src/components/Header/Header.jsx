@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import decode from 'jwt-decode'
+import decode, { jwtDecode } from 'jwt-decode'
 import styles from './Header.module.css'
 
 import Button from '@material-ui/core/Button';
@@ -62,7 +62,7 @@ const Header = () => {
         // setUser(JSON.parse(localStorage.getItem('profile')))
         //If token expires, logout the user
         if(token) {
-            const decodedToken = decode(token)
+            const decodedToken = jwtDecode(token)
             if(decodedToken.exp * 1000 < new Date().getTime()) logout()
         }
         // eslint-disable-next-line

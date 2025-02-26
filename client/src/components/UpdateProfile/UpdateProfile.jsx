@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { decode } from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
+
+
 import { updateProfile, getProfile } from "../../actions/profile";
-import { useSnackbar } from "react-simple-snackbar";
 import { useDispatch } from "react-redux";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
@@ -12,7 +13,6 @@ const UpdateProfile = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("profile"));
   const [userRole, setUserRole] = useState("");
-  const [openSnackbar] = useSnackbar();
   const dispatch = useDispatch();
   const animatedComponents = makeAnimated();
 
@@ -105,7 +105,7 @@ const UpdateProfile = () => {
 
   const checkUserRole = async () => {
     try {
-      const decodedToken = decode(user.token);
+      const decodedToken = jwtDecode(user.token);
       if (decodedToken) {
         const userRole = decodedToken.role;
         setUserRole(userRole);
@@ -206,7 +206,7 @@ const UpdateProfile = () => {
         softSkills: [formData.softSkills.join(",")],
       };
   
-      await dispatch(updateProfile(user.id, formDataToSend, openSnackbar));
+      await dispatch(updateProfile(user.id, formDataToSend));
       setHasChanges(false);
     } catch (error) {
       console.error("Error updating profile:", error.message);

@@ -2,7 +2,9 @@
 import styles from "./InstrucPage.module.css";
 import React, { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { decode } from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
+
+
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import {
@@ -28,7 +30,7 @@ const InstructionPage = () => {
 
   const checkUserRole = () => {
     try {
-      const decodedToken = decode(user.token);
+      const decodedToken = jwtDecode(user.token);
       if (decodedToken) {
         const userRole = decodedToken.role;
         setUserRole(userRole);

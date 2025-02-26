@@ -1,23 +1,24 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { useSnackbar } from "react-simple-snackbar";
+import React, { useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   getInterviewsCandidate,
   getInterviewsHR,
-} from "../../actions/interviews";
-import styles from "./SeeScheduledInterviews.module.css";
-import { getEvaluationUsingInterviewId, getInterviewDetailsById } from "../../api/index";
-import EvaluationPopup from "./EvaluationPopup";
-import { checkUserRole } from "../../actions/auth";
-import ProfileModel from "./UserProfileDetails";
-import { getProfile } from "../../actions/profile";
+} from '../../actions/interviews';
+import styles from './SeeScheduledInterviews.module.css';
+import {
+  getEvaluationUsingInterviewId,
+  getInterviewDetailsById,
+} from '../../api/index';
+import EvaluationPopup from './EvaluationPopup';
+import { checkUserRole } from '../../actions/auth';
+import ProfileModel from './UserProfileDetails';
+import { getProfile } from '../../actions/profile';
 
 const SeeScheduledInterviews = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("profile"));
-  const [userRole, setUserRole] = useState("");
-  const [openSnackbar, closeSnackbar] = useSnackbar();
+  const user = JSON.parse(localStorage.getItem('profile'));
+  const [userRole, setUserRole] = useState('');
   const dispatch = useDispatch();
   const [interviews, setInterviews] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
@@ -29,7 +30,7 @@ const SeeScheduledInterviews = () => {
 
   useEffect(() => {
     if (!user) {
-      navigate("/login");
+      navigate('/login');
     }
 
     let id = null;
@@ -43,9 +44,9 @@ const SeeScheduledInterviews = () => {
     const fetchData = async (id) => {
       try {
         let response = null;
-        if (userRole === "candidate") {
+        if (userRole === 'candidate') {
           response = await dispatch(getInterviewsCandidate(id));
-        } else if (userRole === "hr") {
+        } else if (userRole === 'hr') {
           response = await dispatch(getInterviewsHR(id));
         }
         if (response && response[0]) {
@@ -65,31 +66,23 @@ const SeeScheduledInterviews = () => {
           setInterviews(sortedInterviews);
           setDataFetched(true);
         } else if (!response[0]) {
-          openSnackbar("Loading interviews");
+          console.log('loeading entierviews');
         } else {
-          openSnackbar("Failed to get interviews");
+          console.log('error');
         }
       } catch (error) {
-        openSnackbar("Loading Interviews");
+        console.log(error);
       }
     };
 
     if (id && interviews.length === 0 && !dataFetched) {
       fetchData(id);
     }
-  }, [
-    user,
-    interviews,
-    dataFetched,
-    userRole,
-    navigate,
-    dispatch,
-    openSnackbar
-  ]);
+  }, [user, interviews, dataFetched, userRole, navigate, dispatch]);
 
   // Function to parse time string (HH:MM) and create a Date object
   const parseTimeString = (timeString, startDate) => {
-    const [hours, minutes] = timeString.split(":");
+    const [hours, minutes] = timeString.split(':');
     const date = new Date(startDate);
     date.setHours(parseInt(hours, 10));
     date.setMinutes(parseInt(minutes, 10));
@@ -106,8 +99,8 @@ const SeeScheduledInterviews = () => {
       return (
         start <= now &&
         now <= end &&
-        userRole === "candidate" &&
-        interviewStatus === "Scheduled"
+        userRole === 'candidate' &&
+        interviewStatus === 'Scheduled'
       );
     };
   }, []);
@@ -120,8 +113,8 @@ const SeeScheduledInterviews = () => {
       return (
         start < now &&
         end < now &&
-        userRole === "hr" &&
-        interviewStatus === "Completed"
+        userRole === 'hr' &&
+        interviewStatus === 'Completed'
       );
     };
   }, []);
@@ -135,7 +128,7 @@ const SeeScheduledInterviews = () => {
     topics,
     requiredSkills
   ) => {
-    navigate("/instructions", {
+    navigate('/instructions', {
       state: {
         participantNameFromDB: participantName,
         interviewId: id,
@@ -153,12 +146,12 @@ const SeeScheduledInterviews = () => {
       setShowEvaluationPopup(true);
     } else {
       setEvaluationData(
-        JSON.stringify({ data: "Cannot get evaluation at this time" })
+        JSON.stringify({ data: 'Cannot get evaluation at this time' })
       );
       setShowEvaluationPopup(true);
     }
     const response = await getInterviewDetailsById(id);
-    if (response.statusText === "OK") {
+    if (response.statusText === 'OK') {
       setSelectedInterviewDetails(response.data);
     }
   };
@@ -171,7 +164,7 @@ const SeeScheduledInterviews = () => {
         setShowProfileModel(true);
       })
       .catch((err) => {
-        openSnackbar("Error in fetching profile data");
+        console.log(err);
       });
   };
 
@@ -183,18 +176,18 @@ const SeeScheduledInterviews = () => {
         {interviews.length === 0 ? (
           <p>No interviews scheduled.</p>
         ) : (
-          <table className={styles["interview-table"]}>
+          <table className={styles['interview-table']}>
             <thead>
               <tr>
                 <th>Job Role</th>
-                {userRole === "candidate" ? <th>Company</th> : null}
+                {userRole === 'candidate' ? <th>Company</th> : null}
                 <th>Description</th>
                 <th>Date and Time</th>
                 {/* <th>Time</th> */}
-                {userRole === "candidate" ? <th>HR</th> : null}
-                {userRole === "hr" ? <th>Candidate</th> : null}
+                {userRole === 'candidate' ? <th>HR</th> : null}
+                {userRole === 'hr' ? <th>Candidate</th> : null}
                 <th>Status</th>
-                {userRole === "candidate" ? (
+                {userRole === 'candidate' ? (
                   <th>Join</th>
                 ) : (
                   <th>Get Evaluation</th>
@@ -206,52 +199,57 @@ const SeeScheduledInterviews = () => {
               {interviews.map((interview) => (
                 <tr key={interview._id}>
                   <td>{interview.title}</td>
-                  {userRole === "candidate" ? <td>{interview.hrCompany}</td> : null}
+                  {userRole === 'candidate' ? (
+                    <td>{interview.hrCompany}</td>
+                  ) : null}
                   <td>{interview.description}</td>
-                  <td>{new Date(interview.startDate).toLocaleDateString()} {`${interview.startTime} - ${interview.endTime}`}</td>
+                  <td>
+                    {new Date(interview.startDate).toLocaleDateString()}{' '}
+                    {`${interview.startTime} - ${interview.endTime}`}
+                  </td>
                   {/* <td>{`${interview.startTime} - ${interview.endTime}`}</td> */}
                   <td>
-                    {userRole === "candidate" ? (
-                      <div style={{ display: "flex", alignItems: "center" }}>
+                    {userRole === 'candidate' ? (
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
                         <div
                           style={{
-                            width: "75px",
-                            height: "65px",
-                            borderRadius: "50%",
-                            overflow: "hidden",
+                            width: '75px',
+                            height: '65px',
+                            borderRadius: '50%',
+                            overflow: 'hidden',
                           }}
                         >
                           <img
                             src={`data:image/png;base64, ${interview.profilePicture}`}
                             alt="HR Profile"
-                            style={{ width: "100%", height: "100%" }}
+                            style={{ width: '100%', height: '100%' }}
                             onClick={() => showUserProfileDetails(interview.hr)}
                           />
                         </div>
-                        <div style={{ marginLeft: "10px" }}>
+                        <div style={{ marginLeft: '10px' }}>
                           <p>{interview.hrName}</p>
                         </div>
                       </div>
                     ) : (
-                      <div style={{ display: "flex", alignItems: "center" }}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
                         <div
                           style={{
-                            width: "75px",
-                            height: "65px",
-                            borderRadius: "50%",
-                            overflow: "hidden",
+                            width: '75px',
+                            height: '65px',
+                            borderRadius: '50%',
+                            overflow: 'hidden',
                           }}
                         >
                           <img
                             src={`data:image/png;base64, ${interview.profilePicture}`}
                             alt="HR Profile"
-                            style={{ width: "100%", height: "100%" }}
+                            style={{ width: '100%', height: '100%' }}
                             onClick={() =>
                               showUserProfileDetails(interview.candidate)
                             }
                           />
                         </div>
-                        <div style={{ marginLeft: "10px" }}>
+                        <div style={{ marginLeft: '10px' }}>
                           <p>{interview.candidateName}</p>
                         </div>
                       </div>
@@ -260,7 +258,7 @@ const SeeScheduledInterviews = () => {
 
                   <td>{interview.status}</td>
 
-                  {userRole === "candidate" ? (
+                  {userRole === 'candidate' ? (
                     <button
                       onClick={() =>
                         navigateToInstrucPage(
@@ -281,8 +279,8 @@ const SeeScheduledInterviews = () => {
                           interview.status,
                           userRole
                         )
-                          ? "disabled"
-                          : ""
+                          ? 'disabled'
+                          : ''
                       }`}
                     >
                       Join Interview
@@ -297,8 +295,8 @@ const SeeScheduledInterviews = () => {
                           interview.status,
                           userRole
                         )
-                          ? "disabled"
-                          : ""
+                          ? 'disabled'
+                          : ''
                       }`}
                       onClick={() => showCandidateEvaluation(interview._id)}
                     >
@@ -306,7 +304,9 @@ const SeeScheduledInterviews = () => {
                     </button>
                   )}
                   <td>
-                    {interview.hiringStatus ? interview.hiringStatus : "Decision Pending"}
+                    {interview.hiringStatus
+                      ? interview.hiringStatus
+                      : 'Decision Pending'}
                   </td>
                 </tr>
               ))}
@@ -314,17 +314,17 @@ const SeeScheduledInterviews = () => {
           </table>
         )}
         <div className=".btn_container">
-          <Link to={"/homepage"}>
+          <Link to={'/homepage'}>
             <button
               className="btn btn-secondary"
-              style={{ marginRight: "20px", marginTop: "10px" }}
+              style={{ marginRight: '20px', marginTop: '10px' }}
             >
               Back
             </button>
           </Link>
-          {userRole === "hr" && (
-            <Link to={"/schedule"}>
-              <button className="btn btn-primary" style={{ marginTop: "10px" }}>
+          {userRole === 'hr' && (
+            <Link to={'/schedule'}>
+              <button className="btn btn-primary" style={{ marginTop: '10px' }}>
                 Schedule Interview
               </button>
             </Link>
@@ -343,7 +343,7 @@ const SeeScheduledInterviews = () => {
         <ProfileModel
           profile={selectedInterviewProfile}
           onClose={() => setShowProfileModel(false)}
-          role={userRole === "hr" ? "candidate": "hr"}
+          role={userRole === 'hr' ? 'candidate' : 'hr'}
         />
       )}
     </div>

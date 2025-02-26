@@ -4,7 +4,9 @@ import Hero from "../Hero/Hero";
 import Info from "../Info/Info";
 import About from "../About/About";
 import Footer from "../Footer/Footer";
-import { decode } from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
+
+
 import { useState, useEffect } from "react";
 import { refreshToken } from "../../actions/auth";
 
@@ -27,7 +29,7 @@ const Homepage = () => {
   useEffect(() => {
     const checkUserRole = async () => {
       try {
-        const decodedToken = decode(user.token);
+        const decodedToken = jwtDecode(user.token);
         if (decodedToken) {
           const userRole = decodedToken.role;
           setUserRole(userRole);

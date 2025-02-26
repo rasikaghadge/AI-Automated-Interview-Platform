@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { decode } from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
+
+
 import { useEffect } from "react";
 import styles from "./UserDetails.module.css";
 import { getProfile, updateProfile } from "../../actions/profile";
-import { useSnackbar } from "react-simple-snackbar";
 import { useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Select from "react-select";
@@ -21,7 +22,6 @@ const UserDetails = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("profile"));
   const [userRole, setUserRole] = useState("");
-  const [openSnackbar] = useSnackbar();
   const dispatch = useDispatch();
   const animatedComponents = makeAnimated();
 
@@ -117,7 +117,7 @@ const UserDetails = () => {
 
   const checkUserRole = async () => {
     try {
-      const decodedToken = decode(user.token);
+      const decodedToken = jwtDecode(user.token);
       if (decodedToken) {
         const userRole = decodedToken.role;
         setUserRole(userRole);
@@ -210,7 +210,7 @@ const UserDetails = () => {
         technicalSkills: [formData.technicalSkills.join(",")],
       };
   
-      await dispatch(updateProfile(user.id, formDataToSend, openSnackbar));
+      await dispatch(updateProfile(user.id, formDataToSend));
       setHasChanges(false);
       navigate(`/interview/${interviewId}`, {
         state: {

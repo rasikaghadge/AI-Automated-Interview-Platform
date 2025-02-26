@@ -2,11 +2,12 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { decode } from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
+
+
 import { useEffect } from "react";
 import styles from "./Schedule.module.css";
 import { scheduleMeeting } from "../../actions/interviews";
-import { useSnackbar } from "react-simple-snackbar";
 import { useDispatch } from "react-redux";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
@@ -17,7 +18,6 @@ const Schedule = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("profile"));
   const [userRole, setUserRole] = useState("");
-  const [openSnackbar, closeSnackbar] = useSnackbar();
   const dispatch = useDispatch();
   const animatedComponents = makeAnimated();
 
@@ -28,7 +28,7 @@ const Schedule = () => {
     }
     const checkUserRole = async () => {
       try {
-        const decodedToken = decode(user.token);
+        const decodedToken = jwtDecode(user.token);
         if (decodedToken) {
           const userRole = decodedToken.role;
           setUserRole(userRole);
@@ -108,12 +108,9 @@ const Schedule = () => {
       // Store the endTime value in local storage
       localStorage.setItem("endTime", formData.endTime);
 
-      // Interview scheduled successfully
-      openSnackbar("Interview scheduled successfully!");
       navigate("/homepage");
     } catch (error) {
       console.error("Error scheduling interview:", error.message);
-      openSnackbar("Could not schedule interview");
     }
   };
 

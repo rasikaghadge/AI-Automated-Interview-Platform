@@ -1,24 +1,22 @@
-import axios from 'axios'
-import dotenv from 'dotenv'
+import axios from 'axios';
 
-dotenv.config()
+const NODE_ENV = import.meta.env.VITE_NODE_ENV
 
-const NODE_ENV = process.env.NODE_ENV
 let url;
 if (NODE_ENV === 'development') {
-    url = 'http://localhost:5000'
+    url = 'http://localhost:8000'
 } else {
-    url = process.env.REACT_APP_API
+    url = import.meta.env.VITE_NODE_ENV_REACT_APP_API
 }
 export const baseURL = url;
 const API = axios.create({ baseURL: baseURL})
-export const AI_URL = process.env.AI_APP_API;
+export const AI_URL = import.meta.env.VITE_NODE_ENV_AI_APP_API;
 const AI_APP_API = axios.create({ baseURL: 'http://localhost:8000'})
+
 API.interceptors.request.use((req) => {
     if(localStorage.getItem('profile')) {
         req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
     }
-    // console.log(req);
     return req
 })
 
