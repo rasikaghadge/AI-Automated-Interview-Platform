@@ -6,6 +6,8 @@ import VideoSection from './VideoSection';
 import ChatInterface from './ChatInterface';
 import { INTERVIEWERS, demoQuestions, demoResponses } from './interviewData';
 import AISphere from './AiSphere';
+import InterviewerDetails from './InterviwerDetails';
+import { useWebSocket } from './WebSocket';
 
 const DemoInterview = () => {
   const navigate = useNavigate();
@@ -14,13 +16,13 @@ const DemoInterview = () => {
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [questionTimeLeft, setquestionTimeLeft] = useState(32); // 32 seconds
-  const [interviewTimeLeft, setInterviewTimeLeft] = useState(1800) // 30 min
+  const [interviewTimeLeft, setInterviewTimeLeft] = useState(1800); // 30 min
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
-  const [transcribedUserResponse, setTranscribedUserResponse] = useState("");
-  
+  const [transcribedUserResponse, setTranscribedUserResponse] = useState('');
+
   const videoRef = useRef(null);
   const audioStreamRef = useRef(null);
   const videoStreamRef = useRef(null);
@@ -29,33 +31,30 @@ const DemoInterview = () => {
   const [interviewStarted, setInterviewStarted] = useState(false);
   const [interviewCompleted, setInterviewCompleted] = useState(false);
   const [interviewer, setInterviewer] = useState(null);
+  const [interviewDetailsModelOpen, setInterviewDetailsModelOpen] =
+    useState(false);
+  const [initInterviewData, setInitInterviewData] = useState({
+    jobRole: null,
+    jobDescription: null,
+  });
+
+  // websocket management
+  const { startWebSocket, sendMessage, messages } = useWebSocket();
 
   const isInterviewInProgress = interviewStarted && !interviewCompleted;
 
   const handleOnEvaluationClose = () => {
     setIsModelOpen(false);
-    navigate("/");
+    navigate('/');
   };
 
   const handleInterviewStartButtonClick = (event) => {
     if (event.target.innerText === 'Start Interview') {
       setInterviewStarted(true);
       setIsTimerRunning(true);
-      
-      // Add first question to chat and simulate AI speaking
-      setTimeout(() => {
-        setIsAiSpeaking(true);
-        setTimeout(() => {
-          addMessageToChat(demoQuestions[currentQuestion], 'interviewer');
-          setIsAiSpeaking(false);
-        }, 2000);
-      }, 500);
-      
+      startWebSocket();
     } else {
-      if (window.confirm('Are you sure you want to exit?')) {
-        setInterviewCompleted(true);
-        setIsModelOpen(true);
-      }
+      console.log('');
     }
   };
 
@@ -63,6 +62,8 @@ const DemoInterview = () => {
     const randomInterviewer =
       INTERVIEWERS[Math.floor(Math.random() * INTERVIEWERS.length)];
     setInterviewer(randomInterviewer);
+    console.log('treuee');
+    setInterviewDetailsModelOpen(true);
   }, []);
 
   // Add message to chat
@@ -71,14 +72,18 @@ const DemoInterview = () => {
       id: Date.now(),
       text: message,
       sender: sender, // 'interviewer' or 'user'
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
     };
-    setChatMessages(prevMessages => [...prevMessages, newMessage]);
-    
+    setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+
     // Scroll to bottom of chat
     setTimeout(() => {
       if (chatContainerRef.current) {
-        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        chatContainerRef.current.scrollTop =
+          chatContainerRef.current.scrollHeight;
       }
     }, 100);
   };
@@ -86,17 +91,17 @@ const DemoInterview = () => {
   // Simulate user speaking response
   const simulateUserSpeaking = () => {
     // Clear any previous transcription
-    setTranscribedUserResponse("");
-    
+    setTranscribedUserResponse('');
+
     // Simulate real-time transcription with progressive text updates
     const fullResponse = demoResponses[currentQuestion];
-    const words = fullResponse.split(" ");
+    const words = fullResponse.split(' ');
     let currentIndex = 0;
-    
+
     const transcriptionInterval = setInterval(() => {
       if (currentIndex < words.length) {
-        setTranscribedUserResponse(prev => 
-          prev + (prev ? " " : "") + words[currentIndex]
+        setTranscribedUserResponse(
+          (prev) => prev + (prev ? ' ' : '') + words[currentIndex]
         );
         currentIndex++;
       } else {
@@ -207,12 +212,15 @@ const DemoInterview = () => {
   const handleNextQuestion = () => {
     if (currentQuestion < demoQuestions.length - 1) {
       // First, simulate user's response to current question if not yet added
-      if (!chatMessages.find(msg => 
-        msg.sender === 'user' && 
-        msg.text.includes(demoResponses[currentQuestion].substring(0, 15))
-      )) {
+      if (
+        !chatMessages.find(
+          (msg) =>
+            msg.sender === 'user' &&
+            msg.text.includes(demoResponses[currentQuestion].substring(0, 15))
+        )
+      ) {
         simulateUserSpeaking();
-        
+
         // Short delay before moving to next question
         setTimeout(() => {
           proceedToNextQuestion();
@@ -227,8 +235,8 @@ const DemoInterview = () => {
     setCurrentQuestion((curr) => curr + 1);
     setquestionTimeLeft(32); // Reset timer for new question
     setIsTimerRunning(true);
-    setTranscribedUserResponse(""); // Clear any current transcription
-    
+    setTranscribedUserResponse(''); // Clear any current transcription
+
     // Simulate AI speaking the next question
     setIsAiSpeaking(true);
     setTimeout(() => {
@@ -244,6 +252,10 @@ const DemoInterview = () => {
     if (!isMuted && isInterviewInProgress) {
       simulateUserSpeaking();
     }
+  };
+
+  const handleUserInputJobPreference = ({ jobRole, jobDescription }) => {
+    setInitInterviewData({ jobRole, jobDescription });
   };
 
   return (
@@ -277,7 +289,7 @@ const DemoInterview = () => {
         }}
       >
         {/* Video Feed Section */}
-        <VideoSection 
+        <VideoSection
           videoRef={videoRef}
           isVideoOff={isVideoOff}
           setIsVideoOff={setIsVideoOff}
@@ -287,7 +299,7 @@ const DemoInterview = () => {
         />
 
         {/* Chat Interface */}
-        <ChatInterface 
+        <ChatInterface
           chatContainerRef={chatContainerRef}
           chatMessages={chatMessages}
           interviewer={interviewer}
@@ -301,7 +313,7 @@ const DemoInterview = () => {
       </div>
 
       {/* Interview Controls */}
-      <InterviewControls 
+      <InterviewControls
         isInterviewInProgress={isInterviewInProgress}
         currentQuestion={currentQuestion}
         demoQuestions={demoQuestions}
@@ -350,7 +362,18 @@ const DemoInterview = () => {
       {isInterviewInProgress && <AISphere isAiSpeaking={isAiSpeaking} />}
 
       {/* Evaluation Modal */}
-      {isModelOpen && <Evaluation evaluationData={"some data to be displayed\nhow I can modify this"} onClose={handleOnEvaluationClose}/>}
+      {isModelOpen && (
+        <Evaluation
+          evaluationData={'some data to be displayed\nhow I can modify this'}
+          onClose={handleOnEvaluationClose}
+        />
+      )}
+
+      {/* User Job preference modal  */}
+      <InterviewerDetails
+        isModelOpen={interviewDetailsModelOpen}
+        handleUserInputJobPreference={handleUserInputJobPreference}
+      />
     </div>
   );
 };
