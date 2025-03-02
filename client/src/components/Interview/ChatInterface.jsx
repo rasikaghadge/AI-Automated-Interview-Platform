@@ -63,7 +63,7 @@ const ChatInterface = ({
       }}>
         <div>
           <h3 style={{ margin: 0 }}>
-            {isInterviewInProgress ? `Chat with ${interviewer?.name}` : 'Interview Chat'}
+            {isInterviewInProgress ? `Chat with ${interviewer?.name}` : 'Demo Interview'}
           </h3>
           {isInterviewInProgress && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '5px' }}>
