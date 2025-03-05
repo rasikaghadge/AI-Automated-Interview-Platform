@@ -19,16 +19,19 @@ const style = {
 };
 
 const JOB_TITLES = [
-  "Software Engineer",
-  "Backend Engineer",
-  "Full Stack Developer",
-  "Technical Support"
+  'Software Engineer',
+  'Backend Engineer',
+  'Full Stack Developer',
+  'Technical Support',
 ];
 
-export default function InterviewerDetails({ isModelOpen, handleUserInputJobPreference }) {
+export default function InterviewerDetails({
+  isModelOpen,
+  handleUserInputJobPreference,
+}) {
   const [open, setOpen] = React.useState(isModelOpen);
-  const [selectedJobRole, setselectedJobRole] = React.useState(null)
-  const [jobDescription, setJobDescription] = React.useState(null)
+  const [selectedJobRole, setselectedJobRole] = React.useState('');
+  const [jobDescription, setJobDescription] = React.useState('');
 
   React.useEffect(() => {
     setOpen(isModelOpen);
@@ -37,12 +40,15 @@ export default function InterviewerDetails({ isModelOpen, handleUserInputJobPref
   const handleClose = () => setOpen(false);
   const handleSubmit = () => {
     if (selectedJobRole === null) {
-        alert("Job Role is required")
+      alert('Job Role is required');
     }
     if (jobDescription === null) {
-        alert("Job Description is required")
+      alert('Job Description is required');
     }
-    handleUserInputJobPreference({jobRole: selectedJobRole, jobDescription: jobDescription})
+    handleUserInputJobPreference({
+      jobRole: selectedJobRole,
+      jobDescription: jobDescription,
+    });
     handleClose();
   };
 
@@ -64,11 +70,15 @@ export default function InterviewerDetails({ isModelOpen, handleUserInputJobPref
             disablePortal
             aria-required
             options={JOB_TITLES}
-            value={selectedJobRole}
-            onChange={(event) => setselectedJobRole(event.target.value)}
+            value={selectedJobRole || ''} // Ensures controlled component
+            getOptionLabel={(option) => option.toString()} // Converts option to string
+            onChange={(event, newValue) => setselectedJobRole(newValue)} // Correct onChange handler
             sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Select Role" />}
+            renderInput={(params) => (
+              <TextField {...params} label="Select Role" />
+            )}
           />
+
           <Typography id="job-description" sx={{ mt: 2 }}>
             Job Description
           </Typography>

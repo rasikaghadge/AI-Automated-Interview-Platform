@@ -4,7 +4,6 @@ const InterviewControls = ({
   isInterviewInProgress,
   currentQuestion,
   demoQuestions,
-  handleNextQuestion,
   handleInterviewStartButtonClick
 }) => {
   const buttonStyle = {
@@ -39,17 +38,6 @@ const InterviewControls = ({
       </div>
 
       <div style={{ display: 'flex', gap: '10px' }}>
-        {isInterviewInProgress && (
-          <button
-            onClick={handleNextQuestion}
-            style={{
-              ...buttonStyle,
-              backgroundColor: '#6c757d',
-            }}
-          >
-            Next Question
-          </button>
-        )}
         <button
           onClick={handleInterviewStartButtonClick}
           style={{

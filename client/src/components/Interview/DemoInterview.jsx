@@ -16,7 +16,6 @@ const DemoInterview = () => {
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [questionTimeLeft, setquestionTimeLeft] = useState(32); // 32 seconds
-  const [interviewTimeLeft, setInterviewTimeLeft] = useState(1800); // 30 min
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
@@ -27,6 +26,9 @@ const DemoInterview = () => {
   const audioStreamRef = useRef(null);
   const videoStreamRef = useRef(null);
   const chatContainerRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+  const isRecordingRef = useRef(false);
 
   const [interviewStarted, setInterviewStarted] = useState(false);
   const [interviewCompleted, setInterviewCompleted] = useState(false);
@@ -38,6 +40,10 @@ const DemoInterview = () => {
     jobDescription: null,
   });
 
+  const recognition = new (window.SpeechRecognition ||
+    window.webkitSpeechRecognition)();
+  recognition.continuous = false;
+  recognition.interimResults = false;
   // websocket management
   const { startWebSocket, sendMessage, messages } = useWebSocket();
 
@@ -52,7 +58,7 @@ const DemoInterview = () => {
     if (event.target.innerText === 'Start Interview') {
       setInterviewStarted(true);
       setIsTimerRunning(true);
-      startWebSocket();
+      startWebSocket(addMessageToChat);
     } else {
       console.log('');
     }
@@ -67,10 +73,11 @@ const DemoInterview = () => {
   }, []);
 
   // Add message to chat
-  const addMessageToChat = (message, sender) => {
+  const addMessageToChat = (message, sender, type) => {
     const newMessage = {
       id: Date.now(),
-      text: message,
+      text: type === 'text' && message,
+      audio: type === 'audio' && message,
       sender: sender, // 'interviewer' or 'user'
       timestamp: new Date().toLocaleTimeString([], {
         hour: '2-digit',
@@ -86,32 +93,6 @@ const DemoInterview = () => {
           chatContainerRef.current.scrollHeight;
       }
     }, 100);
-  };
-
-  // Simulate user speaking response
-  const simulateUserSpeaking = () => {
-    // Clear any previous transcription
-    setTranscribedUserResponse('');
-
-    // Simulate real-time transcription with progressive text updates
-    const fullResponse = demoResponses[currentQuestion];
-    const words = fullResponse.split(' ');
-    let currentIndex = 0;
-
-    const transcriptionInterval = setInterval(() => {
-      if (currentIndex < words.length) {
-        setTranscribedUserResponse(
-          (prev) => prev + (prev ? ' ' : '') + words[currentIndex]
-        );
-        currentIndex++;
-      } else {
-        clearInterval(transcriptionInterval);
-        // After full transcription, add to chat
-        setTimeout(() => {
-          addMessageToChat(fullResponse, 'user');
-        }, 500);
-      }
-    }, 300); // Simulate natural speaking pace
   };
 
   const checkPermissions = async (type) => {
@@ -134,7 +115,28 @@ const DemoInterview = () => {
     }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder();
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+      // When recording stops, send audio
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: 'audio/mpeg',
+        });
+        sendMessage(audioBlob);
+      };
+      mediaRecorder.start();
+      isRecordingRef.current = true;
       audioStreamRef.current = stream;
+
+      // Start speech recognition
+      recognition.start();
     } catch (err) {
       console.error('Error accessing microphone:', err);
     }
@@ -173,6 +175,17 @@ const DemoInterview = () => {
     }
   };
 
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecordingRef.current) {
+      mediaRecorderRef.current.stop();
+      isRecordingRef.current = false;
+    }
+  };
+
+  // Detect speech end & trigger stopRecording
+  recognition.onend = () => {
+    stopRecording();
+  };
   useEffect(() => {
     if (!isVideoOff) {
       startVideoStream();
@@ -189,69 +202,10 @@ const DemoInterview = () => {
     }
   }, [isMuted]);
 
-  // Timer Effect
-  useEffect(() => {
-    let timer;
-    if (isTimerRunning && questionTimeLeft > 0) {
-      timer = setInterval(() => {
-        setquestionTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (questionTimeLeft === 0) {
-      // Auto-move to next question when time is up
-      handleNextQuestion();
-    }
-    return () => clearInterval(timer);
-  }, [questionTimeLeft, isTimerRunning]);
-
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const handleNextQuestion = () => {
-    if (currentQuestion < demoQuestions.length - 1) {
-      // First, simulate user's response to current question if not yet added
-      if (
-        !chatMessages.find(
-          (msg) =>
-            msg.sender === 'user' &&
-            msg.text.includes(demoResponses[currentQuestion].substring(0, 15))
-        )
-      ) {
-        simulateUserSpeaking();
-
-        // Short delay before moving to next question
-        setTimeout(() => {
-          proceedToNextQuestion();
-        }, 3000);
-      } else {
-        proceedToNextQuestion();
-      }
-    }
-  };
-
-  const proceedToNextQuestion = () => {
-    setCurrentQuestion((curr) => curr + 1);
-    setquestionTimeLeft(32); // Reset timer for new question
-    setIsTimerRunning(true);
-    setTranscribedUserResponse(''); // Clear any current transcription
-
-    // Simulate AI speaking the next question
-    setIsAiSpeaking(true);
-    setTimeout(() => {
-      // After a delay, add the next question to chat
-      const nextQuestion = demoQuestions[currentQuestion + 1];
-      addMessageToChat(nextQuestion, 'interviewer');
-      setIsAiSpeaking(false);
-    }, 2000);
-  };
-
-  // For demo purposes, let's simulate the user's speech input when they click mic button
-  const simulateSpeechInput = () => {
-    if (!isMuted && isInterviewInProgress) {
-      simulateUserSpeaking();
-    }
   };
 
   const handleUserInputJobPreference = ({ jobRole, jobDescription }) => {
@@ -295,7 +249,7 @@ const DemoInterview = () => {
           setIsVideoOff={setIsVideoOff}
           isMuted={isMuted}
           setIsMuted={setIsMuted}
-          simulateSpeechInput={simulateSpeechInput}
+          // simulateSpeechInput={simulateSpeechInput}
         />
 
         {/* Chat Interface */}
@@ -317,7 +271,7 @@ const DemoInterview = () => {
         isInterviewInProgress={isInterviewInProgress}
         currentQuestion={currentQuestion}
         demoQuestions={demoQuestions}
-        handleNextQuestion={handleNextQuestion}
+        // handleNextQuestion={handleNextQuestion}
         handleInterviewStartButtonClick={handleInterviewStartButtonClick}
       />
 
