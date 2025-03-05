@@ -8,7 +8,6 @@ const VideoSection = ({
   setIsVideoOff, 
   isMuted, 
   setIsMuted,
-  simulateSpeechInput
 }) => {
   const iconButtonStyle = {
     width: '40px',
@@ -76,7 +75,7 @@ const VideoSection = ({
         <button
           onClick={() => {
             setIsMuted(!isMuted);
-            if (isMuted) simulateSpeechInput();
+            // if (isMuted) simulateSpeechInput();
           }}
           style={{
             ...iconButtonStyle,
@@ -99,6 +98,7 @@ const VideoSection = ({
           <VideoIcon off={isVideoOff} />
         </button>
       </div>
+        <button>Start speaking</button> ? <button>Submit Answer</button>
     </div>
   );
 };
