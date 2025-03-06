@@ -33,7 +33,7 @@ const Home = () => {
         />
         <div style={{ display: "flex", gap: "10px" }}>
           <button
-            onClick={() => navigate("/demo")}
+            onClick={() => navigate("/details")}
             style={{
               backgroundColor: "#6c757d",
               color: "#fff",

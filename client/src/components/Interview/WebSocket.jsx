@@ -10,31 +10,31 @@ export function useWebSocket() {
     }
     const socket = new WebSocket('ws://localhost:8000/ws');
     socket.onopen = (event) => {
-      console.log(event)
+      setWs(socket);
       console.log('socket connected');
     };
 
     socket.onclose = (event) => {
       console.log('socket closed');
+      setWs(null);
     };
 
     socket.onmessage = async (event) => {
       console.log(event.data);
-    
+
       if (event.data instanceof Blob) {
         const audioBlob = event.data;
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
-        audio.play().catch((err) => console.error("Error playing audio:", err));
-        addMessageToChat(audioUrl, "interviewer", "audio")
+        audio.play().catch((err) => console.error('Error playing audio:', err));
+        addMessageToChat(audioUrl, 'interviewer', 'audio');
       }
     };
-    
-    setWs(socket);
   };
 
   const sendMessage = (message) => {
-    if (ws && readyState.OPEN) {
+    console.log(ws);
+    if (ws && ws.readyState) {
       ws.send(message);
     } else {
       console.log('websocket is not open');

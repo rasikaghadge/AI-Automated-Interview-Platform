@@ -13,7 +13,6 @@ const Avatar = () => {
         {/* Placeholder for AI Avatar */}
         <Mic className="text-white animate-pulse" size={40} />
       </div>
-      <p className="text-sm text-white mt-2">AI Assistant</p>
     </motion.div>
   );
 };

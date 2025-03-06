@@ -5,6 +5,10 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import CssBaseline from '@mui/material/CssBaseline';
+import Container from '@mui/material/Container';
+import { useNavigate } from 'react-router-dom';
+
 
 const style = {
   position: 'absolute',
@@ -13,8 +17,8 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: 400,
   bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
+  // border: '2px solid #000',
+  boxShadow: 14,
   p: 4,
 };
 
@@ -26,18 +30,13 @@ const JOB_TITLES = [
 ];
 
 export default function InterviewerDetails({
-  isModelOpen,
   handleUserInputJobPreference,
 }) {
-  const [open, setOpen] = React.useState(isModelOpen);
   const [selectedJobRole, setselectedJobRole] = React.useState('');
   const [jobDescription, setJobDescription] = React.useState('');
 
-  React.useEffect(() => {
-    setOpen(isModelOpen);
-  }, [isModelOpen]);
+  const navigate = useNavigate()
 
-  const handleClose = () => setOpen(false);
   const handleSubmit = () => {
     if (selectedJobRole === null) {
       alert('Job Role is required');
@@ -45,20 +44,19 @@ export default function InterviewerDetails({
     if (jobDescription === null) {
       alert('Job Description is required');
     }
-    handleUserInputJobPreference({
-      jobRole: selectedJobRole,
-      jobDescription: jobDescription,
+    const sessionId = crypto.randomUUID();
+    navigate(`/demo/${sessionId}`, {
+      state: {
+        selectedJobRole: selectedJobRole,
+        jobDescription: jobDescription,
+      },
     });
-    handleClose();
   };
 
   return (
     <div>
-      <Modal
-        open={open}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+      <React.Fragment>
+      <CssBaseline />
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Personal Details
@@ -94,8 +92,9 @@ export default function InterviewerDetails({
           <Button variant="contained" sx={{ mt: 2 }} onClick={handleSubmit}>
             Submit
           </Button>
+          
         </Box>
-      </Modal>
+        </React.Fragment>
     </div>
   );
 }
