@@ -15,6 +15,7 @@ import InstrucPage from './components/InstrucPage/InstrucPage';
 import UserDetails from './components/UserDetails/UserDetails';
 import DemoInterview from './components/Interview/DemoInterview';
 import PageNotFound from './components/PageNotFound';
+import InterviewerDetails from './components/Interview/InterviwerDetails';
 
 function App() {
   const user = JSON.parse(localStorage.getItem('profile'));
@@ -39,7 +40,8 @@ function App() {
           <Route path="/interview/:id" element={<Interview />} />
           <Route path="/instructions" element={<InstrucPage />} />
           <Route path="/user" element={<UserDetails />} />
-          <Route path="/demo" element={<DemoInterview />} />
+          <Route path="/demo/:sessionId" element={<DemoInterview />} />
+          <Route path="/details" element={<InterviewerDetails />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </BrowserRouter>

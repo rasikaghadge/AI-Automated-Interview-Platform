@@ -1,356 +1,273 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Evaluation from '../Evaluation/Evaluation';
-import { useNavigate } from 'react-router-dom';
-import InterviewControls from './InterviewControls';
-import VideoSection from './VideoSection';
-import ChatInterface from './ChatInterface';
-import { INTERVIEWERS, demoQuestions, demoResponses } from './interviewData';
-import AISphere from './AiSphere';
+import 'regenerator-runtime/runtime';
+
+import React, { useEffect, useState, useRef } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import { Button, Avatar, Typography, IconButton } from '@mui/material';
+import MicOffIcon from '@mui/icons-material/MicOff';
+import MicIcon from '@mui/icons-material/Mic';
+import CallEndIcon from '@mui/icons-material/CallEnd';
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from 'react-speech-recognition';
+
+const interviewAgentBaseUrl = process.env.REACT_APP_INTERVIEW_AGENT_BASE_URL;
 
 const DemoInterview = () => {
-  const navigate = useNavigate();
+  // States to track whether the user or AI is speaking
+  const [userSpeaking, setUserSpeaking] = useState(false);
+  const [aiSpeaking, setAiSpeaking] = useState(false);
+  const [isMicOn, setIsMicOn] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [silenceTimer, setSilenceTimer] = useState(null);
 
-  const [isMuted, setIsMuted] = useState(false);
-  const [isVideoOff, setIsVideoOff] = useState(false);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [questionTimeLeft, setquestionTimeLeft] = useState(32); // 32 seconds
-  const [interviewTimeLeft, setInterviewTimeLeft] = useState(1800) // 30 min
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [isModelOpen, setIsModelOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState([]);
-  const [isAiSpeaking, setIsAiSpeaking] = useState(false);
-  const [transcribedUserResponse, setTranscribedUserResponse] = useState("");
-  
-  const videoRef = useRef(null);
-  const audioStreamRef = useRef(null);
-  const videoStreamRef = useRef(null);
-  const chatContainerRef = useRef(null);
+  const location = useLocation();
+  const { selectedJobRole, jobDescription } = location.state || {};
+  const { sessionId } = useParams();
 
-  const [interviewStarted, setInterviewStarted] = useState(false);
-  const [interviewCompleted, setInterviewCompleted] = useState(false);
-  const [interviewer, setInterviewer] = useState(null);
+  // Speech recognition setup
+  const {
+    transcript: currentTranscript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
 
-  const isInterviewInProgress = interviewStarted && !interviewCompleted;
+  const startInterview = async (selectedJobRole, jobDescription) => {
+    try {
+      const response = await fetch(`${interviewAgentBaseUrl}/initialize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          job_role: selectedJobRole,
+          job_description: jobDescription,
+        }),
+      });
 
-  const handleOnEvaluationClose = () => {
-    setIsModelOpen(false);
-    navigate("/");
-  };
-
-  const handleInterviewStartButtonClick = (event) => {
-    if (event.target.innerText === 'Start Interview') {
-      setInterviewStarted(true);
-      setIsTimerRunning(true);
-      
-      // Add first question to chat and simulate AI speaking
-      setTimeout(() => {
-        setIsAiSpeaking(true);
-        setTimeout(() => {
-          addMessageToChat(demoQuestions[currentQuestion], 'interviewer');
-          setIsAiSpeaking(false);
-        }, 2000);
-      }, 500);
-      
-    } else {
-      if (window.confirm('Are you sure you want to exit?')) {
-        setInterviewCompleted(true);
-        setIsModelOpen(true);
+      if (!response.ok) {
+        const errorResponse = await response.text();
+        throw new Error(
+          `HTTP error! Status: ${response.status} - ${errorResponse}`
+        );
       }
+
+      const audioBlob = await response.blob();
+      playAudio(audioBlob);
+    } catch (error) {
+      console.error('Error starting interview:', error);
     }
   };
 
+  // Initialize the session when component renders
   useEffect(() => {
-    const randomInterviewer =
-      INTERVIEWERS[Math.floor(Math.random() * INTERVIEWERS.length)];
-    setInterviewer(randomInterviewer);
+    startInterview();
   }, []);
 
-  // Add message to chat
-  const addMessageToChat = (message, sender) => {
-    const newMessage = {
-      id: Date.now(),
-      text: message,
-      sender: sender, // 'interviewer' or 'user'
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  // Handle speech recognition changes
+  useEffect(() => {
+    if (listening) {
+      setUserSpeaking(true);
+      setAiSpeaking(false);
+
+      // Clear any existing silence timer
+      if (silenceTimer) {
+        clearTimeout(silenceTimer);
+      }
+    } else {
+      setUserSpeaking(false);
+    }
+  }, [listening]);
+
+  // Handle transcript changes
+  useEffect(() => {
+    if (currentTranscript && listening) {
+      // User is speaking - update transcript and reset silence detection
+      setTranscript(currentTranscript);
+
+      if (silenceTimer) {
+        clearTimeout(silenceTimer);
+      }
+
+      // Start a new silence detection timer (2 seconds of silence)
+      const timer = setTimeout(() => {
+        if (transcript.trim() !== '') {
+          // If we have some text, assume the user has stopped speaking
+          handleSpeechEnd();
+        }
+      }, 2000);
+
+      setSilenceTimer(timer);
+    }
+  }, [currentTranscript, listening]);
+
+  // Clean up timers
+  useEffect(() => {
+    return () => {
+      if (silenceTimer) {
+        clearTimeout(silenceTimer);
+      }
     };
-    setChatMessages(prevMessages => [...prevMessages, newMessage]);
-    
-    // Scroll to bottom of chat
-    setTimeout(() => {
-      if (chatContainerRef.current) {
-        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-      }
-    }, 100);
-  };
+  }, [silenceTimer]);
 
-  // Simulate user speaking response
-  const simulateUserSpeaking = () => {
-    // Clear any previous transcription
-    setTranscribedUserResponse("");
-    
-    // Simulate real-time transcription with progressive text updates
-    const fullResponse = demoResponses[currentQuestion];
-    const words = fullResponse.split(" ");
-    let currentIndex = 0;
-    
-    const transcriptionInterval = setInterval(() => {
-      if (currentIndex < words.length) {
-        setTranscribedUserResponse(prev => 
-          prev + (prev ? " " : "") + words[currentIndex]
-        );
-        currentIndex++;
-      } else {
-        clearInterval(transcriptionInterval);
-        // After full transcription, add to chat
-        setTimeout(() => {
-          addMessageToChat(fullResponse, 'user');
-        }, 500);
-      }
-    }, 300); // Simulate natural speaking pace
-  };
-
-  const checkPermissions = async (type) => {
-    try {
-      const result = await navigator.permissions.query({ name: type });
-      return result.state;
-    } catch (err) {
-      console.warn(`Could not check ${type} permission:`, err);
-      return 'prompt';
+  // Toggle microphone
+  const toggleMicrophone = () => {
+    if (!isMicOn) {
+      startListening();
+    } else {
+      stopListening();
     }
+    setIsMicOn(!isMicOn);
   };
 
-  // Function to access microphone
-  const startAudioStream = async () => {
-    const micPermission = await checkPermissions('microphone');
-    if (micPermission === 'denied') {
-      setIsMuted(true);
-      alert('Microphone access denied. Please enable it in browser settings.');
+  // Start speech recognition
+  const startListening = () => {
+    if (!browserSupportsSpeechRecognition) {
+      alert("Your browser doesn't support speech recognition.");
       return;
     }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioStreamRef.current = stream;
-    } catch (err) {
-      console.error('Error accessing microphone:', err);
+
+    resetTranscript();
+    setTranscript('');
+    SpeechRecognition.startListening({ continuous: true });
+    setIsListening(true);
+  };
+
+  // Stop speech recognition
+  const stopListening = () => {
+    SpeechRecognition.stopListening();
+    setIsListening(false);
+
+    if (transcript.trim() !== '') {
+      handleSpeechEnd();
     }
   };
 
-  // Function to access camera (optional)
-  const startVideoStream = async () => {
-    const cameraPermission = await checkPermissions('camera');
-    if (cameraPermission === 'denied') {
-      setIsVideoOff(true);
-      alert('Camera access denied. Please enable it in browser settings.');
-      return;
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-      videoStreamRef.current = stream;
-    } catch (err) {
-      console.error('Error accessing camera:', err);
-    }
+  const sendMessageToAi = async (audioData) => {
+    const formData = new FormData();
+    formData.append('stream', audioData);
+    const response = await fetch(`${interviewAgentBaseUrl}/stream`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const audioBlob = await response.blob();
+    playAudio(audioBlob);
   };
 
-  const stopAudioStream = () => {
-    if (audioStreamRef.current) {
-      audioStreamRef.current.getTracks().forEach((track) => track.stop());
-      audioStreamRef.current = null;
-    }
+  const playAudio = (audioBlob) => {
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
+    audio.play().catch((err) => console.error('Error playing audio:', err));
+  };
+  // Handle when speech ends
+  const handleSpeechEnd = () => {
+    // Create a text blob to send
+    console.log(transcript)
+    const textBlob = new Blob([transcript], { type: 'text/plain' });
+
+    // Send the message
+    sendMessageToAi(textBlob);
+
+    // Reset for next speech
+    resetTranscript();
+    setTranscript('');
+
+    // Start AI speaking (if needed)
+    handleAiSpeaking();
   };
 
-  const stopVideoStream = () => {
-    if (videoStreamRef.current) {
-      videoStreamRef.current.getTracks().forEach((track) => track.stop());
-      videoStreamRef.current = null;
-    }
+  // Function to simulate AI speaking
+  const handleAiSpeaking = () => {
+    setAiSpeaking(true);
+    setUserSpeaking(false);
   };
 
-  useEffect(() => {
-    if (!isVideoOff) {
-      startVideoStream();
-    } else {
-      stopVideoStream();
-    }
-  }, [isVideoOff]);
-
-  useEffect(() => {
-    if (!isMuted) {
-      startAudioStream();
-    } else {
-      stopAudioStream();
-    }
-  }, [isMuted]);
-
-  // Timer Effect
-  useEffect(() => {
-    let timer;
-    if (isTimerRunning && questionTimeLeft > 0) {
-      timer = setInterval(() => {
-        setquestionTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (questionTimeLeft === 0) {
-      // Auto-move to next question when time is up
-      handleNextQuestion();
-    }
-    return () => clearInterval(timer);
-  }, [questionTimeLeft, isTimerRunning]);
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const handleNextQuestion = () => {
-    if (currentQuestion < demoQuestions.length - 1) {
-      // First, simulate user's response to current question if not yet added
-      if (!chatMessages.find(msg => 
-        msg.sender === 'user' && 
-        msg.text.includes(demoResponses[currentQuestion].substring(0, 15))
-      )) {
-        simulateUserSpeaking();
-        
-        // Short delay before moving to next question
-        setTimeout(() => {
-          proceedToNextQuestion();
-        }, 3000);
-      } else {
-        proceedToNextQuestion();
-      }
-    }
-  };
-
-  const proceedToNextQuestion = () => {
-    setCurrentQuestion((curr) => curr + 1);
-    setquestionTimeLeft(32); // Reset timer for new question
-    setIsTimerRunning(true);
-    setTranscribedUserResponse(""); // Clear any current transcription
-    
-    // Simulate AI speaking the next question
-    setIsAiSpeaking(true);
-    setTimeout(() => {
-      // After a delay, add the next question to chat
-      const nextQuestion = demoQuestions[currentQuestion + 1];
-      addMessageToChat(nextQuestion, 'interviewer');
-      setIsAiSpeaking(false);
-    }, 2000);
-  };
-
-  // For demo purposes, let's simulate the user's speech input when they click mic button
-  const simulateSpeechInput = () => {
-    if (!isMuted && isInterviewInProgress) {
-      simulateUserSpeaking();
-    }
+  // Function to stop all speaking
+  const stopSpeaking = () => {
+    setUserSpeaking(false);
+    setAiSpeaking(false);
   };
 
   return (
     <div
       style={{
-        minHeight: '100vh',
-        backgroundColor: '#f0f0f0',
-        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        background:
+          'radial-gradient(circle, rgba(0,0,255,0.3) 0%, rgba(0,0,0,1) 70%)',
+        color: 'white',
       }}
     >
-      <style>
-        {`
-          @keyframes soundWave {
-            0% { height: 20%; }
-            100% { height: 100%; }
-          }
-          @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-          }
-        `}
-      </style>
-      <div
-        style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '20px',
+      <Avatar
+        src="https://via.placeholder.com/150"
+        sx={{
+          width: 100,
+          height: 100,
+          mb: 2,
+          boxShadow: userSpeaking
+            ? '0px 10px 30px 10px rgba(0,0,255,0.8)' // Glow moves downward for user
+            : aiSpeaking
+            ? '0px -10px 30px 10px rgba(0,255,0,0.8)' // Glow flashes upward for AI
+            : '0px 0px 30px 10px rgba(0,0,255,0.5)', // Default glow
+          transition: 'box-shadow 0.3s ease', // Smooth transition for effect
+        }}
+      />
+      <Typography variant="h6">Interviewer</Typography>
+
+      {/* Current transcript display */}
+      <Typography
+        variant="body1"
+        sx={{
+          mt: 3,
+          maxWidth: '80%',
+          textAlign: 'center',
+          opacity: userSpeaking ? 1 : 0.7,
+          transition: 'opacity 0.3s ease',
         }}
       >
-        {/* Video Feed Section */}
-        <VideoSection 
-          videoRef={videoRef}
-          isVideoOff={isVideoOff}
-          setIsVideoOff={setIsVideoOff}
-          isMuted={isMuted}
-          setIsMuted={setIsMuted}
-          simulateSpeechInput={simulateSpeechInput}
-        />
+        {transcript || (userSpeaking ? 'Listening...' : '')}
+      </Typography>
 
-        {/* Chat Interface */}
-        <ChatInterface 
-          chatContainerRef={chatContainerRef}
-          chatMessages={chatMessages}
-          interviewer={interviewer}
-          isInterviewInProgress={isInterviewInProgress}
-          isAiSpeaking={isAiSpeaking}
-          questionTimeLeft={questionTimeLeft}
-          formatTime={formatTime}
-          transcribedUserResponse={transcribedUserResponse}
-          isMuted={isMuted}
-        />
-      </div>
-
-      {/* Interview Controls */}
-      <InterviewControls 
-        isInterviewInProgress={isInterviewInProgress}
-        currentQuestion={currentQuestion}
-        demoQuestions={demoQuestions}
-        handleNextQuestion={handleNextQuestion}
-        handleInterviewStartButtonClick={handleInterviewStartButtonClick}
-      />
-
-      {/* Interview Tips */}
-      {!isInterviewInProgress && (
+      <div style={{ display: 'flex', gap: '20px', marginTop: '40px' }}>
         <div
           style={{
-            backgroundColor: 'white',
-            borderRadius: '10px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            padding: '20px',
-            margin: '20px auto',
-            maxWidth: '1200px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
-          <h3
-            style={{
-              fontSize: '20px',
-              fontWeight: '600',
-              marginBottom: '15px',
-            }}
+          <IconButton
+            style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
+            onClick={toggleMicrophone}
           >
-            Interview Tips
-          </h3>
-          <ul style={{ color: '#444', paddingLeft: '20px' }}>
-            <li style={{ marginBottom: '8px' }}>
-              Speak clearly and maintain good eye contact with the camera
-            </li>
-            <li style={{ marginBottom: '8px' }}>
-              Take a moment to gather your thoughts before answering
-            </li>
-            <li style={{ marginBottom: '8px' }}>
-              Provide specific examples to support your answers
-            </li>
-            <li style={{ marginBottom: '8px' }}>
-              Keep your responses focused and concise
-            </li>
-          </ul>
+            {isMicOn ? (
+              <MicIcon style={{ color: 'white' }} />
+            ) : (
+              <MicOffIcon style={{ color: 'white' }} />
+            )}
+          </IconButton>
+          <Typography variant="body2" mt={1}>
+            {isMicOn ? 'Mute' : 'Unmute'}
+          </Typography>
         </div>
-      )}
-
-      {isInterviewInProgress && <AISphere isAiSpeaking={isAiSpeaking} />}
-
-      {/* Evaluation Modal */}
-      {isModelOpen && <Evaluation evaluationData={"some data to be displayed\nhow I can modify this"} onClose={handleOnEvaluationClose}/>}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <IconButton style={{ backgroundColor: 'red' }}>
+            <CallEndIcon style={{ color: 'white' }} />
+          </IconButton>
+          <Typography variant="body2" mt={1}>
+            Hang up
+          </Typography>
+        </div>
+      </div>
     </div>
   );
 };
