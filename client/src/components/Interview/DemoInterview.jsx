@@ -10,7 +10,7 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from 'react-speech-recognition';
 
-const interviewAgentBaseUrl = process.env.REACT_APP_INTERVIEW_AGENT_BASE_URL;
+const interviewAgentBaseUrl = process.env.VITE_INTERVIEW_AGENT_BASE_URL;
 
 const DemoInterview = () => {
   // States to track whether the user or AI is speaking
