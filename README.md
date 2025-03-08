@@ -1,4 +1,5 @@
-# AI-Automated-Interview-Platform
+# 🚀 AI-Automated-Interview-Platform 🚀
+
 
 <a href="https://github.com/rasikaghadge/AI-Automated-Interview-Platform/network/members"><img src="https://img.shields.io/github/forks/rasikaghadge/AI-Automated-Interview-Platform" alt="Forks Badge"/></a>
 <a href="https://github.com/rasikaghadge/AI-Automated-Interview-Platform/pulls"><img src="https://img.shields.io/github/issues-pr/rasikaghadge/AI-Automated-Interview-Platform" alt="Pull Requests Badge"/></a>
@@ -6,34 +7,79 @@
 <a href="https://github.com/rasikaghadge/AI-Automated-Interview-Platform/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/rasikaghadge/AI-Automated-Interview-Platform?color=2b9348"></a>
 <a href="https://github.com/rasikaghadge/AI-Automated-Interview-Platform/blob/main/LICENSE"><img src="https://img.shields.io/github/license/rasikaghadge/AI-Automated-Interview-Platform?color=orange" alt="License Badge"/></a>
 
-## Installation
+---
 
-### Server (TypeScript+Node)
-Install packages
-`npm i`
+## 🌐 Live Demo
+🚀 [Try the live version here](https://hirewithaiinterviewer.vercel.app/)
 
-Run the server in development model
-`npm run dev`
+---
 
-Run in production
-`npm start`
+## 🛠 Installation
 
-## Tech Stack
+### Server (TypeScript + Node.js)
+```bash
+# Install dependencies
+npm install
 
-**Client:** ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=white) ![Redux](https://img.shields.io/badge/-Redux-764ABC?logo=redux&logoColor=white) ![CSS](https://img.shields.io/badge/-CSS-1572B6?logo=css3&logoColor=white)
+# Development mode
+npm run dev
 
-**Server:** ![Node](https://img.shields.io/badge/-Node.js-339933?logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/-Express-000000?logo=express&logoColor=white)
+# Production build
+npm start
+```
 
+### Client (React)
+```bash
+# Install dependencies
+npm install
 
+# Start development server
+npm start
+```
 
-## License
+---
 
-[MIT](https://github.com/rasikaghadge/AI-Automated-Interview-Platform/blob/main/LICENSE)
+## 🔧 Tech Stack
 
+| **Frontend**                | **Backend**               |
+|-----------------------------|---------------------------|
+| React                       | Node.js + Express         |
+| Redux Toolkit               | Socket.IO                 |
+| CSS Modules                 | TypeScript                |
+| Axios                       | MongoDB                   |
 
-## Thanks for your Contribution
-<div class="avatar-container">
-    <a href="https://github.com/rasikaghadge/AI-Automated-Interview-Platform/graphs/contributors">
-        <img src="https://contrib.rocks/image?max=50&repo=rasikaghadge/AI-Automated-Interview-Platform" />
-    </a>
+---
+
+## 📄 License
+
+This project is [MIT licensed](LICENSE) 📝
+
+---
+
+## 🤝 Contributing
+
+Contributions are always welcome! To contribute:
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a pull request
+
+---
+
+## 🙌 Contributors
+
+<div align="center">
+  <a href="https://github.com/rasikaghadge/AI-Automated-Interview-Platform/graphs/contributors">
+    <img src="https://contrib.rocks/image?max=50&repo=rasikaghadge/AI-Automated-Interview-Platform" alt="Contributors" />
+  </a>
 </div>
+
+---
+
+## 📌 Related Projects
+
+- [Real Interview AI Service](https://github.com/kalpesh521/Hire.Ai)
+- [Demo Interview AI Service](https://github.com/Suraj1089/interview-agent)
+
+---
