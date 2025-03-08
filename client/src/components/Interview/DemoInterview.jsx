@@ -10,6 +10,8 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from 'react-speech-recognition';
 
+const interviewAgentBaseUrl = process.env.REACT_APP_INTERVIEW_AGENT_BASE_URL;
+
 const DemoInterview = () => {
   // States to track whether the user or AI is speaking
   const [userSpeaking, setUserSpeaking] = useState(false);
@@ -33,7 +35,7 @@ const DemoInterview = () => {
 
   const startInterview = async (selectedJobRole, jobDescription) => {
     try {
-      const response = await fetch('http://localhost:8000/initialize', {
+      const response = await fetch(`${interviewAgentBaseUrl}/initialize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -143,7 +145,7 @@ const DemoInterview = () => {
   const sendMessageToAi = async (audioData) => {
     const formData = new FormData();
     formData.append('stream', audioData);
-    const response = await fetch('http://localhost:8000/stream', {
+    const response = await fetch(`${interviewAgentBaseUrl}/stream`, {
       method: 'POST',
       body: formData,
     });
