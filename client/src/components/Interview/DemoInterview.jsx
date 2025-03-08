@@ -37,6 +37,7 @@ const DemoInterview = () => {
     try {
       const response = await fetch(`${interviewAgentBaseUrl}/initialize`, {
         method: 'POST',
+        mode: "no-cors",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           job_role: selectedJobRole,
@@ -147,6 +148,7 @@ const DemoInterview = () => {
     formData.append('stream', audioData);
     const response = await fetch(`${interviewAgentBaseUrl}/stream`, {
       method: 'POST',
+      mode: "no-cors",
       body: formData,
     });
 
