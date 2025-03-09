@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import bannerImage from "../../Assets/banner2.png";
+import { ToastContainer, toast } from "react-toastify";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -11,6 +12,10 @@ const Home = () => {
       navigate('/homepage');
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+      toast.success("Welcome to hirewithAi! Clik on Try Demo to see how it works.", {position: 'top-center'})
+  }, [])
 
   return (
     <div>
@@ -87,6 +92,7 @@ const Home = () => {
           </div>
         </section>
       </div>
+      <ToastContainer />
     </div>
   );
 };

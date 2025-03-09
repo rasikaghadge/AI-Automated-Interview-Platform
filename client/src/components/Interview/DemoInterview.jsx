@@ -9,6 +9,7 @@ import CallEndIcon from '@mui/icons-material/CallEnd';
 import SpeechRecognition, {
   useSpeechRecognition,
 } from 'react-speech-recognition';
+import { ToastContainer, toast } from 'react-toastify';
 
 const interviewAgentBaseUrl = import.meta.env.VITE_INTERVIEW_AGENT_BASE_URL;
 
@@ -37,15 +38,16 @@ const DemoInterview = () => {
     try {
       const response = await fetch(`${interviewAgentBaseUrl}/initialize`, {
         method: 'POST',
-        mode: "no-cors",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           job_role: selectedJobRole,
           job_description: jobDescription,
         }),
-      });
+      }); 
+      console.log(response.ok)
 
       if (!response.ok) {
+        toast.error("This project uses free resources. Limit might be exeeded please try after some time!")
         const errorResponse = await response.text();
         throw new Error(
           `HTTP error! Status: ${response.status} - ${errorResponse}`
@@ -55,13 +57,14 @@ const DemoInterview = () => {
       const audioBlob = await response.blob();
       playAudio(audioBlob);
     } catch (error) {
+      toast.error("This project uses free resources. Limit might be exeeded please try after some time!")
       console.error('Error starting interview:', error);
     }
   };
 
   // Initialize the session when component renders
   useEffect(() => {
-    startInterview();
+    startInterview(selectedJobRole, jobDescription);
   }, []);
 
   // Handle speech recognition changes
@@ -144,6 +147,7 @@ const DemoInterview = () => {
   };
 
   const sendMessageToAi = async (audioData) => {
+    try {
     const formData = new FormData();
     formData.append('stream', audioData);
     const response = await fetch(`${interviewAgentBaseUrl}/stream`, {
@@ -154,6 +158,9 @@ const DemoInterview = () => {
 
     const audioBlob = await response.blob();
     playAudio(audioBlob);
+  } catch {
+    toast.error("This project uses free resources. Limit might be exeeded please try after some time!")
+  }
   };
 
   const playAudio = (audioBlob) => {
@@ -270,6 +277,7 @@ const DemoInterview = () => {
           </Typography>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

@@ -7,6 +7,7 @@ import Interview from "../models/Interview.js";
 import Profile from "../models/ProfileModel.js";
 import User from "../models/userModel.js";
 import { sendInterviewStatusEmail } from "../helper/emailHelper.js";
+
 dotenv.config();
 
 const API_BASE_URL = process.env.API_BASE_URL;

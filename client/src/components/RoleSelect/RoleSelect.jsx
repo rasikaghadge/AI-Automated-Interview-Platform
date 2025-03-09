@@ -19,7 +19,7 @@ const RoleSelect = () => {
         <img
           style={{ width: "50px", cursor: "pointer" }}
           onClick={() => navigate("/")}
-          src="https://i.postimg.cc/hGZKzdkS/logo.png"
+          src="https://cdn-icons-png.flaticon.com/512/25/25694.png"
           alt="arc-invoice"
         />
       </div>

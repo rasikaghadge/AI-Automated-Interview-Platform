@@ -7,10 +7,12 @@ import { jwtDecode } from "jwt-decode";
 
 import { useEffect } from "react";
 import styles from "./Schedule.module.css";
-import { scheduleMeeting } from "../../actions/interviews";
+import { scheduleMeeting, handleApiError } from "../../actions/interviews";
 import { useDispatch } from "react-redux";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import { ToastContainer } from "react-toastify";
+
 
 let prevUserToken = null;
 
@@ -23,7 +25,6 @@ const Schedule = () => {
 
   useEffect(() => {
     if (!user) {
-      console.log("navigating");
       navigate("/login");
     }
     const checkUserRole = async () => {
@@ -103,12 +104,12 @@ const Schedule = () => {
     formData.title = formData.title.value;
     try {
       // Send a request to the server to schedule the interview
-      await dispatch(scheduleMeeting(formData));
-
+      const result = await dispatch(scheduleMeeting(formData));
+      handleApiError(result, message='Interview sheduled successfully!')
       // Store the endTime value in local storage
       localStorage.setItem("endTime", formData.endTime);
-
-      navigate("/homepage");
+      navigate('/homepage')
+      // navigate("/homepage");
     } catch (error) {
       console.error("Error scheduling interview:", error.message);
     }
@@ -286,6 +287,7 @@ const Schedule = () => {
           </form>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

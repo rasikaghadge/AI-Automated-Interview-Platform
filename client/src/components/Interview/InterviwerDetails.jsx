@@ -6,6 +6,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 
 const style = {
   position: 'absolute',
@@ -32,11 +33,11 @@ export default function InterviewerDetails() {
 
   const handleSubmit = () => {
     if (!selectedJobRole) {
-      alert('Job Role is required');
+      toast.error('Please select job role.')
       return;
     }
     if (!jobDescription.trim()) {
-      alert('Job Description is required');
+      toast.error('Job Description is required.')
       return;
     }
     const sessionId = crypto.randomUUID();
@@ -76,6 +77,7 @@ export default function InterviewerDetails() {
           Submit
         </Button>
       </Box>
+      <ToastContainer />
     </React.Fragment>
   );
 }
