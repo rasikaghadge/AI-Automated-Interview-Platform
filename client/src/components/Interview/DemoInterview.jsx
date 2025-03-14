@@ -152,7 +152,6 @@ const DemoInterview = () => {
     formData.append('stream', audioData);
     const response = await fetch(`${interviewAgentBaseUrl}/stream`, {
       method: 'POST',
-      mode: "no-cors",
       body: formData,
     });
 
