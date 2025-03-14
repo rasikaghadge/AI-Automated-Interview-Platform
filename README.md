@@ -9,6 +9,10 @@
 
 ---
 
+<img width="1689" alt="image" src="https://github.com/user-attachments/assets/2518ce1f-8045-44e4-a467-7d0bcf6a9f77" />
+
+---
+
 ## 🌐 Live Demo
 🚀 [Try the live version here](https://hirewithaiinterviewer.vercel.app/)
 
